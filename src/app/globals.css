@@ -12,6 +12,40 @@
   --font-mono: var(--font-geist-mono);
 }
 
+@theme {
+  --color-main: #BB6653;
+  --color-secondary: #F08B51;
+  --color-plain: #f1d2b2;
+  --color-light:#FFF8E8;
+  --color-cute:#f67676;
+}
+
+@layer base {
+  p {
+    line-height: 1.3;
+    text-align: justify;
+    font-size: 0.8rem;
+    margin: 0 0 .8rem 0;
+  }
+
+  li {
+    /* text-indent: 1rem; */
+    list-style: disc;
+    margin-left: calc(var(--spacing) * 6); 
+  }
+  li li {
+    /* text-indent: 2rem; */
+    list-style: circle;
+  }
+
+  button {
+    cursor: pointer;
+  }
+  button:hover {
+    transform: scale(1.1);
+  }
+}
+
 /* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
