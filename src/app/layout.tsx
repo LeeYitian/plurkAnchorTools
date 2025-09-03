@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-TW">
-      <body className={"antialiased bg-light"}>
+      <body className={"antialiased"}>
         <div className="max-w-3xl mx-auto">
           <div className="fixed z-10 w-full left-0 top-0 p-4 bg-plain">
             <div className="flex flex-col gap-2 justify-between items-center md:flex-row max-w-3xl mx-auto">
