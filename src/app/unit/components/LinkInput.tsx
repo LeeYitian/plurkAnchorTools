@@ -7,7 +7,7 @@ export default function LinkInput() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [hasUrl, setHasUrl] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [{ plurks }, dispatch] = useContext(PlurksDataContext);
+  const [, dispatch] = useContext(PlurksDataContext);
   const fetchPlurk = async () => {
     const url = inputRef.current?.value.trim();
     if (!url) return;
@@ -26,6 +26,8 @@ export default function LinkInput() {
 
       const data = await response.json();
       dispatch({ type: "SET_PLURKS", payload: data.data.responses });
+    } else {
+      setErrorMessage("無效的噗文網址");
     }
   };
 
@@ -50,7 +52,7 @@ export default function LinkInput() {
             }
           }}
           className={clsx(
-            "w-full bg-light rounded-md outline-main p-1 text-sm font-light",
+            "w-full bg-light rounded-md outline-main px-3 py-1 text-sm font-light",
             { "text-gray-300": !hasUrl }
           )}
         />
