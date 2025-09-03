@@ -50,6 +50,7 @@ const countAndSplit = (texts: string) => {
     const arr = needSliceString.split("\n");
     if (arr[arr.length - 1] === "") arr.pop();
     needSliceString = arr.join("\n");
+
     const string = countText(needSliceString);
     paragraphs.push(string);
 
@@ -59,7 +60,9 @@ const countAndSplit = (texts: string) => {
     }
   } while (needSliceString.length > MAX_TEXT_NUM);
 
-  paragraphs.push(needSliceString);
+  if (needSliceString) {
+    paragraphs.push(needSliceString);
+  }
 
   return paragraphs;
 };
