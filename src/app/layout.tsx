@@ -28,14 +28,14 @@ export default function RootLayout({
               <div className="flex gap-4 justify-end">
                 <Link
                   href="/chunk"
-                  className="bg-main rounded-full p-1 text-xs text-light text-center min-w-[120px] cursor-pointer hover:scale-105 transition-transform group relative"
+                  className="bg-main rounded-full px-1 py-2 text-sm text-light text-center min-w-[120px] cursor-pointer hover:scale-105 transition-transform group relative"
                 >
                   分段工具
                   <span className="tabHover group-hover:block">貼到噗浪上</span>
                 </Link>
                 <Link
                   href="/unit"
-                  className="bg-main rounded-full p-1 text-xs text-light text-center min-w-[120px] cursor-pointer hover:scale-105 transition-transform group"
+                  className="bg-main rounded-full px-1 py-2 text-sm text-light text-center min-w-[120px] cursor-pointer hover:scale-105 transition-transform group"
                 >
                   組合工具
                   <span className="tabHover group-hover:block">製作好讀版</span>
