@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
       headPlurkData = headPlurkData.replace("plurk =", "");
       // 將 new Date(...) 轉換成字串
       headPlurkData = headPlurkData.replace(
-        /new Date\((.*?)\)/,
+        /new Date\((.*?)\)/g,
         (_, dateStr) => {
           return JSON.stringify(eval(dateStr));
         }

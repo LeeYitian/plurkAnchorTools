@@ -27,6 +27,7 @@ export default function LinkInput() {
         );
         dispatch({ type: "SET_PLURKS", payload: [] });
         setLoading(false);
+        return;
       }
 
       const { data } = await response.json();
@@ -34,6 +35,7 @@ export default function LinkInput() {
     } else {
       setErrorMessage("無效的噗文網址");
     }
+    setLoading(false);
   };
 
   useEffect(() => {
