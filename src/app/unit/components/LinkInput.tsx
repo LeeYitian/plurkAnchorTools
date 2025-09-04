@@ -24,8 +24,8 @@ export default function LinkInput() {
         );
       }
 
-      const data = await response.json();
-      dispatch({ type: "SET_PLURKS", payload: data.data.responses });
+      const { data } = await response.json();
+      dispatch({ type: "SET_PLURKS", payload: data });
     } else {
       setErrorMessage("無效的噗文網址");
     }
