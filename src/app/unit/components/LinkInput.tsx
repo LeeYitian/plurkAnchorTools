@@ -3,7 +3,8 @@ import { LoadingContext } from "@/providers/LoadingProvider";
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
 import clsx from "clsx";
 import Image from "next/image";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import "./LinkInput.scss";
 
 export default function LinkInput() {
   const [url, setUrl] = useState("");

@@ -3,13 +3,14 @@ import { PlurksDataContext } from "@/providers/PlurksDataProvider";
 import { useContext } from "react";
 
 export default function ArticleArea() {
-  const [{ plurks }] = useContext(PlurksDataContext);
-
+  const [{ hasData }] = useContext(PlurksDataContext);
   return (
     <>
-      {plurks.map((plurk) => (
-        <p key={plurk.id}>{plurk.content}</p>
-      ))}
+      {hasData && (
+        <div className="w-[50%] p-2 border-l-main border-l-3">
+          <div>ArticleArea</div>
+        </div>
+      )}
     </>
   );
 }

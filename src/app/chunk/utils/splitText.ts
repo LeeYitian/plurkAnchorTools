@@ -1,4 +1,4 @@
-import { MAX_LINE_NUM, MAX_TEXT_NUM } from "./constants";
+import { MAX_LINE_NUM, MAX_TEXT_NUM } from "@/types/constants";
 
 // const paragraphs: string[] = [];
 function countText(needSliceString: string) {
