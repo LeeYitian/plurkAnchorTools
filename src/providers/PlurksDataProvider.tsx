@@ -5,11 +5,13 @@ import { TPlurkReducerAction, TPlurkResponse } from "../types/plurks";
 type TInitialState = {
   plurks: TPlurkResponse[];
   hasData: boolean;
+  selectedPlurksIds: number[];
 };
 
 const initialState = {
   plurks: [],
   hasData: false,
+  selectedPlurksIds: [],
 };
 
 export const PlurksDataContext = createContext<
@@ -26,6 +28,21 @@ const reducer = (
         ...state,
         plurks: action.payload,
         hasData: action.payload.length > 0,
+      };
+    case "SELECT_PLURKS_IDS":
+      const temp = new Set(state.selectedPlurksIds);
+
+      for (const id of action.payload) {
+        if (temp.has(id)) {
+          temp.delete(id);
+        } else {
+          temp.add(id);
+        }
+      }
+
+      return {
+        ...state,
+        selectedPlurksIds: Array.from(temp),
       };
     default:
       return state;

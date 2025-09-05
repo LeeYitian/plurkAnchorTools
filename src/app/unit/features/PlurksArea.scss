@@ -53,5 +53,10 @@
     border-radius: calc(var(--spacing) * 5);
     padding: calc(var(--spacing) * 1) calc(var(--spacing) * 1.5);
     cursor: pointer;
+    &.active {
+      background: var(--color-plain);
+      color: var(--color-main);
+      border: none;
+    }
   }
 }

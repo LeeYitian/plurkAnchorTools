@@ -23,7 +23,9 @@ export type TPlurk = {
   responses: TPlurkResponse[];
 };
 
-export type TPlurkReducerAction = {
-  type: "SET_PLURKS";
-  payload: TPlurkResponse[];
-};
+export type TPlurkReducerAction =
+  | {
+      type: "SET_PLURKS";
+      payload: TPlurkResponse[];
+    }
+  | { type: "SELECT_PLURKS_IDS"; payload: number[] };
