@@ -1,13 +1,18 @@
 "use client";
 import LinkInput from "@/app/unit/components/LinkInput";
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
+import clsx from "clsx";
 import { useContext } from "react";
 
 export default function LinkArea() {
   const [{ hasData }] = useContext(PlurksDataContext);
 
   return (
-    <div className="flex flex-col md:flex-row gap-2 md:gap-8 mt-8">
+    <div
+      className={clsx("flex flex-col md:flex-row gap-2 md:gap-8", {
+        "mt-8": !hasData,
+      })}
+    >
       {!hasData && (
         <section className="flex-[1_0_50%]">
           <p>

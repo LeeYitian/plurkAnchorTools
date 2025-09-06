@@ -16,7 +16,7 @@
 }
 
 @layer components {
-  .article {
+  .plurk {
     display: flex;
     background-color: var(--color-light);
     font-size: 0.8rem;
@@ -29,7 +29,7 @@
 
     div.plurkContent {
       color: var(--color-gray-800);
-      line-height: 1.15;
+      // line-height: 1.15;
     }
 
     img {
@@ -37,6 +37,19 @@
       margin: calc(var(--spacing) * 0.5);
       height: 1.1rem;
       width: auto;
+    }
+
+    a.meta {
+    cursor: pointer;
+    display: block;
+    margin: 1px 0 4px;
+    overflow: hidden;
+    padding: 4px;
+    position: relative;
+    color: #2153D2;
+    border-radius: calc(var(--spacing) * 2);
+    background: rgba(33, 83, 210, 0.04);
+    border: rgba(33, 83, 210, 0.08) 1px solid;
     }
   }
 

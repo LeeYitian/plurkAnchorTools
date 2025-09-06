@@ -100,6 +100,11 @@ export default function LinkInput() {
               const target = e.target as HTMLElement;
               if (target.tagName === "INPUT" || target.tagName === "BUTTON")
                 return;
+              if (!openChangeUrl) {
+                const btn = target.closest(".urlBtn");
+                const input = btn?.querySelector("input");
+                input?.select();
+              }
               setOpenChangeUrl(!openChangeUrl);
             }}
             title="更換網址"
@@ -109,7 +114,7 @@ export default function LinkInput() {
             <div
               id="changeUrl"
               className={clsx(
-                "absolute top-4/5 right-0 w-[30vw] min-w-[300px] h-[6vh] bg-white p-1 rounded-md shadow-md flex items-center justify-between transition transition-duration-500 ease-in-out",
+                "absolute top-4/5 right-0 w-[30vw] min-w-[300px] h-[6vh] bg-white p-1 rounded-md shadow-md flex items-center justify-between transition transition-duration-700 ease-in-out",
                 { "opacity-0": !openChangeUrl }
               )}
             >

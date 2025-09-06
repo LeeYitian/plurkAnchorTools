@@ -18,7 +18,7 @@ export default function Chunk() {
           360 字。
         </p>
         <p>但是如果單一段落超過 360 字，就無可避免會斷在段落中間。</p>
-        <p>將需要分段s的文字貼進輸入框，按下「確認」即完成分段。</p>
+        <p>將需要分段的文字貼進輸入框，按下「確認」即完成分段。</p>
       </section>
       <ChunkArea />
       <VersionDetail />

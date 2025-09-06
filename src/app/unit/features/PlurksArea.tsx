@@ -2,7 +2,7 @@
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
 import { useContext, useMemo, useState } from "react";
 import "./PlurksArea.scss";
-import { OWNWER } from "@/types/constants";
+import { DICE_EMOTICON, OWNER } from "@/types/constants";
 import clsx from "clsx";
 
 const FILTER_OPTIONS: { [key: string]: string } = {
@@ -28,12 +28,10 @@ export default function PlurksArea() {
   const filteredPlurks = useMemo(() => {
     return plurks.filter((plurk, index) => {
       if (filter.onlyOwner) {
-        return plurk.handle === OWNWER || index === 0;
+        return plurk.handle === OWNER || index === 0;
       }
       if (filter.onlyDice) {
-        return (
-          plurk.content.includes('class="emoticon"') && plurk.handle === OWNWER
-        );
+        return plurk.content.includes(DICE_EMOTICON) && plurk.handle === OWNER;
       }
       return true;
     });
@@ -62,15 +60,18 @@ export default function PlurksArea() {
   }
 
   return (
-    <div className="w-[49%] overflow-y-auto max-h-[500px] scrollbar relative">
+    <div className="w-[49%] overflow-y-auto max-h-[calc(100dvh-200px)] scrollbar relative">
       <div className="flex justify-between items-center px-3 pb-3 sticky top-0 z-1 bg-white">
         <div className="flex items-center text-[0.8rem] text-gray-800 gap-1">
           <input
             type="checkbox"
             id="select-all"
-            checked={filteredPlurks.every((plurk) =>
-              selectedPlurksIds.includes(plurk.id)
-            )}
+            checked={
+              filteredPlurks.length > 0 &&
+              filteredPlurks.every((plurk) =>
+                selectedPlurksIds.includes(plurk.id)
+              )
+            }
             onChange={() => {
               const patch = !filteredPlurks.every((plurk) =>
                 selectedPlurksIds.includes(plurk.id)
@@ -97,10 +98,9 @@ export default function PlurksArea() {
       {filteredPlurks.map((plurk, index) => (
         <div
           key={plurk.id}
-          className={clsx("article", {
+          className={clsx("plurk", {
             "bg-plain/40":
-              plurk.handle === OWNWER &&
-              plurk.content.includes('class="emoticon"'),
+              plurk.handle === OWNER && plurk.content.includes(DICE_EMOTICON),
           })}
         >
           <input
@@ -116,9 +116,9 @@ export default function PlurksArea() {
               key={plurk.id}
               dangerouslySetInnerHTML={{ __html: plurk.content }}
             />
-            {(plurk.handle === OWNWER || index === 0) && (
+            {(plurk.handle === OWNER || index === 0) && (
               <span className="absolute bottom-1 right-1 text-gray-400 text-xs font-extralight scale-[0.9]">
-                {OWNWER}
+                {OWNER}
               </span>
             )}
           </div>
