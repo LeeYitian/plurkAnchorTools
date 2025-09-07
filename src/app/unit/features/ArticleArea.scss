@@ -1,13 +1,15 @@
+@reference "../../globals.css";
+
 @layer components {
   .article {
-    font-size: 0.8rem;
-    padding: 0 calc(var(--spacing) * 3) 0;
-    
+    @apply text-[0.8rem] px-3;
+
     img {
-      display: inline-block;
-      margin: calc(var(--spacing) * 0.5);
-      height: 1.1rem;
-      width: auto;
+      @apply inline-block m-0.5 h-[1.1rem] w-auto;
+    }
+
+    a {
+      @apply text-main underline;
     }
   }
 }

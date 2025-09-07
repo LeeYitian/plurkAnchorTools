@@ -24,7 +24,7 @@ export default function RootLayout({
             <LoadingMask />
           </Suspense>
           <div className="max-w-4xl mx-auto">
-            <header className="fixed z-10 w-full left-0 top-0 p-3 bg-plain">
+            <header className="fixed w-full left-0 top-0 p-3 bg-plain">
               <div className="flex flex-col gap-2 justify-between items-center md:flex-row max-w-4xl mx-auto">
                 <h1
                   className="text-main font-bold text-2xl strokeText"

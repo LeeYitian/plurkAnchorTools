@@ -1,55 +1,36 @@
+@reference "../../globals.css";
+
 @layer base {
   input[type="checkbox"] {
-      width: calc(var(--spacing) * 4.5);
-      min-width: calc(var(--spacing) * 4.5);
-      height: calc(var(--spacing) * 4.5);
-      appearance: none;
-      background: white;
-      border-radius: calc(var(--spacing)*1);
-      border: 2px solid var(--color-main);
-      cursor: pointer;
-      &:checked {
-        background-color: var(--color-main);
-        background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M5 13L9 17L19 7' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
-      }
+    @apply appearance-none w-4.5 min-w-4.5 h-4.5 bg-white rounded-sm border-2 border-main cursor-pointer;
+
+    &:checked {
+      @apply bg-main;
+      background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M5 13L9 17L19 7' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
     }
+  }
 }
 
 @layer components {
   .plurk {
-    display: flex;
-    background-color: var(--color-light);
-    font-size: 0.8rem;
-    padding: calc(var(--spacing)*3);
-    border-radius: calc(var(--spacing) * 2);
-    margin-bottom: calc(var(--spacing) * 2);
-    align-items: flex-start;
-    gap: calc(var(--spacing) * 4);
-    position: relative;
+    @apply flex bg-light text-[0.8rem] p-3 rounded-sm mb-2 items-start gap-4 relative;
 
     div.plurkContent {
-      color: var(--color-gray-800);
+      @apply text-gray-800;
+      // color: var(--color-gray-800);
       // line-height: 1.15;
     }
 
     img {
-      display: inline-block;
-      margin: calc(var(--spacing) * 0.5);
-      height: 1.1rem;
-      width: auto;
+      @apply inline-block m-0.5 h-[1.1rem] w-auto;
+    }
+
+    a {
+      @apply text-[#2153D2] underline;
     }
 
     a.meta {
-    cursor: pointer;
-    display: block;
-    margin: 1px 0 4px;
-    overflow: hidden;
-    padding: 4px;
-    position: relative;
-    color: #2153D2;
-    border-radius: calc(var(--spacing) * 2);
-    background: rgba(33, 83, 210, 0.04);
-    border: rgba(33, 83, 210, 0.08) 1px solid;
+      @apply cursor-pointer block mt-[1px] mb-[4px] overflow-hidden p-1 relative text-[#2153D2] rounded-sm bg-[rgba(33,83,210,0.04)] border-[rgba(33,83,210,0.08)] border-[1px];
     }
   }
 
@@ -59,17 +40,10 @@
   }
 
   .filterBtn {
+    @apply border-[1px] border-main text-main rounded-full text-[0.75rem] px-2 py-1 cursor-pointer;
     // background: var(--color-main);
-    border: 1px solid var(--color-main);
-    color: var(--color-main);
-    font-size: 0.75rem;
-    border-radius: calc(var(--spacing) * 5);
-    padding: calc(var(--spacing) * 1) calc(var(--spacing) * 1.5);
-    cursor: pointer;
     &.active {
-      background: var(--color-plain);
-      color: var(--color-main);
-      border: none;
+      @apply  bg-plain text-main border-none; 
     }
   }
 }

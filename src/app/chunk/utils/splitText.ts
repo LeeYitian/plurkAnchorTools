@@ -1,7 +1,7 @@
 import { MAX_LINE_NUM, MAX_TEXT_NUM } from "@/types/constants";
 
 // const paragraphs: string[] = [];
-function countText(needSliceString: string) {
+const countText = (needSliceString: string) => {
   const tempString = needSliceString.slice(0, MAX_TEXT_NUM);
   let string = tempString;
 
@@ -20,9 +20,9 @@ function countText(needSliceString: string) {
   // paragraphs.push(string);
 
   return string;
-}
+};
 
-function countLineBreak(needSliceString: string) {
+const countLineBreak = (needSliceString: string) => {
   //去掉最後面的空行
   const tempArr = needSliceString.split("\n");
   if (tempArr[tempArr.length - 1] === "") tempArr.pop();
@@ -37,7 +37,7 @@ function countLineBreak(needSliceString: string) {
     }
   }
   return tempArr.join("\n");
-}
+};
 
 const countAndSplit = (texts: string) => {
   if (texts.trim().length === 0) return [];
@@ -75,11 +75,11 @@ const copyParagraph = async (paragraph: string) => {
   }
 };
 
-function suggestDeleteCount(pre: string, next: string) {
+const suggestDeleteCount = (pre: string, next: string) => {
   const remain = MAX_TEXT_NUM - pre.length;
   const firstOfNext = next.slice(0, next.indexOf("\n")).length;
   return firstOfNext - remain + 3;
-}
+};
 
 export const splitTextUtils = {
   countAndSplit,

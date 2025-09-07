@@ -4,8 +4,10 @@ import { useContext, useMemo, useState } from "react";
 import "./PlurksArea.scss";
 import { DICE_EMOTICON, OWNER } from "@/types/constants";
 import clsx from "clsx";
+import { TPlurkResponse } from "@/types/plurks";
 
 const FILTER_OPTIONS: { [key: string]: string } = {
+  onlySelected: "只看已選",
   onlyDice: "只看骰點",
   onlyOwner: "只看噗主",
 };
@@ -25,17 +27,32 @@ export default function PlurksArea() {
     }));
   };
 
+  const filterConfig = [
+    {
+      active: filter.onlySelected,
+      rule: (plurk: TPlurkResponse) => selectedPlurksIds.includes(plurk.id),
+    },
+    {
+      active: filter.onlyDice,
+      rule: (plurk: TPlurkResponse) => plurk.content.includes(DICE_EMOTICON),
+    },
+    {
+      active: filter.onlyOwner,
+      rule: (plurk: TPlurkResponse, index: number) =>
+        plurk.handle === OWNER || index === 0,
+    },
+  ];
+
   const filteredPlurks = useMemo(() => {
-    return plurks.filter((plurk, index) => {
-      if (filter.onlyOwner) {
-        return plurk.handle === OWNER || index === 0;
-      }
-      if (filter.onlyDice) {
-        return plurk.content.includes(DICE_EMOTICON) && plurk.handle === OWNER;
-      }
-      return true;
-    });
-  }, [plurks, filter]);
+    // 只取啟用的規則
+    const activeRules = filterConfig
+      .filter((config) => config.active)
+      .map((config) => config.rule);
+
+    return plurks.filter((plurk, index) =>
+      activeRules.every((rule) => rule(plurk, index))
+    );
+  }, [plurks, filter, selectedPlurksIds]);
 
   const handleSelect = (id: number) => {
     dispatch({ type: "SELECT_PLURKS_IDS", payload: [id] });

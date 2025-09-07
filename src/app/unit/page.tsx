@@ -3,7 +3,6 @@ import { PlurksDataProvider } from "@/providers/PlurksDataProvider";
 import PlurksArea from "./features/PlurksArea";
 import LinkArea from "./features/LinkArea";
 import ArticleArea from "./features/ArticleArea";
-import CopyBar from "./components/CopyBar";
 
 export default function Unit() {
   return (
@@ -16,7 +15,6 @@ export default function Unit() {
           <ArticleArea />
         </div>
       </div>
-      <CopyBar />
     </PlurksDataProvider>
   );
 }
