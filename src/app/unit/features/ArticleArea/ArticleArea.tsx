@@ -39,7 +39,7 @@ export default function ArticleArea() {
         <>
           <div
             ref={articleRef}
-            className="w-[50%] p-2 border-l-main border-l-3 overflow-y-auto max-h-[calc(100dvh-200px)] scrollbar"
+            className="w-[50%] p-2 border-l-main border-l-3 overflow-y-auto max-h-[calc(100vh-200px)] max-h-[calc(100dvh-200px)] scrollbar"
           >
             {selectedPlurks.map((plurk) => (
               <div

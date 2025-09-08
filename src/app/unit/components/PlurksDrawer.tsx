@@ -3,7 +3,7 @@ import { Drawer, DrawerContent, DrawerTitle } from "@/lib/ui/drawer";
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
 import { useContext, useState } from "react";
 
-const SNAP_POINTS = ["500px", "750px"];
+const SNAP_POINTS = ["550px", "800px"];
 export function PlurksDrawer({ children }: { children: React.ReactNode }) {
   const [snapPoint, setSnapPoint] = useState<string | number | null>(null);
   const [{ hasData }] = useContext(PlurksDataContext);

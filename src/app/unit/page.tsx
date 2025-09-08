@@ -41,14 +41,14 @@ export default function Unit() {
         visibleToasts={1}
         toastOptions={{
           style: {
-            width: "fit-content",
+            width: "250px",
             height: "40px",
           },
           classNames: {
             title: "text-main! text-sm",
             icon: "text-main",
           },
-          duration: 100000,
+          duration: 1000,
         }}
       />
     </PlurksDataProvider>
