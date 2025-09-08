@@ -30,10 +30,23 @@
     }
   }
 
-  .scrollbar {
-    scrollbar-width: thin;
-    scrollbar-color: var(--color-main) transparent;
-  }
+    .scrollbar {
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-main) transparent;
+  
+      &::-webkit-scrollbar {
+        width: 8px;
+      }
+  
+      &::-webkit-scrollbar-track {
+        background: transparent;
+      }
+  
+      &::-webkit-scrollbar-thumb {
+        background-color: var(--color-main);
+      }
+    }
+
 
   .filterBtn {
     @apply flex border-[1px] border-main text-main rounded-full text-[0.75rem] px-2 py-1 cursor-pointer;
