@@ -39,6 +39,11 @@ export async function GET(request: NextRequest) {
       const headPlurkJson = JSON.parse(headPlurkData);
       const data = [headPlurkJson, ...plurksData.responses];
       return Response.json({ state: "SUCCESS", data }, { status: 200 });
+    } else {
+      return Response.json(
+        { state: "SUCCESS", data: [...plurksData.responses] },
+        { status: 200 }
+      );
     }
   } catch (error) {
     console.error("Error fetching Plurks:", error);
