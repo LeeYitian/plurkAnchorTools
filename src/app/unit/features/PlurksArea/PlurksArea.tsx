@@ -1,6 +1,6 @@
 "use client";
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
-import { useContext, useMemo, useState } from "react";
+import { use, useContext, useEffect, useMemo, useRef, useState } from "react";
 import "./PlurksArea.scss";
 import { DICE_EMOTICON, OWNER } from "@/types/constants";
 import clsx from "clsx";
@@ -13,13 +13,14 @@ const FILTER_OPTIONS: { [key: string]: string } = {
 };
 
 export default function PlurksArea() {
-  const [{ hasData, plurks, selectedPlurksIds }, dispatch] =
+  const [{ hasData, plurks, selectedPlurksIds, scrollToId }, dispatch] =
     useContext(PlurksDataContext);
   const [filter, setFilter] = useState<{ [key: string]: boolean }>({
     onlyOwner: false,
     onlyDice: false,
     onlySelected: false,
   });
+  const refs = useRef<HTMLDivElement[]>([]);
 
   const handleFilterChange = (filterType: string) => {
     setFilter((prev) => ({
@@ -74,6 +75,18 @@ export default function PlurksArea() {
     dispatch({ type: "SELECT_PLURKS_IDS", payload: allIds });
   };
 
+  useEffect(() => {
+    if (scrollToId) {
+      const target = refs.current.find((ref) => {
+        return ref.dataset.id === String(scrollToId);
+      });
+
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+  }, [scrollToId]);
+
   if (!hasData) {
     return null;
   }
@@ -117,6 +130,12 @@ export default function PlurksArea() {
       {filteredPlurks.map((plurk, index) => (
         <div
           key={plurk.id}
+          ref={(el) => {
+            if (el) {
+              refs.current.push(el);
+            }
+          }}
+          data-id={plurk.id}
           className={clsx("plurk", {
             "bg-plain/40":
               plurk.handle === OWNER && plurk.content.includes(DICE_EMOTICON),

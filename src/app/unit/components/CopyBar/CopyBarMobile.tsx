@@ -8,7 +8,7 @@ export default function CopyBarMobile({
 }: CopyBarProps) {
   return (
     <>
-      <div className="bg-main fixed bottom-0 left-0 right-0 h-14 flex justify-between gap-2 px-5 py-1">
+      <div className="bg-main fixed bottom-0 left-0 right-0 h-14 flex justify-between items-center gap-2 px-5 py-1">
         <DrawerTrigger asChild>
           <div className="filterBtn bg-none text-light w-[80px] text-center">
             瀏覽噗文

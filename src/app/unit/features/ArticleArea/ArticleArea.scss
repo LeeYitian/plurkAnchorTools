@@ -2,7 +2,7 @@
 
 @layer components {
   .article {
-    @apply text-[0.8rem] px-3;
+    @apply text-[0.8rem] px-3 cursor-pointer hover:bg-light/50;
 
     img {
       @apply inline-block m-0.5 h-[1.1rem] w-auto;

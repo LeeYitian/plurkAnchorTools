@@ -6,12 +6,14 @@ type TInitialState = {
   plurks: TPlurkResponse[];
   hasData: boolean;
   selectedPlurksIds: number[];
+  scrollToId: number | null;
 };
 
 const initialState = {
   plurks: [],
   hasData: false,
   selectedPlurksIds: [],
+  scrollToId: null,
 };
 
 export const PlurksDataContext = createContext<
@@ -43,6 +45,11 @@ const reducer = (
       return {
         ...state,
         selectedPlurksIds: Array.from(temp),
+      };
+    case "SCROLL_TO_ID":
+      return {
+        ...state,
+        scrollToId: action.payload,
       };
     default:
       return state;

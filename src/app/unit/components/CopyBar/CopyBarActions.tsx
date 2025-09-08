@@ -6,7 +6,7 @@ import clsx from "clsx";
 import { CopyBarProps } from "./CopyBar";
 
 const btnStyle =
-  "filterBtn bg-light hover:scale-110 justify-center items-center text-center";
+  "filterBtn bg-light hover:scale-110 justify-center items-center text-center max-h-[35px]";
 
 const COPY_STATUS: { [key: string]: string } = {
   idle: "idle",

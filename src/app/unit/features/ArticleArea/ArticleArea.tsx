@@ -13,7 +13,7 @@ import CopyBar from "../../components/CopyBar/CopyBar";
 
 export default function ArticleArea() {
   const articleRef = useRef<HTMLDivElement>(null);
-  const [{ hasData, plurks, selectedPlurksIds }] =
+  const [{ hasData, plurks, selectedPlurksIds }, dispatch] =
     useContext(PlurksDataContext);
 
   const selectedPlurks = useMemo(() => {
@@ -52,6 +52,10 @@ export default function ArticleArea() {
                       "font-medium",
                     ]
                 )}
+                onClick={() => {
+                  console.log("click", plurk.id);
+                  dispatch({ type: "SCROLL_TO_ID", payload: plurk.id });
+                }}
                 dangerouslySetInnerHTML={{ __html: plurk.content }}
               />
             ))}

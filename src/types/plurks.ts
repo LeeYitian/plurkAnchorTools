@@ -28,4 +28,5 @@ export type TPlurkReducerAction =
       type: "SET_PLURKS";
       payload: TPlurkResponse[];
     }
-  | { type: "SELECT_PLURKS_IDS"; payload: number[] };
+  | { type: "SELECT_PLURKS_IDS"; payload: number[] }
+  | { type: "SCROLL_TO_ID"; payload: number };
