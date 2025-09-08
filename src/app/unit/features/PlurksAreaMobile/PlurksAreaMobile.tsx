@@ -18,7 +18,9 @@ export default function PlurksAreaMobile() {
   const [filter, setFilter] = useState<{ [key: string]: boolean }>({
     onlyOwner: false,
     onlyDice: false,
+    onlySelected: false,
   });
+  const [showFullPlurk, setShowFullPlurk] = useState<number | null>(null);
 
   const handleFilterChange = (filterType: string) => {
     setFilter((prev) => ({
@@ -120,6 +122,13 @@ export default function PlurksAreaMobile() {
             "bg-plain/40":
               plurk.handle === OWNER && plurk.content.includes(DICE_EMOTICON),
           })}
+          onClick={() => {
+            if (showFullPlurk === plurk.id) {
+              setShowFullPlurk(null);
+            } else {
+              setShowFullPlurk(plurk.id);
+            }
+          }}
         >
           <input
             type="checkbox"
@@ -127,9 +136,18 @@ export default function PlurksAreaMobile() {
             onChange={() => {
               handleSelect(plurk.id);
             }}
+            onClick={(e) => e.stopPropagation()}
           />
           <div
-            className="plurkContent"
+            className={clsx(
+              "plurkContent",
+              showFullPlurk === plurk.id && [
+                "max-h-none",
+                "whitespace-normal",
+                "width-initial",
+                "text-overflow-visible",
+              ]
+            )}
             key={plurk.id}
             dangerouslySetInnerHTML={{ __html: plurk.content }}
           />

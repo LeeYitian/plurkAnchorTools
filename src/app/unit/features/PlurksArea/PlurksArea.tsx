@@ -18,6 +18,7 @@ export default function PlurksArea() {
   const [filter, setFilter] = useState<{ [key: string]: boolean }>({
     onlyOwner: false,
     onlyDice: false,
+    onlySelected: false,
   });
 
   const handleFilterChange = (filterType: string) => {

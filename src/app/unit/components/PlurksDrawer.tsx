@@ -5,18 +5,10 @@ import { useContext, useState } from "react";
 
 const SNAP_POINTS = ["550px", "800px"];
 export function PlurksDrawer({ children }: { children: React.ReactNode }) {
-  const [snapPoint, setSnapPoint] = useState<string | number | null>(null);
   const [{ hasData }] = useContext(PlurksDataContext);
-  console.log("snapPoint", snapPoint);
 
   return (
-    <>
-      {hasData && (
-        <Drawer snapPoints={SNAP_POINTS} setActiveSnapPoint={setSnapPoint}>
-          {children}
-        </Drawer>
-      )}{" "}
-    </>
+    <>{hasData && <Drawer snapPoints={SNAP_POINTS}>{children}</Drawer>} </>
   );
 }
 

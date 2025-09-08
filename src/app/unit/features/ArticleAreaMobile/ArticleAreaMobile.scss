@@ -2,7 +2,7 @@
 
 @layer components {
   .articleMobile {
-    @apply text-[0.8rem] px-3;
+    @apply text-[0.8rem];
 
     img {
       @apply inline-block m-0.5 h-[1.1rem] w-auto;
