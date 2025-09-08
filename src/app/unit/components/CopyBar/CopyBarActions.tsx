@@ -1,33 +1,30 @@
-import { TPlurkResponse } from "@/types/plurks";
-import { copyUtils } from "../utils/copy";
+import { copyUtils } from "../../utils/copy";
 import { useMemo, useState } from "react";
-import { Toaster } from "@/app/components/sonner";
 import { toast } from "sonner";
 import { EMPTY_LINE_RAW } from "@/types/constants";
 import clsx from "clsx";
+import { CopyBarProps } from "./CopyBar";
 
-const btnStyle = "filterBtn bg-light hover:scale-110";
-type CopyBarProps = {
-  selectedPlurks: TPlurkResponse[];
-  articleRef?: HTMLDivElement | null;
-};
+const btnStyle =
+  "filterBtn bg-light hover:scale-110 justify-center items-center text-center";
 
 const COPY_STATUS: { [key: string]: string } = {
   idle: "idle",
   coping: "coping",
   copied: "copied",
 };
-
 const copyStatusText = {
   [COPY_STATUS.idle]: "複製文字",
   [COPY_STATUS.coping]: "複製中...",
   [COPY_STATUS.copied]: "已複製",
 };
 
-export default function CopyBar({ selectedPlurks, articleRef }: CopyBarProps) {
+export default function CopyBarActions({
+  selectedPlurks,
+  articleRef,
+}: CopyBarProps) {
   const [copyStatus, setCopyStatus] = useState(COPY_STATUS.idle);
   const { copyWhatYouSee, copyHTML, copyMarkdown } = copyUtils;
-
   const nothingToCopy = useMemo(() => {
     return selectedPlurks.length === 0;
   }, [selectedPlurks]);
@@ -104,9 +101,8 @@ export default function CopyBar({ selectedPlurks, articleRef }: CopyBarProps) {
       }, 500);
     }
   };
-
   return (
-    <div className="bg-main fixed bottom-0 left-0 right-0 h-8 flex justify-end gap-2 px-5 lg:px-25 py-1">
+    <>
       <div className={btnClassName} onClick={() => handleCopyWhatYouSee()}>
         複製文字
       </div>
@@ -116,22 +112,6 @@ export default function CopyBar({ selectedPlurks, articleRef }: CopyBarProps) {
       <div className={btnClassName} onClick={() => handleCopyHTML()}>
         複製 HTML
       </div>
-      <Toaster
-        position="top-left"
-        offset={{ left: "40%", top: "5%" }}
-        visibleToasts={1}
-        toastOptions={{
-          style: {
-            width: "fit-content",
-            height: "40px",
-          },
-          classNames: {
-            title: "text-main! text-sm",
-            icon: "text-main",
-          },
-          duration: 1000,
-        }}
-      />
-    </div>
+    </>
   );
 }

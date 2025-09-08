@@ -1,0 +1,49 @@
+@reference "../../../globals.css";
+
+@layer base {
+  input[type="checkbox"] {
+    @apply appearance-none w-4.5 min-w-4.5 h-4.5 bg-white rounded-sm border-2 border-main cursor-pointer;
+
+    &:checked {
+      @apply bg-main;
+      background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M5 13L9 17L19 7' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
+    }
+  }
+}
+
+@layer components {
+  .plurk {
+    @apply flex bg-light text-[0.8rem] p-3 rounded-sm mb-2 items-start gap-4 relative;
+
+    div.plurkContent {
+      @apply text-gray-800;
+      // color: var(--color-gray-800);
+      // line-height: 1.15;
+    }
+
+    img {
+      @apply inline-block m-0.5 h-[1.1rem] w-auto;
+    }
+
+    a {
+      @apply text-[#2153D2] underline;
+    }
+
+    a.meta {
+      @apply cursor-pointer block mt-[1px] mb-[4px] overflow-hidden p-1 relative text-[#2153D2] rounded-sm bg-[rgba(33,83,210,0.04)] border-[rgba(33,83,210,0.08)] border-[1px];
+    }
+  }
+
+  .scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-main) transparent;
+  }
+
+  .filterBtn {
+    @apply flex border-[1px] border-main text-main rounded-full text-[0.75rem] px-2 py-1 cursor-pointer;
+    // background: var(--color-main);
+    &.active {
+      @apply  bg-plain text-main border-none; 
+    }
+  }
+}

@@ -108,3 +108,10 @@
     }
   }
 }
+
+@media (max-width: 600px) {
+  [data-sonner-toaster] [data-sonner-toast] {
+    left: 50px !important;
+    right: 0;
+  }
+}

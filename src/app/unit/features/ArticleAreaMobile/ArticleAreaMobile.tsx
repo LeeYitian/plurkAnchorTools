@@ -1,7 +1,7 @@
 "use client";
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
 import { useContext, useMemo, useRef } from "react";
-import "./ArticleArea.scss";
+import "./ArticleAreaMobile.scss";
 import {
   DICE_EMOTICON,
   EMPTY_LINE,
@@ -9,9 +9,9 @@ import {
   OWNER,
 } from "@/types/constants";
 import clsx from "clsx";
-import CopyBar from "../components/CopyBar";
+import CopyBarMobile from "@/app/unit/components/CopyBar/CopyBarMobile";
 
-export default function ArticleArea() {
+export default function ArticleAreaMobile() {
   const articleRef = useRef<HTMLDivElement>(null);
   const [{ hasData, plurks, selectedPlurksIds }] =
     useContext(PlurksDataContext);
@@ -33,21 +33,16 @@ export default function ArticleArea() {
       });
   }, [plurks, selectedPlurksIds]);
 
-  console.log("selectedPlurks", selectedPlurks);
-
   return (
     <>
       {hasData && (
         <>
-          <div
-            ref={articleRef}
-            className="w-[50%] p-2 border-l-main border-l-3 overflow-y-auto max-h-[calc(100dvh-200px)] scrollbar"
-          >
+          <div ref={articleRef} className="p-2 overflow-y-auto scrollbar">
             {selectedPlurks.map((plurk) => (
               <div
                 key={plurk.id}
                 className={clsx(
-                  "article",
+                  "articleMobile",
                   plurk.handle === OWNER &&
                     plurk.content.includes(DICE_EMOTICON) && [
                       "text-main",
@@ -58,7 +53,7 @@ export default function ArticleArea() {
               />
             ))}
           </div>
-          <CopyBar
+          <CopyBarMobile
             selectedPlurks={selectedPlurks}
             articleRef={articleRef.current}
           />

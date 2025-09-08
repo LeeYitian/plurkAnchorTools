@@ -54,8 +54,8 @@ export default function LinkInput() {
   return (
     <>
       {!hasData && (
-        <div className="flex flex-col flex-[2_1_50%] justify-center">
-          <div className="flex h-7 mt-4">
+        <div className="flex flex-col flex-[2_1_50%] justify-center order-1 md:order-2">
+          <div className="flex h-7 mt-0 md:mt-4 mb-2 md:mb-0">
             <input
               type="text"
               placeholder="貼上噗浪網址"
@@ -95,11 +95,11 @@ export default function LinkInput() {
       {hasData && (
         <>
           <div
-            className="urlBtn flex items-center justify-center text-white absolute -top-1 right-1 h-8 w-8 rounded-full cursor-pointer bg-cute"
+            id="changeUrl"
+            className="urlBtn flex items-center justify-center text-white absolute -top-1 right-2 lg:right-1 h-8 w-8 rounded-full cursor-pointer bg-cute"
             onClick={(e) => {
               const target = e.target as HTMLElement;
-              if (target.tagName === "INPUT" || target.tagName === "BUTTON")
-                return;
+              if (target.tagName !== "IMG" && target.id !== "changeUrl") return;
               if (!openChangeUrl) {
                 const btn = target.closest(".urlBtn");
                 const input = btn?.querySelector("input");
@@ -110,11 +110,9 @@ export default function LinkInput() {
             title="更換網址"
           >
             <Image src="/urlLink.svg" alt="更換網址" width={25} height={25} />
-
             <div
-              id="changeUrl"
               className={clsx(
-                "absolute top-4/5 right-0 w-[30vw] min-w-[300px] h-[6vh] bg-white p-1 rounded-md shadow-md flex items-center justify-between transition transition-duration-700 ease-in-out",
+                "absolute top-4/5 right-0 z-10 w-[30vw] min-w-[300px] h-[6vh] bg-white p-1 rounded-md shadow-md flex items-center justify-between transition transition-duration-700 ease-in-out",
                 { "opacity-0": !openChangeUrl }
               )}
             >

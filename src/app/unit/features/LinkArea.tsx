@@ -1,5 +1,5 @@
 "use client";
-import LinkInput from "@/app/unit/components/LinkInput";
+import LinkInput from "@/app/unit/components/LinkInput/LinkInput";
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
 import clsx from "clsx";
 import { useContext } from "react";
@@ -14,7 +14,7 @@ export default function LinkArea() {
       })}
     >
       {!hasData && (
-        <section className="flex-[1_0_50%]">
+        <section className="flex-[1_0_50%] order-2 md:order-1">
           <p>
             將想要整理的安價噗（普通噗也可以啦）網址貼進輸入框，按下「取噗」。
           </p>

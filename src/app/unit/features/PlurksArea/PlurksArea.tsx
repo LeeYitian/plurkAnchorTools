@@ -127,18 +127,16 @@ export default function PlurksArea() {
               handleSelect(plurk.id);
             }}
           />
-          <div>
-            <div
-              className="plurkContent"
-              key={plurk.id}
-              dangerouslySetInnerHTML={{ __html: plurk.content }}
-            />
-            {(plurk.handle === OWNER || index === 0) && (
-              <span className="absolute bottom-1 right-1 text-gray-400 text-xs font-extralight scale-[0.9]">
-                {OWNER}
-              </span>
-            )}
-          </div>
+          <div
+            className="plurkContent"
+            key={plurk.id}
+            dangerouslySetInnerHTML={{ __html: plurk.content }}
+          />
+          {(plurk.handle === OWNER || index === 0) && (
+            <span className="absolute bottom-1 right-1 text-gray-400 text-xs font-extralight scale-[0.9]">
+              {OWNER}
+            </span>
+          )}
         </div>
       ))}
     </div>
