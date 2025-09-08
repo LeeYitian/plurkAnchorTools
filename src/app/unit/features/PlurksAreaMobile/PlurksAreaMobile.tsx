@@ -80,7 +80,7 @@ export default function PlurksAreaMobile() {
   }
 
   return (
-    <div className="overflow-y-auto scrollbar max-h-[85vh] max-h-[85dvh] flex-[1_0_auto] p-1">
+    <div className="overflow-y-auto scrollbar max-h-[80vh] max-h-[80dvh] flex-[1_0_auto] p-1">
       <div className="flex justify-between items-center px-3 py-3 sticky -top-1 z-1 bg-white rounded-t-xl">
         <div className="flex items-center text-[0.8rem] text-gray-800 gap-1">
           <input

@@ -39,6 +39,11 @@ export default function ArticleAreaMobile() {
       {hasData && (
         <>
           <div ref={articleRef} className="pb-[70px] overflow-y-auto scrollbar">
+            {selectedPlurks.length === 0 && (
+              <div className=" text-gray-400 mt-10 font-light text-sm text-center">
+                點選下方「瀏覽噗文」以新增噗文
+              </div>
+            )}
             {selectedPlurks.map((plurk) => (
               <>
                 <div

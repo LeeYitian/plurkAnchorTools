@@ -53,7 +53,6 @@ export default function ArticleArea() {
                     ]
                 )}
                 onClick={() => {
-                  console.log("click", plurk.id);
                   dispatch({ type: "SCROLL_TO_ID", payload: plurk.id });
                 }}
                 dangerouslySetInnerHTML={{ __html: plurk.content }}

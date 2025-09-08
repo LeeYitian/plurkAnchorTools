@@ -1,6 +1,6 @@
 // import Image from next/image;
-import VersionDetail from "@/app/chunk/components/VersionDetail";
 import ChunkArea from "./features/ChunkArea";
+import VersionDetailChunk from "@/app/chunk/components/VersionDetailChunk";
 
 export default function Chunk() {
   return (
@@ -21,7 +21,7 @@ export default function Chunk() {
         <p>將需要分段的文字貼進輸入框，按下「確認」即完成分段。</p>
       </section>
       <ChunkArea />
-      <VersionDetail />
+      <VersionDetailChunk />
     </div>
   );
 }

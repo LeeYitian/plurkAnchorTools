@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { splitTextUtils } from "../utils/splitText";
 
 type SplitResultProps = {
@@ -20,6 +20,10 @@ export default function SplitResult({ splitTexts }: SplitResultProps) {
     await copyParagraph(text);
     setCopyIndex([...copyIndex, index]);
   };
+
+  useEffect(() => {
+    setCopyIndex([]);
+  }, [splitTexts]);
 
   return (
     <>

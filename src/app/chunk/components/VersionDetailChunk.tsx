@@ -1,4 +1,4 @@
-export default function VersionDetail() {
+export default function VersionDetailChunk() {
   return (
     <details className="text-gray-600 text-sm mt-4">
       <summary>看起來很帥的版本紀錄</summary>
@@ -19,7 +19,13 @@ export default function VersionDetail() {
           v1.3.0：二次修正無法將文字複製到剪貼簿的問題。codepen 的 full page
           模式會阻擋 clipboard API ，因此改用 execCommand 方法。
         </li>
-        <li>v1.4.0：換成 react 寫法，部署至 vercel 和組合工具整合。</li>
+        <li>
+          v1.4.0：
+          <ul>
+            <li>換成 react 寫法，部署至 vercel ，加上組合工具</li>
+            <li>複製到剪貼簿功能改回 clipboard API</li>
+          </ul>
+        </li>
       </ul>
     </details>
   );
