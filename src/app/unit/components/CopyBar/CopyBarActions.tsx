@@ -40,12 +40,12 @@ export default function CopyBarActions({
     if (!articleRef?.children) return;
     try {
       const elements = Array.from(articleRef.children).filter(
-        (child): child is HTMLElement => child instanceof HTMLElement
+        (child): child is HTMLElement =>
+          child instanceof HTMLElement &&
+          child.classList.contains("articleMobile")
       );
 
-      const textString = elements
-        .map((element) => element.innerText)
-        .join(EMPTY_LINE_RAW);
+      const textString = elements.map((element) => element.innerText).join("");
       const htmlString = elements.map((element) => element.innerHTML).join("");
 
       setCopyStatus(COPY_STATUS.coping);
@@ -88,6 +88,7 @@ export default function CopyBarActions({
       const markdownString = selectedPlurks
         .map((plurk) => plurk.content)
         .join("");
+
       setCopyStatus(COPY_STATUS.coping);
       await copyMarkdown(markdownString);
       setCopyStatus(COPY_STATUS.copied);
