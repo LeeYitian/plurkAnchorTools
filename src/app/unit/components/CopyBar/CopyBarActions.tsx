@@ -42,7 +42,7 @@ export default function CopyBarActions({
       const elements = Array.from(articleRef.children).filter(
         (child): child is HTMLElement =>
           child instanceof HTMLElement &&
-          child.classList.contains("articleMobile")
+          child.classList.contains("articleMobile" || "article")
       );
 
       const textString = elements.map((element) => element.innerText).join("");
