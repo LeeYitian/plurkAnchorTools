@@ -8,7 +8,7 @@
 
 - 噗浪一則留言長度為 360 字，包含空格和空行；11 行斷行，不包含空行。
 
-![分段工具](https://upload.cc/i1/2025/09/09/eb9zo0.gif)
+![分段工具](https://upload.cc/i1/2025/09/09/fPYWpn.gif)
 
 ### 組合工具：將安價噗文合成一篇長文，方便貼到網誌等文章編輯網頁、軟體。
 
@@ -16,24 +16,24 @@
 
   _噗文網址格式： `https://plurk.com/p/[id]`_
 
-![組合工具_篩選](https://upload.cc/i1/2025/09/09/pmX1KF.gif)
+![組合工具_篩選](https://upload.cc/i1/2025/09/09/6psgM7.gif)
 
 - 組合完後可選擇複製內容、Markdown、HTML
   - 內容：就跟直接用滑鼠選取後複製一樣
   - Markdown：跟噗浪語法類似，骰子會是 `(coin)` 的格式，而非圖片
   - HTML：包含 HTML 標籤的字串（不包含樣式）。預設會用 `<p>` 把整個文章包起來
 
-![組合工具_複製](https://upload.cc/i1/2025/09/09/iHbETR.gif)
+![組合工具_複製](https://upload.cc/i1/2025/09/09/nthRNQ.gif)
 
 - RWD
 
   - 桌面版：點選文章段落可滾動至原噗文位置，方便選取周圍的其他留言或取消選取
 
-![組合工具_捲動](https://upload.cc/i1/2025/09/09/MYqxFm.gif)
+![組合工具_捲動](https://upload.cc/i1/2025/09/09/puD9mk.gif)
 
 - 手機版：以 Drawer 呈現噗文，點選文章段落可直接選擇是否取消選取
 
-![組合工具_捲動](https://upload.cc/i1/2025/09/09/hRS9ts.gif)
+![組合工具_捲動](https://upload.cc/i1/2025/09/09/DLdK5j.gif)
 
 ## 技術介紹
 
