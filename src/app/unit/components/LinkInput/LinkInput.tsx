@@ -140,7 +140,10 @@ export default function LinkInput() {
               />
               <button
                 className=" px-2 py-1 bg-cute text-white text-xs whitespace-nowrap rounded-md"
-                onClick={() => fetchPlurk(url)}
+                onClick={() => {
+                  if (!openChangeUrl) return; // 防止點擊圖示誤觸
+                  fetchPlurk(url);
+                }}
               >
                 取噗
               </button>
