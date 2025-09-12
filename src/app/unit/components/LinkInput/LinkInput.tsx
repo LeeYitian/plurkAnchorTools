@@ -112,7 +112,7 @@ export default function LinkInput() {
             <Image src="/urlLink.svg" alt="更換網址" width={25} height={25} />
             <div
               className={clsx(
-                "absolute top-4/5 right-0 z-10 w-[30vw] min-w-[300px] h-[6vh] bg-white p-1 rounded-md shadow-md flex items-center justify-between transition transition-duration-700 ease-in-out",
+                "absolute top-4/5 right-0 z-10 w-[30vw] min-w-[300px] max-w-[450px] h-[6vh] max-h-[42px] bg-white p-1 rounded-md shadow-md flex items-center justify-between transition transition-duration-700 ease-in-out",
                 !openChangeUrl && ["opacity-0", "pointer-events-none"]
               )}
             >
