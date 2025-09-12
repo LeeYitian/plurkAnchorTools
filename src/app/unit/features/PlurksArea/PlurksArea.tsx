@@ -1,10 +1,10 @@
 "use client";
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
-import { use, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useRef } from "react";
 import "./PlurksArea.scss";
 import { DICE_EMOTICON, OWNER } from "@/types/constants";
 import clsx from "clsx";
-import { TPlurkResponse } from "@/types/plurks";
+import useFilterPlurks from "../../utils/useFilterPlurks";
 
 const FILTER_OPTIONS: { [key: string]: string } = {
   onlySelected: "只看已選",
@@ -15,11 +15,11 @@ const FILTER_OPTIONS: { [key: string]: string } = {
 export default function PlurksArea() {
   const [{ hasData, plurks, selectedPlurksIds, scrollToId }, dispatch] =
     useContext(PlurksDataContext);
-  const [filter, setFilter] = useState<{ [key: string]: boolean }>({
-    onlyOwner: false,
-    onlyDice: false,
-    onlySelected: false,
-  });
+  const { filter, filteredPlurks, setFilter } = useFilterPlurks(
+    plurks,
+    selectedPlurksIds
+  );
+
   const refs = useRef<HTMLDivElement[]>([]);
 
   const handleFilterChange = (filterType: string) => {
@@ -28,34 +28,6 @@ export default function PlurksArea() {
       [filterType]: !prev[filterType],
     }));
   };
-
-  const filterConfig = [
-    {
-      active: filter.onlySelected,
-      rule: (plurk: TPlurkResponse) => selectedPlurksIds.includes(plurk.id),
-    },
-    {
-      active: filter.onlyDice,
-      rule: (plurk: TPlurkResponse) =>
-        plurk.content.includes(DICE_EMOTICON) && plurk.handle === OWNER,
-    },
-    {
-      active: filter.onlyOwner,
-      rule: (plurk: TPlurkResponse, index: number) =>
-        plurk.handle === OWNER || index === 0,
-    },
-  ];
-
-  const filteredPlurks = useMemo(() => {
-    // 只取啟用的規則
-    const activeRules = filterConfig
-      .filter((config) => config.active)
-      .map((config) => config.rule);
-
-    return plurks.filter((plurk, index) =>
-      activeRules.every((rule) => rule(plurk, index))
-    );
-  }, [plurks, filter, selectedPlurksIds]);
 
   const handleSelect = (id: number) => {
     dispatch({ type: "SELECT_PLURKS_IDS", payload: [id] });

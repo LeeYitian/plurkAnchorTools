@@ -113,7 +113,7 @@ export default function LinkInput() {
             <div
               className={clsx(
                 "absolute top-4/5 right-0 z-10 w-[30vw] min-w-[300px] h-[6vh] bg-white p-1 rounded-md shadow-md flex items-center justify-between transition transition-duration-700 ease-in-out",
-                { "opacity-0": !openChangeUrl }
+                !openChangeUrl && ["opacity-0", "pointer-events-none"]
               )}
             >
               <input
