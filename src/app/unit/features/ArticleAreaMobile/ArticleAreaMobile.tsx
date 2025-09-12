@@ -67,6 +67,7 @@ export default function ArticleAreaMobile() {
                   }}
                 />
                 <div
+                  key={`cancel-${plurk.id}`}
                   className={clsx(
                     "flex justify-end opacity-0 transition-all duration-300",
                     {

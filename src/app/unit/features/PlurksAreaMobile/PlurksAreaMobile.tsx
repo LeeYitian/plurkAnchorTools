@@ -1,10 +1,10 @@
 "use client";
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
-import { useContext, useMemo, useState } from "react";
+import { useContext, useState } from "react";
 import "./PlurksAreaMobile.scss";
 import { DICE_EMOTICON, OWNER } from "@/types/constants";
 import clsx from "clsx";
-import { TPlurkResponse } from "@/types/plurks";
+import useFilterPlurks from "@/app/unit/utils/useFilterPlurks";
 
 const FILTER_OPTIONS: { [key: string]: string } = {
   onlySelected: "已選",
@@ -15,12 +15,11 @@ const FILTER_OPTIONS: { [key: string]: string } = {
 export default function PlurksAreaMobile() {
   const [{ hasData, plurks, selectedPlurksIds }, dispatch] =
     useContext(PlurksDataContext);
-  const [filter, setFilter] = useState<{ [key: string]: boolean }>({
-    onlyOwner: false,
-    onlyDice: false,
-    onlySelected: false,
-  });
   const [showFullPlurk, setShowFullPlurk] = useState<number | null>(null);
+  const { filter, filteredPlurks, setFilter } = useFilterPlurks(
+    plurks,
+    selectedPlurksIds
+  );
 
   const handleFilterChange = (filterType: string) => {
     setFilter((prev) => ({
@@ -28,34 +27,6 @@ export default function PlurksAreaMobile() {
       [filterType]: !prev[filterType],
     }));
   };
-
-  const filterConfig = [
-    {
-      active: filter.onlySelected,
-      rule: (plurk: TPlurkResponse) => selectedPlurksIds.includes(plurk.id),
-    },
-    {
-      active: filter.onlyDice,
-      rule: (plurk: TPlurkResponse) =>
-        plurk.content.includes(DICE_EMOTICON) && plurk.handle === OWNER,
-    },
-    {
-      active: filter.onlyOwner,
-      rule: (plurk: TPlurkResponse, index: number) =>
-        plurk.handle === OWNER || index === 0,
-    },
-  ];
-
-  const filteredPlurks = useMemo(() => {
-    // 只取啟用的規則
-    const activeRules = filterConfig
-      .filter((config) => config.active)
-      .map((config) => config.rule);
-
-    return plurks.filter((plurk, index) =>
-      activeRules.every((rule) => rule(plurk, index))
-    );
-  }, [plurks, filter, selectedPlurksIds]);
 
   const handleSelect = (id: number) => {
     dispatch({ type: "SELECT_PLURKS_IDS", payload: [id] });
@@ -80,8 +51,8 @@ export default function PlurksAreaMobile() {
   }
 
   return (
-    <div className="overflow-y-auto scrollbar max-h-[80vh] max-h-[80dvh] flex-[1_0_auto] p-1">
-      <div className="flex justify-between items-center px-3 py-3 sticky -top-1 z-1 bg-white rounded-t-xl">
+    <div className="overflow-y-auto scrollbar max-h-[80vh] max-h-[80dvh] flex-[1_0_auto] p-1 min-h-[800px]">
+      <div className="flex justify-between items-center px-3 py-3 sticky -top-1 z-1 bg-white">
         <div className="flex items-center text-[0.8rem] text-gray-800 gap-1">
           <input
             type="checkbox"
