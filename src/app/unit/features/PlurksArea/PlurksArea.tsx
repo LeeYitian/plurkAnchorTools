@@ -20,7 +20,7 @@ export default function PlurksArea() {
     selectedPlurksIds
   );
 
-  const refs = useRef<HTMLDivElement[]>([]);
+  const refs = useRef<{ [key: number]: HTMLDivElement | null }>({});
 
   const handleFilterChange = (filterType: string) => {
     setFilter((prev) => ({
@@ -49,9 +49,7 @@ export default function PlurksArea() {
 
   useEffect(() => {
     if (scrollToId) {
-      const target = refs.current.find((ref) => {
-        return ref.dataset.id === String(scrollToId);
-      });
+      const target = refs.current[scrollToId];
 
       if (target) {
         target.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -103,9 +101,8 @@ export default function PlurksArea() {
         <div
           key={plurk.id}
           ref={(el) => {
-            if (el) {
-              refs.current.push(el);
-            }
+            if (el) refs.current[plurk.id] = el;
+            else delete refs.current[plurk.id];
           }}
           data-id={plurk.id}
           className={clsx("plurk", {
