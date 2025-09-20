@@ -25,7 +25,7 @@ turndownService.addRule("singleBr", {
   filter: (node) =>
     node.tagName === "BR" && !node.classList.contains("double-br"),
   replacement: function (content, node) {
-    return "";
+    return "\n";
   },
 });
 
