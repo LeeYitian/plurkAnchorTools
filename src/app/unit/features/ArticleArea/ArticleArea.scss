@@ -15,7 +15,7 @@
     }
 
     a {
-      @apply text-main underline;
+      @apply text-main underline inline-block;
     }
   }
   .contextMenu {

@@ -85,14 +85,14 @@ export default function PlurksArea() {
       }
     };
     getSelectedIds();
-  }, [isDBInitialized, hasData]);
+  }, [isDBInitialized, hasData, plurks]);
 
   if (!hasData) {
     return null;
   }
 
   return (
-    <div className="w-[49%] overflow-y-auto max-h-[calc(100vh-200px)] max-h-[calc(100dvh-200px)] scrollbar relative">
+    <div className="w-[41%] overflow-y-auto max-h-[calc(100vh-200px)] max-h-[calc(100dvh-200px)] scrollbar relative">
       <div className="flex justify-between items-center px-3 pb-3 sticky top-0 z-1 bg-white">
         <div className="flex items-center text-[0.8rem] text-gray-800 gap-1">
           <input

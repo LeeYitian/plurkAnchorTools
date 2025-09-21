@@ -26,10 +26,13 @@ const reducer = (
 ): TInitialState => {
   switch (action.type) {
     case "SET_PLURKS":
+      const isSamePlurk =
+        state.plurks[0]?.plurk_id === action.payload[0]?.plurk_id;
       return {
         ...state,
         plurks: action.payload,
         hasData: action.payload.length > 0,
+        selectedPlurksIds: isSamePlurk ? state.selectedPlurksIds : [],
       };
     case "SELECT_PLURKS_IDS":
       const temp = new Set(state.selectedPlurksIds);

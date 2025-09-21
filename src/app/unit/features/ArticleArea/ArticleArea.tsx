@@ -9,12 +9,7 @@ import {
   useState,
 } from "react";
 import "./ArticleArea.scss";
-import {
-  DICE_EMOTICON,
-  EMPTY_LINE,
-  EMPTY_LINE_RAW,
-  OWNER,
-} from "@/types/constants";
+import { EMPTY_LINE, EMPTY_LINE_RAW } from "@/types/constants";
 import clsx from "clsx";
 import CopyBar from "@/app/unit/components/CopyBar/CopyBar";
 import useIndexedDB from "../../utils/useIndexedDB";
@@ -60,6 +55,7 @@ export default function ArticleArea() {
     const plurk_id = selectedPlurks.find(
       (plurk) => plurk.id.toString() === id
     )!.plurk_id;
+    const originalContent = target.innerHTML;
 
     target.setAttribute("contentEditable", "true");
     target.focus();
@@ -69,12 +65,14 @@ export default function ArticleArea() {
       () => {
         target.removeAttribute("contentEditable");
         const newContent = target.innerHTML;
+        setEditing(false);
+        if (newContent === originalContent) return;
+
         saveEditedPlurk({
           editedPlurk: { id: Number(id), content: newContent, plurk_id },
         });
 
         setEditedRecord((prev) => ({ ...prev, [id]: newContent }));
-        setEditing(false);
       },
       { once: true }
     );
@@ -87,6 +85,11 @@ export default function ArticleArea() {
     )?.content;
     if (originalContent) {
       target.innerHTML = originalContent;
+      setEditedRecord((prev) => {
+        const newRecord = { ...prev };
+        delete newRecord[id];
+        return newRecord;
+      });
       await deleteEditedPlurk(Number(id));
     }
   };
@@ -132,7 +135,7 @@ export default function ArticleArea() {
         <>
           <div
             ref={articleRef}
-            className="w-[50%] p-2 border-l-main border-l-3 overflow-y-auto max-h-[calc(100vh-200px)] max-h-[calc(100dvh-200px)] scrollbar"
+            className="w-[58%] p-2 overflow-y-auto max-h-[calc(100vh-200px)] max-h-[calc(100dvh-200px)] scrollbar"
           >
             {selectedPlurks.map((plurk) => (
               <div
@@ -140,11 +143,7 @@ export default function ArticleArea() {
                 id={plurk.id.toString()}
                 className={clsx(
                   "article",
-                  plurk.handle === OWNER &&
-                    plurk.content.includes(DICE_EMOTICON) && [
-                      "text-main",
-                      "font-medium",
-                    ]
+                  editedRecord[plurk.id] && ["border-l-cute border-l-3 "]
                 )}
                 onClick={() => {
                   if (
