@@ -3,6 +3,12 @@
 @layer components {
   .article {
     @apply text-[0.8rem] px-3 cursor-pointer hover:bg-light/50;
+    &:focus-visible {
+      @apply outline-main outline-2 outline-dashed;
+    }
+    &[contenteditable="true"] {
+      @apply hover:bg-transparent;
+    }
 
     img {
       @apply inline-block m-0.5 h-[1.1rem] w-auto;

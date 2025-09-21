@@ -1,6 +1,13 @@
 "use client";
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
-import { useContext, useMemo, useRef } from "react";
+import {
+  MouseEventHandler,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import "./ArticleArea.scss";
 import {
   DICE_EMOTICON,
@@ -9,12 +16,23 @@ import {
   OWNER,
 } from "@/types/constants";
 import clsx from "clsx";
-import CopyBar from "../../components/CopyBar/CopyBar";
+import CopyBar from "@/app/unit/components/CopyBar/CopyBar";
+import useIndexedDB from "../../utils/useIndexedDB";
+import { LoadingContext } from "@/providers/LoadingProvider";
 
 export default function ArticleArea() {
   const articleRef = useRef<HTMLDivElement>(null);
   const [{ hasData, plurks, selectedPlurksIds }, dispatch] =
     useContext(PlurksDataContext);
+  const [editing, setEditing] = useState(false);
+  const [editedRecord, setEditedRecord] = useState<Record<string, string>>({});
+  const {
+    isDBInitialized,
+    saveOriginalPlurk,
+    saveEditedPlurk,
+    getSavedEditedPlurks,
+  } = useIndexedDB();
+  const [, setLoading] = useContext(LoadingContext);
 
   const selectedPlurks = useMemo(() => {
     return plurks
@@ -33,6 +51,50 @@ export default function ArticleArea() {
       });
   }, [plurks, selectedPlurksIds]);
 
+  const handleDoubleClick: MouseEventHandler = (e) => {
+    setEditing(true);
+    const target = e.currentTarget as HTMLDivElement;
+    const id = target.id;
+
+    target.setAttribute("contentEditable", "true");
+    target.focus();
+
+    const originalPlurk = selectedPlurks.find(
+      (plurk) => plurk.id.toString() === id
+    );
+    if (originalPlurk) {
+      saveOriginalPlurk({
+        originalPlurk: {
+          id,
+          content: originalPlurk.content,
+        },
+      });
+    }
+
+    target.addEventListener(
+      "blur",
+      () => {
+        target.removeAttribute("contentEditable");
+        const newContent = target.innerHTML;
+        saveEditedPlurk({ editedPlurk: { id, content: newContent } });
+
+        setEditedRecord((prev) => ({ ...prev, [id]: newContent }));
+        setEditing(false);
+      },
+      { once: true }
+    );
+  };
+
+  useEffect(() => {
+    const getDBRecord = async () => {
+      setLoading(true);
+      const record = await getSavedEditedPlurks();
+      setEditedRecord(record);
+      setLoading(false);
+    };
+    getDBRecord();
+  }, [isDBInitialized]);
+
   return (
     <>
       {hasData && (
@@ -44,6 +106,7 @@ export default function ArticleArea() {
             {selectedPlurks.map((plurk) => (
               <div
                 key={plurk.id}
+                id={plurk.id.toString()}
                 className={clsx(
                   "article",
                   plurk.handle === OWNER &&
@@ -53,9 +116,13 @@ export default function ArticleArea() {
                     ]
                 )}
                 onClick={() => {
+                  if (editing) return;
                   dispatch({ type: "SCROLL_TO_ID", payload: plurk.id });
                 }}
-                dangerouslySetInnerHTML={{ __html: plurk.content }}
+                onDoubleClick={handleDoubleClick}
+                dangerouslySetInnerHTML={{
+                  __html: editedRecord[plurk.id] || plurk.content,
+                }}
               />
             ))}
           </div>

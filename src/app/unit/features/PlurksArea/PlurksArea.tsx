@@ -54,8 +54,12 @@ export default function PlurksArea() {
       if (target) {
         target.scrollIntoView({ behavior: "smooth", block: "center" });
       }
+
+      setTimeout(() => {
+        dispatch({ type: "SCROLL_TO_ID", payload: 0 });
+      }, 500);
     }
-  }, [scrollToId]);
+  }, [scrollToId, dispatch]);
 
   if (!hasData) {
     return null;
