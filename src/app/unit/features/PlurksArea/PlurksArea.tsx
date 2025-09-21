@@ -4,7 +4,8 @@ import { useContext, useEffect, useRef } from "react";
 import "./PlurksArea.scss";
 import { DICE_EMOTICON, OWNER } from "@/types/constants";
 import clsx from "clsx";
-import useFilterPlurks from "../../utils/useFilterPlurks";
+import useFilterPlurks from "@/app/unit/utils/useFilterPlurks";
+import useIndexedDB from "@/app/unit/utils/useIndexedDB";
 
 const FILTER_OPTIONS: { [key: string]: string } = {
   onlySelected: "只看已選",
@@ -19,6 +20,7 @@ export default function PlurksArea() {
     plurks,
     selectedPlurksIds
   );
+  const { isDBInitialized, storeSelectedIds, getStoredIds } = useIndexedDB();
 
   const refs = useRef<{ [key: number]: HTMLDivElement | null }>({});
 
@@ -60,6 +62,30 @@ export default function PlurksArea() {
       }, 500);
     }
   }, [scrollToId, dispatch]);
+
+  useEffect(() => {
+    if (!selectedPlurksIds.length) return;
+    const updateSelectedIds = async () => {
+      await storeSelectedIds({
+        storeIds: {
+          plurk_id: plurks[0].plurk_id,
+          ids: selectedPlurksIds,
+        },
+      });
+    };
+    updateSelectedIds();
+  }, [selectedPlurksIds]);
+
+  useEffect(() => {
+    if (!isDBInitialized || !hasData) return;
+    const getSelectedIds = async () => {
+      const ids = await getStoredIds(plurks[0].plurk_id);
+      if (ids.length) {
+        dispatch({ type: "SELECT_PLURKS_IDS", payload: ids });
+      }
+    };
+    getSelectedIds();
+  }, [isDBInitialized, hasData]);
 
   if (!hasData) {
     return null;

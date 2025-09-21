@@ -22,15 +22,18 @@ import { LoadingContext } from "@/providers/LoadingProvider";
 
 export default function ArticleArea() {
   const articleRef = useRef<HTMLDivElement>(null);
+  const contextMenuRef = useRef<HTMLDivElement>(null);
+  const contextMenuTarget = useRef<HTMLDivElement>(null);
   const [{ hasData, plurks, selectedPlurksIds }, dispatch] =
     useContext(PlurksDataContext);
   const [editing, setEditing] = useState(false);
   const [editedRecord, setEditedRecord] = useState<Record<string, string>>({});
   const {
     isDBInitialized,
-    saveOriginalPlurk,
+    // saveOriginalPlurk,
     saveEditedPlurk,
     getSavedEditedPlurks,
+    deleteEditedPlurk,
   } = useIndexedDB();
   const [, setLoading] = useContext(LoadingContext);
 
@@ -51,38 +54,52 @@ export default function ArticleArea() {
       });
   }, [plurks, selectedPlurksIds]);
 
-  const handleDoubleClick: MouseEventHandler = (e) => {
+  const handleEditClick = (target: HTMLDivElement) => {
     setEditing(true);
-    const target = e.currentTarget as HTMLDivElement;
     const id = target.id;
+    const plurk_id = selectedPlurks.find(
+      (plurk) => plurk.id.toString() === id
+    )!.plurk_id;
 
     target.setAttribute("contentEditable", "true");
     target.focus();
-
-    const originalPlurk = selectedPlurks.find(
-      (plurk) => plurk.id.toString() === id
-    );
-    if (originalPlurk) {
-      saveOriginalPlurk({
-        originalPlurk: {
-          id,
-          content: originalPlurk.content,
-        },
-      });
-    }
 
     target.addEventListener(
       "blur",
       () => {
         target.removeAttribute("contentEditable");
         const newContent = target.innerHTML;
-        saveEditedPlurk({ editedPlurk: { id, content: newContent } });
+        saveEditedPlurk({
+          editedPlurk: { id: Number(id), content: newContent, plurk_id },
+        });
 
         setEditedRecord((prev) => ({ ...prev, [id]: newContent }));
         setEditing(false);
       },
       { once: true }
     );
+  };
+
+  const handleRestoreClick = async (target: HTMLDivElement) => {
+    const id = target.id;
+    const originalContent = selectedPlurks.find(
+      (plurk) => plurk.id.toString() === id
+    )?.content;
+    if (originalContent) {
+      target.innerHTML = originalContent;
+      await deleteEditedPlurk(Number(id));
+    }
+  };
+
+  const customContextMenu: MouseEventHandler = (e) => {
+    e.preventDefault();
+    contextMenuTarget.current = e.currentTarget as HTMLDivElement;
+    const contextMenu = contextMenuRef.current;
+    if (contextMenu) {
+      contextMenu.style.top = `${e.pageY}px`;
+      contextMenu.style.left = `${e.pageX}px`;
+      contextMenu.classList.remove("hidden");
+    }
   };
 
   useEffect(() => {
@@ -94,6 +111,20 @@ export default function ArticleArea() {
     };
     getDBRecord();
   }, [isDBInitialized]);
+
+  useEffect(() => {
+    const hideContextMenu = () => {
+      const contextMenu = contextMenuRef.current;
+      if (contextMenu && !contextMenu.classList.contains("hidden")) {
+        contextMenu.classList.add("hidden");
+      }
+    };
+    document.addEventListener("click", hideContextMenu);
+
+    return () => {
+      document.removeEventListener("click", hideContextMenu);
+    };
+  }, []);
 
   return (
     <>
@@ -116,10 +147,15 @@ export default function ArticleArea() {
                     ]
                 )}
                 onClick={() => {
-                  if (editing) return;
+                  if (
+                    editing ||
+                    !contextMenuRef.current?.classList.contains("hidden")
+                  )
+                    return;
                   dispatch({ type: "SCROLL_TO_ID", payload: plurk.id });
                 }}
-                onDoubleClick={handleDoubleClick}
+                onDoubleClick={(e) => handleEditClick(e.currentTarget)}
+                onContextMenu={customContextMenu}
                 dangerouslySetInnerHTML={{
                   __html: editedRecord[plurk.id] || plurk.content,
                 }}
@@ -130,6 +166,28 @@ export default function ArticleArea() {
             selectedPlurks={selectedPlurks}
             articleRef={articleRef.current}
           />
+          <div ref={contextMenuRef} className="hidden contextMenu">
+            <div
+              className="contextMenuItem mb-1"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (!contextMenuTarget.current) return;
+                handleEditClick(contextMenuTarget.current);
+              }}
+            >
+              編輯
+            </div>
+            <div
+              className="contextMenuItem"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (!contextMenuTarget.current) return;
+                handleRestoreClick(contextMenuTarget.current);
+              }}
+            >
+              全部還原
+            </div>
+          </div>
         </>
       )}
     </>
