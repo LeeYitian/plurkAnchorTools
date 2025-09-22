@@ -10,12 +10,22 @@ import {
 } from "@/types/constants";
 import clsx from "clsx";
 import CopyBarMobile from "@/app/unit/components/CopyBar/CopyBarMobile";
+import useEditPlurks from "@/app/unit/utils/useEditPlurks";
+import useCustomContextMenu from "@/app/unit/utils/useCustomContextMenu";
 
 export default function ArticleAreaMobile() {
   const articleRef = useRef<HTMLDivElement>(null);
   const [{ hasData, plurks, selectedPlurksIds }, dispatch] =
     useContext(PlurksDataContext);
   const [showOptions, setShowOptions] = useState<number | null>(null);
+  const { editedRecord, editing, handleEditClick, handleRestoreClick } =
+    useEditPlurks();
+  const {
+    isOpen,
+    // position: contextMenuPos,
+    openCustomContextMenu,
+    CustomContextMenu,
+  } = useCustomContextMenu();
 
   const selectedPlurks = useMemo(() => {
     return plurks
@@ -38,7 +48,10 @@ export default function ArticleAreaMobile() {
     <>
       {hasData && (
         <>
-          <div ref={articleRef} className="pb-[70px] overflow-y-auto scrollbar">
+          <div
+            ref={articleRef}
+            className="px-1 pt-1 pb-[70px] overflow-y-auto scrollbar"
+          >
             {selectedPlurks.length === 0 && (
               <div className=" text-gray-400 mt-10 font-light text-sm text-center">
                 點選下方「瀏覽噗文」以新增噗文
@@ -57,14 +70,21 @@ export default function ArticleAreaMobile() {
                       ],
                     { "bg-cute/10": showOptions === plurk.id }
                   )}
-                  dangerouslySetInnerHTML={{ __html: plurk.content }}
+                  dangerouslySetInnerHTML={{
+                    __html: editedRecord[plurk.id] || plurk.content,
+                  }}
                   onClick={() => {
+                    if (editing || isOpen) return;
                     if (showOptions === plurk.id) {
                       setShowOptions(null);
                     } else {
                       setShowOptions(plurk.id);
                     }
                   }}
+                  onContextMenu={openCustomContextMenu}
+                  onDoubleClick={(e) =>
+                    handleEditClick({ target: e.currentTarget })
+                  }
                 />
                 <div
                   key={`cancel-${plurk.id}`}
@@ -93,6 +113,10 @@ export default function ArticleAreaMobile() {
           <CopyBarMobile
             selectedPlurks={selectedPlurks}
             articleRef={articleRef.current}
+          />
+          <CustomContextMenu
+            onEdit={handleEditClick}
+            onRestore={handleRestoreClick}
           />
         </>
       )}
