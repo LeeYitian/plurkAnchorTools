@@ -12,6 +12,7 @@ import {
 } from "./components/PlurksDrawer";
 import { Toaster } from "sonner";
 import DeleteDB from "./components/DeleteDB";
+import SyncSelectedIds from "./components/SyncSelectedIds";
 
 export default function Unit() {
   return (
@@ -37,6 +38,7 @@ export default function Unit() {
           </PlurksDrawer>
         </div>
       </div>
+      <SyncSelectedIds />
       <Toaster
         position="top-left"
         offset={{ left: "40%", top: "5%" }}
