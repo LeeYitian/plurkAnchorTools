@@ -1,9 +1,9 @@
 import { copyUtils } from "../../utils/copy";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { EMPTY_LINE_RAW } from "@/types/constants";
 import clsx from "clsx";
 import { CopyBarProps } from "./CopyBar";
+import { EMPTY_LINE_RAW } from "@/types/constants";
 
 const btnStyle =
   "filterBtn bg-light hover:scale-110 justify-center items-center text-center max-h-[35px]";
@@ -21,13 +21,28 @@ const copyStatusText = {
 
 export default function CopyBarActions({
   selectedPlurks,
-  articleRef,
+  editedRecord,
 }: CopyBarProps) {
   const [copyStatus, setCopyStatus] = useState(COPY_STATUS.idle);
   const { copyWhatYouSee, copyHTML, copyMarkdown } = copyUtils;
+
   const nothingToCopy = useMemo(() => {
     return selectedPlurks.length === 0;
   }, [selectedPlurks]);
+
+  const articleToCopy = useMemo(() => {
+    const editedIds = Object.keys(editedRecord).map((id) => Number(id));
+    const article = selectedPlurks
+      .map((plurk) => {
+        if (editedIds.includes(plurk.id)) {
+          return editedRecord[plurk.id];
+        } else {
+          return plurk.content;
+        }
+      })
+      .join(EMPTY_LINE_RAW);
+    return article;
+  }, [selectedPlurks, editedRecord]);
 
   const btnClassName = clsx(
     btnStyle,
@@ -37,18 +52,13 @@ export default function CopyBarActions({
   );
 
   const handleCopyWhatYouSee = async () => {
-    if (!articleRef?.children) return;
     try {
-      const elements = Array.from(articleRef.children).filter(
-        (child): child is HTMLElement =>
-          (child instanceof HTMLElement &&
-            child.classList.contains("articleMobile")) ||
-          child.classList.contains("article")
-      );
+      const htmlString = articleToCopy;
 
-      const textString = elements.map((element) => element.innerText).join("");
-      const htmlString = elements.map((element) => element.innerHTML).join("");
-
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = htmlString;
+      const textString = tempDiv.innerText;
+      tempDiv.remove();
       setCopyStatus(COPY_STATUS.coping);
       await copyWhatYouSee({ text: textString, html: htmlString });
       setCopyStatus(COPY_STATUS.copied);
@@ -65,7 +75,7 @@ export default function CopyBarActions({
 
   const handleCopyHTML = async () => {
     try {
-      const htmlString = selectedPlurks.map((plurk) => plurk.content).join("");
+      const htmlString = articleToCopy;
 
       setCopyStatus(COPY_STATUS.coping);
       await copyHTML(htmlString);
@@ -86,9 +96,7 @@ export default function CopyBarActions({
       // const markdownString = selectedPlurks
       //   .map((plurk) => plurk.content_raw)
       //   .join("");
-      const markdownString = selectedPlurks
-        .map((plurk) => plurk.content)
-        .join("");
+      const markdownString = articleToCopy;
 
       setCopyStatus(COPY_STATUS.coping);
       await copyMarkdown(markdownString);
@@ -103,6 +111,7 @@ export default function CopyBarActions({
       }, 500);
     }
   };
+
   return (
     <>
       <div className={btnClassName} onClick={() => handleCopyWhatYouSee()}>

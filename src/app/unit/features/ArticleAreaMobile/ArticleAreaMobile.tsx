@@ -2,12 +2,7 @@
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
 import { useContext, useMemo, useRef, useState } from "react";
 import "./ArticleAreaMobile.scss";
-import {
-  DICE_EMOTICON,
-  EMPTY_LINE,
-  EMPTY_LINE_RAW,
-  OWNER,
-} from "@/types/constants";
+import { EMPTY_LINE, EMPTY_LINE_RAW } from "@/types/constants";
 import clsx from "clsx";
 import CopyBarMobile from "@/app/unit/components/CopyBar/CopyBarMobile";
 import useEditPlurks from "@/app/unit/utils/useEditPlurks";
@@ -61,13 +56,10 @@ export default function ArticleAreaMobile() {
               <>
                 <div
                   key={plurk.id}
+                  id={plurk.id.toString()}
                   className={clsx(
-                    "articleMobile",
-                    plurk.handle === OWNER &&
-                      plurk.content.includes(DICE_EMOTICON) && [
-                        "text-main",
-                        "font-medium",
-                      ],
+                    "articleMobile p-1",
+                    editedRecord[plurk.id] && ["border-l-cute border-l-3 "],
                     { "bg-cute/10": showOptions === plurk.id }
                   )}
                   dangerouslySetInnerHTML={{
@@ -112,7 +104,7 @@ export default function ArticleAreaMobile() {
           </div>
           <CopyBarMobile
             selectedPlurks={selectedPlurks}
-            articleRef={articleRef.current}
+            editedRecord={editedRecord}
           />
           <CustomContextMenu
             onEdit={handleEditClick}

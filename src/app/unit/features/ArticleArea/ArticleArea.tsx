@@ -70,7 +70,7 @@ export default function ArticleArea() {
           </div>
           <CopyBar
             selectedPlurks={selectedPlurks}
-            articleRef={articleRef.current}
+            editedRecord={editedRecord}
           />
           <CustomContextMenu
             onEdit={handleEditClick}
