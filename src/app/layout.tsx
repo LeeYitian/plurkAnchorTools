@@ -20,7 +20,9 @@ export default function RootLayout({
     <html lang="zh-TW">
       <body className={"antialiased"}>
         <LoadingProvider>
-          <LoadingMask />
+          <Suspense fallback={null}>
+            <LoadingMask />
+          </Suspense>
           <div className="max-w-4xl mx-auto">
             <header className="fixed z-10 w-full left-0 top-0 p-3 bg-plain">
               <div className="flex flex-col gap-2 justify-between items-center md:flex-row max-w-4xl mx-auto">
