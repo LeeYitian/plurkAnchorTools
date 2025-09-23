@@ -10,7 +10,7 @@ export default function SyncSelectedIds() {
   const { isDBInitialized, getStoredIds, storeSelectedIds } = useIndexedDB();
 
   useEffect(() => {
-    if (!selectedPlurksIds.length) return;
+    if (!selectedPlurksIds.length || !isDBInitialized) return;
     const updateSelectedIds = async () => {
       await storeSelectedIds({
         storeIds: {
@@ -20,7 +20,7 @@ export default function SyncSelectedIds() {
       });
     };
     updateSelectedIds();
-  }, [selectedPlurksIds]);
+  }, [selectedPlurksIds, isDBInitialized, plurks]);
 
   useEffect(() => {
     if (!isDBInitialized || !hasData) return;
