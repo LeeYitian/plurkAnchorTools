@@ -23,7 +23,7 @@ const DELETEBTN_CONFIG = {
 };
 
 export default function DeleteDB() {
-  const [{ hasData, plurks }] = useContext(PlurksDataContext);
+  const [{ hasData, plurk_id }] = useContext(PlurksDataContext);
   const [showDialog, setShowDialog] = useState(false);
   const {
     isDBInitialized,
@@ -40,8 +40,7 @@ export default function DeleteDB() {
         break;
       case DELETE_TYPE.SINGLE:
         if (hasData) {
-          const id = plurks[0].plurk_id;
-          await deleteSinglePlurkData(id);
+          await deleteSinglePlurkData(plurk_id);
           window.location.reload();
         }
         break;
@@ -59,10 +58,10 @@ export default function DeleteDB() {
 
   useEffect(() => {
     if (hasData) {
-      const id = plurks[0].plurk_id.toString(36);
+      const id = plurk_id.toString(36);
       setText(id);
     }
-  }, [hasData, plurks]);
+  }, [hasData, plurk_id]);
 
   return (
     <>

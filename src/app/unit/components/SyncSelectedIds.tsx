@@ -5,7 +5,7 @@ import { useContext, useEffect } from "react";
 import useIndexedDB from "../utils/useIndexedDB";
 
 export default function SyncSelectedIds() {
-  const [{ hasData, plurks, selectedPlurksIds }, dispatch] =
+  const [{ hasData, plurk_id, selectedPlurksIds }, dispatch] =
     useContext(PlurksDataContext);
   const { isDBInitialized, getStoredIds, storeSelectedIds } = useIndexedDB();
 
@@ -14,23 +14,23 @@ export default function SyncSelectedIds() {
     const updateSelectedIds = async () => {
       await storeSelectedIds({
         storeIds: {
-          plurk_id: plurks[0].plurk_id,
+          plurk_id,
           ids: selectedPlurksIds,
         },
       });
     };
     updateSelectedIds();
-  }, [selectedPlurksIds, isDBInitialized, plurks]);
+  }, [selectedPlurksIds, isDBInitialized, plurk_id]);
 
   useEffect(() => {
     if (!isDBInitialized || !hasData) return;
     const getSelectedIds = async () => {
-      const ids = await getStoredIds(plurks[0].plurk_id);
+      const ids = await getStoredIds(plurk_id);
       if (ids.length) {
         dispatch({ type: "SELECT_PLURKS_IDS", payload: ids });
       }
     };
     getSelectedIds();
-  }, [isDBInitialized, hasData, plurks]);
+  }, [isDBInitialized, hasData, plurk_id]);
   return null;
 }

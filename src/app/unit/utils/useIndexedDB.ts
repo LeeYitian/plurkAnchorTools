@@ -27,6 +27,7 @@ export default function useIndexedDB() {
   //   await db.put("original-plurks", originalPlurk);
   // };
 
+  /** 儲存每則噗文（plurk_id）被選擇的留言的 id*/
   const storeSelectedIds = async ({
     storeIds,
   }: {
@@ -36,39 +37,52 @@ export default function useIndexedDB() {
     db.put("selected-ids", storeIds);
   };
 
+  /** 取得每則噗文（plurk_id） 被選擇的留言的 id */
   const getStoredIds = async (plurk_id: number) => {
     if (!db) return [];
     const allIds = await db.get("selected-ids", plurk_id);
     return allIds?.ids || [];
   };
+
+  /** 儲存被編輯過的噗文內容，及原本所屬的噗文（plurk_id） */
   const saveEditedPlurk = async ({ editedPlurk }: TSavedEditedPlurks) => {
     if (!db) return;
     await db.put("edited-plurks", editedPlurk);
   };
 
-  const getSavedEditedPlurks = async () => {
+  /** 取得某則所有被編輯過的噗文內容 */
+  const getSavedEditedPlurks = async (plurk_id: number) => {
     if (!db) return {};
-    const result = await db.getAllFromIndex("edited-plurks", "id");
+    const result = await db.getAllFromIndex(
+      "edited-plurks",
+      "plurk_id",
+      plurk_id
+    );
     return result.reduce((acc, curr) => {
       acc[curr.id] = curr.content;
       return acc;
     }, {});
   };
 
+  /** 刪除某一條被編輯過的噗文留言 */
   const deleteEditedPlurk = async (id: number) => {
     if (!db) return;
     await db.delete("edited-plurks", id);
   };
+
+  /** 取得所有曾經使用過的噗文（plurk_id） */
   const getAllPlurkIds = async () => {
     if (!db) return [];
     const result = await db.getAllKeys("selected-ids");
     return result;
   };
 
+  /** 刪除整個 IndexedDB */
   const deleteIndexedDB = async () => {
     await deleteDBFunc();
   };
 
+  /** 刪除某一則噗文（plurk_id）及其所有編輯紀錄 */
   const deleteSinglePlurkData = async (plurk_id: number) => {
     if (!db) return;
     await db.delete("selected-ids", plurk_id);

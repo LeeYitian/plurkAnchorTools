@@ -20,7 +20,8 @@ export const DBProvider = ({ children }: { children: React.ReactNode }) => {
           const editedStore = db.createObjectStore("edited-plurks", {
             keyPath: "id",
           });
-          editedStore.createIndex("id", "id");
+          // editedStore.createIndex("id", "id");
+          editedStore.createIndex("plurk_id", "plurk_id");
         }
         // if (!db.objectStoreNames.contains("original-plurks")) {
         //   const originalStore = db.createObjectStore("original-plurks", {
