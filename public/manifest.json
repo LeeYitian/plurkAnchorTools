@@ -3,6 +3,11 @@
   "name": "噗浪（Plurk）安價小工具",
   "icons": [
     {
+      "src": "/icon_1024.png",
+      "type": "image/png",
+      "sizes": "1024x1024"
+    },
+    {
       "src": "/icons.png",
       "type": "image/png",
       "sizes": "512x512"
