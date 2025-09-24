@@ -53,10 +53,11 @@ export default function CopyBarActions({
 
   const handleCopyWhatYouSee = async () => {
     try {
-      // 為了要能複製出最像眼睛看到的狀態
+      // 為了要能複製出最像眼睛看到的狀態所以直接取 DOM 的內容
       const desktopArticle =
-        document.querySelector("articleArea")?.parentElement;
-      const isDesktop = desktopArticle?.style.display === "none" ? false : true;
+        document.querySelector("#articleArea")?.parentElement;
+      const isDesktop =
+        window.getComputedStyle(desktopArticle!).display !== "none";
 
       const articleChildren = document.querySelector(
         isDesktop ? "#articleArea" : "#articleAreaMobile"
