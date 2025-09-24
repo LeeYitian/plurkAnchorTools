@@ -3,7 +3,7 @@ import { MetadataRoute } from "next";
 export default function manifest(): MetadataRoute.Manifest {
   return {
     short_name: "安價小工具",
-    name: "噗浪（Plurk）安價小工具",
+    name: "噗浪安價小工具",
     icons: [
       {
         src: "/icon_1024.png",
