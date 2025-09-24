@@ -4,7 +4,7 @@ import { useContext, useEffect, useRef } from "react";
 import "./PlurksArea.scss";
 import { DICE_EMOTICON, OWNER } from "@/types/constants";
 import clsx from "clsx";
-import useFilterPlurks from "../../utils/useFilterPlurks";
+import useFilterPlurks from "@/app/unit/utils/useFilterPlurks";
 
 const FILTER_OPTIONS: { [key: string]: string } = {
   onlySelected: "只看已選",
@@ -54,15 +54,19 @@ export default function PlurksArea() {
       if (target) {
         target.scrollIntoView({ behavior: "smooth", block: "center" });
       }
+
+      setTimeout(() => {
+        dispatch({ type: "SCROLL_TO_ID", payload: 0 });
+      }, 500);
     }
-  }, [scrollToId]);
+  }, [scrollToId, dispatch]);
 
   if (!hasData) {
     return null;
   }
 
   return (
-    <div className="w-[49%] overflow-y-auto max-h-[calc(100vh-200px)] max-h-[calc(100dvh-200px)] scrollbar relative">
+    <div className="w-[41%] overflow-y-auto max-h-[calc(100vh-200px)] max-h-[calc(100dvh-200px)] scrollbar relative">
       <div className="flex justify-between items-center px-3 pb-3 sticky top-0 z-1 bg-white">
         <div className="flex items-center text-[0.8rem] text-gray-800 gap-1">
           <input

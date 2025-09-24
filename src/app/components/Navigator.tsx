@@ -13,7 +13,10 @@ export default function Navigator() {
         href="/chunk"
         className="bg-main rounded-full px-1 py-1 text-sm text-light text-center min-w-[120px] cursor-pointer hover:scale-105 transition-transform group relative"
         onClick={() => {
-          if (pathname === "/chunk") return;
+          if (pathname === "/chunk") {
+            window.location.reload();
+            return;
+          }
           setLoading(true);
         }}
       >
@@ -24,7 +27,10 @@ export default function Navigator() {
         href="/unit"
         className="bg-main rounded-full px-1 py-1 text-sm text-light text-center min-w-[120px] cursor-pointer hover:scale-105 transition-transform group"
         onClick={() => {
-          if (pathname === "/unit") return;
+          if (pathname === "/unit") {
+            window.location.reload();
+            return;
+          }
           setLoading(true);
         }}
       >

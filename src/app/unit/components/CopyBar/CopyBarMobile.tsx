@@ -4,7 +4,7 @@ import { DrawerTrigger } from "@/lib/ui/drawer";
 
 export default function CopyBarMobile({
   selectedPlurks,
-  articleRef,
+  editedRecord,
 }: CopyBarProps) {
   return (
     <>
@@ -17,7 +17,7 @@ export default function CopyBarMobile({
         <div className="flex gap-1">
           <CopyBarActions
             selectedPlurks={selectedPlurks}
-            articleRef={articleRef}
+            editedRecord={editedRecord}
           />
         </div>
       </div>

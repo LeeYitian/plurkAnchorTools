@@ -9,6 +9,7 @@ import Navigator from "./components/Navigator";
 export const metadata: Metadata = {
   title: "噗浪安價小工具 | Plurk Tools",
   description: "將長文切成適合噗浪留言的小段落、製作安價好讀版的小工具",
+  // manifest: "/manifest.json",
 };
 
 export default function RootLayout({
@@ -27,7 +28,7 @@ export default function RootLayout({
             <header className="fixed z-10 w-full left-0 top-0 p-3 bg-plain">
               <div className="flex flex-col gap-2 justify-between items-center md:flex-row max-w-4xl mx-auto">
                 <h1
-                  className="text-main font-bold text-2xl strokeText"
+                  className="text-main font-bold text-2xl strokeText select-none"
                   data-stroke="噗浪安價小工具"
                 >
                   噗浪安價小工具

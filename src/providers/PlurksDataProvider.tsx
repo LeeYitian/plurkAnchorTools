@@ -4,6 +4,7 @@ import { TPlurkReducerAction, TPlurkResponse } from "../types/plurks";
 
 type TInitialState = {
   plurks: TPlurkResponse[];
+  plurk_id: number;
   hasData: boolean;
   selectedPlurksIds: number[];
   scrollToId: number | null;
@@ -11,6 +12,7 @@ type TInitialState = {
 
 const initialState = {
   plurks: [],
+  plurk_id: 0,
   hasData: false,
   selectedPlurksIds: [],
   scrollToId: null,
@@ -26,10 +28,14 @@ const reducer = (
 ): TInitialState => {
   switch (action.type) {
     case "SET_PLURKS":
+      const isSamePlurk =
+        state.plurks[0]?.plurk_id === action.payload[0]?.plurk_id;
       return {
         ...state,
         plurks: action.payload,
+        plurk_id: action.payload[0]?.plurk_id || 0,
         hasData: action.payload.length > 0,
+        selectedPlurksIds: isSamePlurk ? state.selectedPlurksIds : [],
       };
     case "SELECT_PLURKS_IDS":
       const temp = new Set(state.selectedPlurksIds);

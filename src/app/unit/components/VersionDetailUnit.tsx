@@ -15,6 +15,28 @@ export default function VersionDetailUnit() {
             </li>
           </ul>
         </li>
+        <li>
+          v1.0.1：細節修正
+          <ul>
+            <li>調整寬螢幕跑板問題</li>
+            <li>手機版會把「取消選取」一起複製起來</li>
+            <li>Markdown 空行樣式：/n/n 和 /n</li>
+          </ul>
+        </li>
+        <li>
+          v1.2.0：簡易存檔機制（儲存於瀏覽器）
+          <ul>
+            <li>
+              利用 Indexed DB
+              將編輯（contenteditable）及選擇紀錄儲存起來，避免網頁重新整理時丟失
+            </li>
+            <li>新增右鍵選單：編輯、全部還原；桌面版可用雙擊滑鼠進入編輯</li>
+            <li>提供刪除 Indexed DB 資料的功能</li>
+            <li>修正複製功能以正確取得編輯過的內容</li>
+            <li>新增 PWA 支援</li>
+            <li>版面及樣式細修</li>
+          </ul>
+        </li>
       </ul>
     </details>
   );

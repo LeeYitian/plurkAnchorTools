@@ -3,13 +3,19 @@
 @layer components {
   .articleMobile {
     @apply text-[0.8rem];
+    &:focus-visible {
+      @apply outline-main outline-2 outline-dashed;
+    }
+    &[contenteditable="true"] {
+      @apply hover:bg-transparent;
+    }
 
     img {
       @apply inline-block m-0.5 h-[1.1rem] w-auto;
     }
 
     a {
-      @apply text-main underline;
+      @apply text-main underline inline-block;
     }
   }
 }
