@@ -53,12 +53,19 @@ export default function CopyBarActions({
 
   const handleCopyWhatYouSee = async () => {
     try {
+      // 為了要能複製出最像眼睛看到的狀態
+      const desktopArticle =
+        document.querySelector("articleArea")?.parentElement;
+      const isDesktop = desktopArticle?.style.display === "none" ? false : true;
+
+      const articleChildren = document.querySelector(
+        isDesktop ? "#articleArea" : "#articleAreaMobile"
+      )?.children;
+
+      const elements = Array.from(articleChildren || []) as HTMLElement[];
+      const textString = elements.map((el) => el.innerText).join("");
       const htmlString = articleToCopy;
 
-      const tempDiv = document.createElement("div");
-      tempDiv.innerHTML = htmlString;
-      const textString = tempDiv.innerText;
-      tempDiv.remove();
       setCopyStatus(COPY_STATUS.coping);
       await copyWhatYouSee({ text: textString, html: htmlString });
       setCopyStatus(COPY_STATUS.copied);

@@ -9,7 +9,6 @@ import useEditPlurks from "@/app/unit/utils/useEditPlurks";
 import useCustomContextMenu from "@/app/unit/utils/useCustomContextMenu";
 
 export default function ArticleAreaMobile() {
-  const articleRef = useRef<HTMLDivElement>(null);
   const [{ hasData, plurks, selectedPlurksIds }, dispatch] =
     useContext(PlurksDataContext);
   const [showOptions, setShowOptions] = useState<number | null>(null);
@@ -44,7 +43,7 @@ export default function ArticleAreaMobile() {
       {hasData && (
         <>
           <div
-            ref={articleRef}
+            id="articleAreaMobile"
             className="px-1 pt-1 pb-[70px] overflow-y-auto scrollbar"
           >
             {selectedPlurks.length === 0 && (

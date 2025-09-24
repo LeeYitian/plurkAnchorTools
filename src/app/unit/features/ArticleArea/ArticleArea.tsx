@@ -9,7 +9,6 @@ import useCustomContextMenu from "@/app/unit/utils/useCustomContextMenu";
 import useEditPlurks from "@/app/unit/utils/useEditPlurks";
 
 export default function ArticleArea() {
-  const articleRef = useRef<HTMLDivElement>(null);
   const [{ hasData, plurks, selectedPlurksIds }, dispatch] =
     useContext(PlurksDataContext);
   const { editedRecord, editing, handleEditClick, handleRestoreClick } =
@@ -43,7 +42,7 @@ export default function ArticleArea() {
       {hasData && (
         <>
           <div
-            ref={articleRef}
+            id="articleArea"
             className="w-[58%] p-2 overflow-y-auto max-h-[calc(100vh-200px)] max-h-[calc(100dvh-200px)] scrollbar"
           >
             {selectedPlurks.map((plurk) => (
