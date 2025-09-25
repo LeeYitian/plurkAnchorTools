@@ -22,7 +22,7 @@ export default function VersionDetailChunk() {
         <li>
           v1.4.0：
           <ul>
-            <li>換成 react 寫法，部署至 vercel ，加上組合工具</li>
+            <li>換成 React 寫法，部署至 vercel ，加上組合工具</li>
             <li>複製到剪貼簿功能改回 clipboard API</li>
           </ul>
         </li>

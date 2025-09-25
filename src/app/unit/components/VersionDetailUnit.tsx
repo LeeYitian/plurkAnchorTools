@@ -30,7 +30,7 @@ export default function VersionDetailUnit() {
               利用 Indexed DB
               將編輯（contenteditable）及選擇紀錄儲存起來，避免網頁重新整理時丟失
             </li>
-            <li>新增右鍵選單：編輯、全部還原；桌面版可用雙擊滑鼠進入編輯</li>
+            <li>新增右鍵選單：編輯、全部還原；也可用連點兩下滑鼠進入編輯</li>
             <li>提供刪除 Indexed DB 資料的功能</li>
             <li>修正複製功能以正確取得編輯過的內容</li>
             <li>新增 PWA 支援</li>
