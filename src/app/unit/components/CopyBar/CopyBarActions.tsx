@@ -64,7 +64,11 @@ export default function CopyBarActions({
       )?.children;
 
       const elements = Array.from(articleChildren || []) as HTMLElement[];
-      const textString = elements.map((el) => el.innerText).join("");
+
+      const textString = elements
+        .map((el) => el.innerText)
+        .join("")
+        .replace(/取消選取/g, ""); // 手機上會複製到按鈕的 elements。如果在 elements 用 filter 會導致換行不見所以改用 replace
       const htmlString = articleToCopy;
 
       setCopyStatus(COPY_STATUS.coping);
