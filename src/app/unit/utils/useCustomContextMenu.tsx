@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import {
   MouseEventHandler,
   TouchEventHandler,
@@ -6,6 +5,17 @@ import {
   useEffect,
   useState,
 } from "react";
+import {
+  ContextMenu,
+  ContextMenuItem,
+} from "../components/ContextMenu/ContextMenu";
+
+type ContextMenuItem<T> = {
+  label: string;
+  action: (args: T) => void;
+};
+
+type ContextMenuItems = ContextMenuItem<{ target: HTMLElement }>;
 
 /**
  * 自訂右鍵選單
@@ -51,41 +61,23 @@ export default function useCustomContextMenu() {
   }, []);
 
   const CustomContextMenu = ({
-    onEdit,
-    onRestore,
+    menuItems,
   }: {
-    onEdit: ({ target }: { target: HTMLElement }) => void;
-    onRestore: ({ target }: { target: HTMLElement }) => void;
+    menuItems: ContextMenuItems[];
   }) => (
-    <div
-      className={clsx("contextMenu", { hidden: !state.isOpen })}
-      style={{ top: `${state.y}px`, left: `${state.x}px` }}
-    >
-      <div
-        className="contextMenuItem mb-1"
-        onClick={(e) => {
-          e.stopPropagation();
-          if (!state.target) return;
-          onEdit({ target: state.target });
-          // if (!contextMenuTarget) return;
-          // handleEditClick(contextMenuTarget);
-        }}
-      >
-        編輯
-      </div>
-      <div
-        className="contextMenuItem"
-        onClick={(e) => {
-          e.stopPropagation();
-          if (!state.target) return;
-          onRestore({ target: state.target });
-          // if (!contextMenuTarget) return;
-          // handleRestoreClick(contextMenuTarget);
-        }}
-      >
-        全部還原
-      </div>
-    </div>
+    <ContextMenu position={{ x: state.x, y: state.y }} isOpen={state.isOpen}>
+      {menuItems.map((item) => (
+        <ContextMenuItem
+          key={item.label}
+          label={item.label}
+          action={(e) => {
+            e.stopPropagation();
+            if (!state.target) return;
+            item.action({ target: state.target });
+          }}
+        />
+      ))}
+    </ContextMenu>
   );
 
   useEffect(() => {

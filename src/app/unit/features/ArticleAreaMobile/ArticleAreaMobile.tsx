@@ -29,6 +29,17 @@ export default function ArticleAreaMobile() {
   } = useCustomContextMenu();
   const touchTimeout = useRef<NodeJS.Timeout | null>(null);
 
+  const customContextItems = [
+    {
+      label: "編輯",
+      action: handleEditClick,
+    },
+    {
+      label: "全部還原",
+      action: handleRestoreClick,
+    },
+  ];
+
   const selectedPlurks = useMemo(() => {
     return plurks
       .filter((plurk) => selectedPlurksIds.includes(plurk.id))
@@ -129,10 +140,7 @@ export default function ArticleAreaMobile() {
             selectedPlurks={selectedPlurks}
             editedRecord={editedRecord}
           />
-          <CustomContextMenu
-            onEdit={handleEditClick}
-            onRestore={handleRestoreClick}
-          />
+          <CustomContextMenu menuItems={customContextItems} />
         </>
       )}
     </>
