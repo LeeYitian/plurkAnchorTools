@@ -1,6 +1,13 @@
 "use client";
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
-import { useContext, useMemo, useRef, useState } from "react";
+import {
+  MouseEventHandler,
+  TouchEventHandler,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import "./ArticleAreaMobile.scss";
 import { EMPTY_LINE, EMPTY_LINE_RAW } from "@/types/constants";
 import clsx from "clsx";
@@ -17,9 +24,10 @@ export default function ArticleAreaMobile() {
   const {
     isOpen,
     // position: contextMenuPos,
-    openCustomContextMenu,
+    openCustomContextMenuTouch,
     CustomContextMenu,
   } = useCustomContextMenu();
+  const touchTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const selectedPlurks = useMemo(() => {
     return plurks
@@ -37,6 +45,20 @@ export default function ArticleAreaMobile() {
         }
       });
   }, [plurks, selectedPlurksIds]);
+
+  const handleTouchStart: TouchEventHandler = (e) => {
+    touchTimeout.current = setTimeout(() => {
+      if (editing || isOpen) return;
+      openCustomContextMenuTouch(e);
+    }, 600);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchTimeout.current) {
+      clearTimeout(touchTimeout.current);
+      touchTimeout.current = null;
+    }
+  };
 
   return (
     <>
@@ -72,7 +94,9 @@ export default function ArticleAreaMobile() {
                       setShowOptions(plurk.id);
                     }
                   }}
-                  onContextMenu={openCustomContextMenu}
+                  onTouchStart={handleTouchStart}
+                  onTouchEnd={handleTouchEnd}
+                  onContextMenu={(e) => e.preventDefault()}
                   onDoubleClick={(e) =>
                     handleEditClick({ target: e.currentTarget })
                   }

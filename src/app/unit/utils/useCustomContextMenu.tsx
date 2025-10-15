@@ -1,5 +1,11 @@
 import clsx from "clsx";
-import { MouseEventHandler, useCallback, useEffect, useState } from "react";
+import {
+  MouseEventHandler,
+  TouchEventHandler,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 
 /**
  * 自訂右鍵選單
@@ -27,6 +33,16 @@ export default function useCustomContextMenu() {
       x: e.pageX,
       y: e.pageY,
       target: e.currentTarget as HTMLElement,
+    });
+  };
+
+  const openCustomContextMenuTouch: TouchEventHandler = (e) => {
+    const target = e.target as HTMLElement;
+    setState({
+      isOpen: true,
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY,
+      target: target.closest(".articleMobile") as HTMLElement,
     });
   };
 
@@ -84,6 +100,7 @@ export default function useCustomContextMenu() {
     isOpen: state.isOpen,
     // position: { x: state.x, y: state.y },
     openCustomContextMenu,
+    openCustomContextMenuTouch,
     CustomContextMenu,
   };
 }

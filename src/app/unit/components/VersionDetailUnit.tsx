@@ -37,6 +37,7 @@ export default function VersionDetailUnit() {
             <li>版面及樣式細修</li>
           </ul>
         </li>
+        <li>v1.2.1：修正手機版右鍵選單開啟問題（改用 touchstart 事件）</li>
       </ul>
     </details>
   );
