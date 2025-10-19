@@ -37,6 +37,20 @@ export default function VersionDetailUnit() {
             <li>版面及樣式細修</li>
           </ul>
         </li>
+        <li>v1.2.1：修正手機版右鍵選單開啟問題（改用 touchstart 事件）</li>
+        <li>
+          v1.3.0：電腦版新增選取骰點功能（同骰、大小、輸贏）
+          <ul>
+            <li>改變 contextmenu hook，使其能夠重複利用根據情境產生不同選單</li>
+            <li>使用 new DOMParser() 來解析噗文字串資料進行篩選</li>
+          </ul>
+        </li>
+        <li>
+          v1.3.1：電腦版新增取消選取功能、在文章區域也可篩選骰點
+          <ul>
+            <li>將骰點篩選功能作成 hook 以利重複使用</li>
+          </ul>
+        </li>
       </ul>
     </details>
   );

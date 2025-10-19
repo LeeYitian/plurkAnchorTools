@@ -2,15 +2,9 @@
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
 import { useContext, useState } from "react";
 import "./PlurksAreaMobile.scss";
-import { DICE_EMOTICON, OWNER } from "@/types/constants";
+import { DICE_EMOTICON, FILTER_OPTIONS, OWNER } from "@/types/constants";
 import clsx from "clsx";
 import useFilterPlurks from "@/app/unit/utils/useFilterPlurks";
-
-const FILTER_OPTIONS: { [key: string]: string } = {
-  onlySelected: "已選",
-  onlyDice: "骰點",
-  onlyOwner: "噗主",
-};
 
 export default function PlurksAreaMobile() {
   const [{ hasData, plurks, selectedPlurksIds }, dispatch] =

@@ -1,12 +1,21 @@
 "use client";
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
-import { useContext, useMemo, useRef, useState } from "react";
+import {
+  MouseEventHandler,
+  TouchEventHandler,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import "./ArticleAreaMobile.scss";
 import { EMPTY_LINE, EMPTY_LINE_RAW } from "@/types/constants";
 import clsx from "clsx";
 import CopyBarMobile from "@/app/unit/components/CopyBar/CopyBarMobile";
 import useEditPlurks from "@/app/unit/utils/useEditPlurks";
-import useCustomContextMenu from "@/app/unit/utils/useCustomContextMenu";
+import useCustomContextMenu, {
+  TextContextMenuItem,
+} from "@/app/unit/utils/useCustomContextMenu";
 
 export default function ArticleAreaMobile() {
   const [{ hasData, plurks, selectedPlurksIds }, dispatch] =
@@ -17,9 +26,23 @@ export default function ArticleAreaMobile() {
   const {
     isOpen,
     // position: contextMenuPos,
-    openCustomContextMenu,
+    openCustomContextMenuTouch,
     CustomContextMenu,
   } = useCustomContextMenu();
+  const touchTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  const customContextItems: TextContextMenuItem[] = [
+    {
+      target: "text",
+      label: "編輯",
+      action: handleEditClick,
+    },
+    {
+      target: "text",
+      label: "全部還原",
+      action: handleRestoreClick,
+    },
+  ];
 
   const selectedPlurks = useMemo(() => {
     return plurks
@@ -37,6 +60,20 @@ export default function ArticleAreaMobile() {
         }
       });
   }, [plurks, selectedPlurksIds]);
+
+  const handleTouchStart: TouchEventHandler = (e) => {
+    touchTimeout.current = setTimeout(() => {
+      if (editing || isOpen) return;
+      openCustomContextMenuTouch(e);
+    }, 600);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchTimeout.current) {
+      clearTimeout(touchTimeout.current);
+      touchTimeout.current = null;
+    }
+  };
 
   return (
     <>
@@ -72,7 +109,9 @@ export default function ArticleAreaMobile() {
                       setShowOptions(plurk.id);
                     }
                   }}
-                  onContextMenu={openCustomContextMenu}
+                  onTouchStart={handleTouchStart}
+                  onTouchEnd={handleTouchEnd}
+                  onContextMenu={(e) => e.preventDefault()}
                   onDoubleClick={(e) =>
                     handleEditClick({ target: e.currentTarget })
                   }
@@ -105,10 +144,7 @@ export default function ArticleAreaMobile() {
             selectedPlurks={selectedPlurks}
             editedRecord={editedRecord}
           />
-          <CustomContextMenu
-            onEdit={handleEditClick}
-            onRestore={handleRestoreClick}
-          />
+          <CustomContextMenu menuItems={customContextItems} />
         </>
       )}
     </>
