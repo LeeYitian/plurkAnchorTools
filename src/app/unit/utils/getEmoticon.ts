@@ -1,3 +1,4 @@
+import { PlurksDataContext } from "@/providers/PlurksDataProvider";
 import {
   Emoticon,
   GetLargeSmallEmoticonType,
@@ -5,6 +6,12 @@ import {
   GetSearchPlurksType,
   GetWinLoseEmoticonType,
 } from "@/types/emoticon";
+import { useContext } from "react";
+import { IconContextMenuItem } from "./useCustomContextMenu";
+
+const noNullArray = (arr: (string | null)[]): arr is string[] => {
+  return arr.every((item) => item !== null);
+};
 
 /**
  * 取得表情符號的名稱，因為某些表情符號（如數字骰、拉霸）會沒有 alt 屬性，因此需要從左邊的兄弟節點繼續往外找，直到遇到下一個表情符號為止。且（digit）的 alt 屬性會是（diceX-XXX），所以需要額外紀錄 raw（原始值）。否則大部分的骰子 iconName 和 raw 是相同的。
@@ -99,7 +106,7 @@ const getSearchPlurks = ({
     );
 };
 
-export const getSameEmoticon = ({
+const getSameEmoticon = ({
   plurks,
   plurkId,
   iconName,
@@ -149,7 +156,7 @@ export const getSameEmoticon = ({
   return targetPlurk;
 };
 
-export const getLargeSmallEmoticon = ({
+const getLargeSmallEmoticon = ({
   plurks,
   plurkId,
   iconName,
@@ -209,19 +216,19 @@ const rockPaperScissorsRules: {
   win: { [key: string]: string };
   lose: { [key: string]: string };
 } = {
-  win: {
+  lose: {
     rock: "scissors",
     scissors: "paper",
     paper: "rock",
   },
-  lose: {
+  win: {
     rock: "paper",
     scissors: "rock",
     paper: "scissors",
   },
 };
 
-export const getWinLoseEmoticon = ({
+const getWinLoseEmoticon = ({
   plurks,
   plurkId,
   iconName,
@@ -245,3 +252,112 @@ export const getWinLoseEmoticon = ({
 
   return targetPlurks;
 };
+
+export default function useGetEmoticon() {
+  const [{ plurks }, dispatch] = useContext(PlurksDataContext);
+
+  const handleSelect = (id: number) => {
+    dispatch({ type: "SELECT_PLURKS_IDS", payload: [id] });
+  };
+  const customContextItemsForEmoticon: IconContextMenuItem[] = [
+    {
+      target: "emoticon",
+      label: "取同骰",
+      action: ({ iconName, rndnum, plurkId, raw }) => {
+        // iconName 用來判斷是否是 slot 或 digit，rndnum 是骰子真實的值， plurkId 判斷從哪個噗文開始往後找， raw 主要是給 digit 用因為 digit 真實的值是 (diceX-XXX)
+        if (!plurkId || !noNullArray(rndnum)) return;
+
+        const targetPlurk = getSameEmoticon({
+          plurks,
+          plurkId,
+          iconName,
+          rndnum,
+          raw,
+        });
+
+        if (targetPlurk) {
+          handleSelect(targetPlurk.id);
+        }
+      },
+      type: "same",
+    },
+    {
+      target: "emoticon",
+      label: "取大",
+      action: ({ iconName, rndnum, plurkId, raw }) => {
+        if (!plurkId || !noNullArray(rndnum)) return;
+
+        const targetPlurk = getLargeSmallEmoticon({
+          plurks,
+          plurkId,
+          iconName,
+          rndnum,
+          mode: "large",
+          raw,
+        });
+        if (targetPlurk) {
+          handleSelect(targetPlurk.id);
+        }
+      },
+      type: "largeSmall",
+    },
+    {
+      target: "emoticon",
+      label: "取小",
+      action: ({ iconName, rndnum, plurkId, raw }) => {
+        if (!plurkId || !noNullArray(rndnum)) return;
+
+        const targetPlurk = getLargeSmallEmoticon({
+          plurks,
+          plurkId,
+          iconName,
+          rndnum,
+          mode: "small",
+          raw,
+        });
+        if (targetPlurk) {
+          handleSelect(targetPlurk.id);
+        }
+      },
+      type: "largeSmall",
+    },
+    {
+      target: "emoticon",
+      label: "取贏",
+      action: ({ iconName, rndnum, plurkId }) => {
+        if (!plurkId || !noNullArray(rndnum)) return;
+        const targetPlurk = getWinLoseEmoticon({
+          plurks,
+          plurkId,
+          iconName,
+          rndnum,
+          mode: "win",
+        });
+        if (targetPlurk) {
+          handleSelect(targetPlurk.id);
+        }
+      },
+      type: "winLose",
+    },
+    {
+      target: "emoticon",
+      label: "取輸",
+      action: ({ iconName, rndnum, plurkId }) => {
+        if (!plurkId || !noNullArray(rndnum)) return;
+        const targetPlurk = getWinLoseEmoticon({
+          plurks,
+          plurkId,
+          iconName,
+          rndnum,
+          mode: "lose",
+        });
+        if (targetPlurk) {
+          handleSelect(targetPlurk.id);
+        }
+      },
+      type: "winLose",
+    },
+  ];
+
+  return { customContextItemsForEmoticon };
+}

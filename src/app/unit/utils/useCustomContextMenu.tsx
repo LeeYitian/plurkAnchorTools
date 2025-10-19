@@ -13,7 +13,7 @@ import {
 } from "../components/ContextMenu/ContextMenu";
 import { DEFAULT_EMOTICONS } from "@/types/constants";
 import { Emoticon } from "@/types/emoticon";
-import { getEmoticonName, getEmoticonRndnum } from "./getEmoticonName";
+import { getEmoticonName, getEmoticonRndnum } from "./getEmoticon";
 
 export type IconContextMenuItem = {
   target: "emoticon";

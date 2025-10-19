@@ -29,3 +29,21 @@ export const DEFAULT_EMOTICONS = {
     "	https://s.plurk.com/emoticons/random/d4e02922f336b3fc37df.gif",
   "(bzzz)": "https://s.plurk.com/emoticons/special/19acfc995b239be115f8.png",
 };
+
+export const EMOTICON_TYPE_MAP = {
+  "(dice)": ["same", "largeSmall"],
+  "(dice2)": ["same", "largeSmall"],
+  "(dice4)": ["same", "largeSmall"],
+  "(dice8)": ["same", "largeSmall"],
+  "(dice10)": ["same", "largeSmall"],
+  "(dice12)": ["same", "largeSmall"],
+  "(dice20)": ["same", "largeSmall"],
+  "(digit)": ["same", "largeSmall"],
+  "(lots)": ["same"],
+  "(bobei)": ["same"],
+  "(panties)": ["same"],
+  "(slot)": ["same"],
+  "(coin)": ["same"],
+  "(rock-paper-scissors)": ["same", "winLose"],
+  "(bzzz)": ["same"],
+};
