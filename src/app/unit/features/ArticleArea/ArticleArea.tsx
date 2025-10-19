@@ -1,11 +1,13 @@
 "use client";
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
-import { useContext, useMemo, useRef } from "react";
+import { useContext, useMemo } from "react";
 import "./ArticleArea.scss";
 import { EMPTY_LINE, EMPTY_LINE_RAW } from "@/types/constants";
 import clsx from "clsx";
 import CopyBar from "@/app/unit/components/CopyBar/CopyBar";
-import useCustomContextMenu from "@/app/unit/utils/useCustomContextMenu";
+import useCustomContextMenu, {
+  TextContextMenuItem,
+} from "@/app/unit/utils/useCustomContextMenu";
 import useEditPlurks from "@/app/unit/utils/useEditPlurks";
 
 export default function ArticleArea() {
@@ -20,12 +22,14 @@ export default function ArticleArea() {
     CustomContextMenu,
   } = useCustomContextMenu();
 
-  const customContextItems = [
+  const customContextItems: TextContextMenuItem[] = [
     {
+      target: "text",
       label: "編輯",
       action: handleEditClick,
     },
     {
+      target: "text",
       label: "全部還原",
       action: handleRestoreClick,
     },

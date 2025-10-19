@@ -4,18 +4,36 @@ import {
   useCallback,
   useEffect,
   useState,
+  useMemo,
+  MouseEvent,
 } from "react";
 import {
   ContextMenu,
   ContextMenuItem,
 } from "../components/ContextMenu/ContextMenu";
+import { DEFAULT_EMOTICONS } from "@/types/constants";
+import { Emoticon } from "@/types/emoticon";
+import { getEmoticonName, getEmoticonRndnum } from "./getEmoticonName";
 
-type ContextMenuItem<T> = {
+export type IconContextMenuItem = {
+  target: "emoticon";
   label: string;
-  action: (args: T) => void;
+  action: (args: {
+    iconName: string;
+    rndnum: (string | null)[];
+    plurkId: string;
+    raw: string;
+  }) => void;
+  type: string;
 };
 
-type ContextMenuItems = ContextMenuItem<{ target: HTMLElement }>;
+export type TextContextMenuItem = {
+  target: "text";
+  label: string;
+  action: (args: { target: HTMLElement }) => void;
+};
+
+type ContextMenuItems = IconContextMenuItem | TextContextMenuItem;
 
 /**
  * 自訂右鍵選單
@@ -35,6 +53,10 @@ export default function useCustomContextMenu() {
     y: 0,
     target: null,
   });
+  const [emoticonData, setEmoticonData] = useState<{
+    plurkId: number;
+    raw: string;
+  }>({ plurkId: 0, raw: "" });
 
   const openCustomContextMenu: MouseEventHandler = (e) => {
     e.preventDefault();
@@ -56,9 +78,35 @@ export default function useCustomContextMenu() {
     });
   };
 
+  const clickOnEmoticon = (e: MouseEvent, plurkId: number, raw: string) => {
+    e.preventDefault();
+
+    const target = e.target as HTMLElement;
+    const emoticon = target.closest("img.emoticon") as HTMLElement;
+    if (!emoticon) return;
+
+    setEmoticonData({ plurkId, raw });
+    setState({
+      isOpen: true,
+      x: e.pageX,
+      y: e.pageY,
+      target: emoticon,
+    });
+  };
+
   const hideContextMenu = useCallback(() => {
     setState((prev) => ({ ...prev, isOpen: false }));
   }, []);
+
+  const iconName: Emoticon | null = useMemo(() => {
+    if (!state.target || state.target.nodeName !== "IMG") return null;
+    return getEmoticonName(state.target).iconName;
+  }, [state.target]);
+
+  const rndnum = useMemo(() => {
+    if (!state.target || state.target.nodeName !== "IMG") return [];
+    return getEmoticonRndnum(state.target);
+  }, [state.target]);
 
   const CustomContextMenu = ({
     menuItems,
@@ -66,6 +114,17 @@ export default function useCustomContextMenu() {
     menuItems: ContextMenuItems[];
   }) => (
     <ContextMenu position={{ x: state.x, y: state.y }} isOpen={state.isOpen}>
+      {iconName && (
+        <div className="p-1 flex items-center text-gray-300">
+          以
+          <img
+            className="h-[1.1rem] inline mx-1"
+            src={DEFAULT_EMOTICONS[iconName]}
+            alt={iconName}
+          />
+          選擇
+        </div>
+      )}
       {menuItems.map((item) => (
         <ContextMenuItem
           key={item.label}
@@ -73,7 +132,16 @@ export default function useCustomContextMenu() {
           action={(e) => {
             e.stopPropagation();
             if (!state.target) return;
-            item.action({ target: state.target });
+            if (item.target === "emoticon" && iconName) {
+              item.action({
+                iconName,
+                rndnum,
+                plurkId: emoticonData.plurkId.toString(),
+                raw: emoticonData.raw,
+              });
+            } else if (item.target === "text") {
+              item.action({ target: state.target });
+            }
           }}
         />
       ))}
@@ -94,5 +162,6 @@ export default function useCustomContextMenu() {
     openCustomContextMenu,
     openCustomContextMenuTouch,
     CustomContextMenu,
+    clickOnEmoticon,
   };
 }

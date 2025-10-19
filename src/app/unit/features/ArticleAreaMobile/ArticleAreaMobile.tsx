@@ -13,7 +13,9 @@ import { EMPTY_LINE, EMPTY_LINE_RAW } from "@/types/constants";
 import clsx from "clsx";
 import CopyBarMobile from "@/app/unit/components/CopyBar/CopyBarMobile";
 import useEditPlurks from "@/app/unit/utils/useEditPlurks";
-import useCustomContextMenu from "@/app/unit/utils/useCustomContextMenu";
+import useCustomContextMenu, {
+  TextContextMenuItem,
+} from "@/app/unit/utils/useCustomContextMenu";
 
 export default function ArticleAreaMobile() {
   const [{ hasData, plurks, selectedPlurksIds }, dispatch] =
@@ -29,12 +31,14 @@ export default function ArticleAreaMobile() {
   } = useCustomContextMenu();
   const touchTimeout = useRef<NodeJS.Timeout | null>(null);
 
-  const customContextItems = [
+  const customContextItems: TextContextMenuItem[] = [
     {
+      target: "text",
       label: "編輯",
       action: handleEditClick,
     },
     {
+      target: "text",
       label: "全部還原",
       action: handleRestoreClick,
     },
