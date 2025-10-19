@@ -45,6 +45,12 @@ export default function VersionDetailUnit() {
             <li>使用 new DOMParser() 來解析噗文字串資料進行篩選</li>
           </ul>
         </li>
+        <li>
+          v1.3.1：電腦版新增取消選取功能、在文章區域也可篩選骰點
+          <ul>
+            <li>將骰點篩選功能作成 hook 以利重複使用</li>
+          </ul>
+        </li>
       </ul>
     </details>
   );
