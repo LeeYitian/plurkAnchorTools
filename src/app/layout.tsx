@@ -5,6 +5,7 @@ import { LoadingProvider } from "@/providers/LoadingProvider";
 import LoadingMask from "./components/LoadingMask";
 import { Suspense } from "react";
 import Navigator from "./components/Navigator";
+import SidePanel from "./components/SidePanel";
 
 export const metadata: Metadata = {
   title: "噗浪安價小工具 | Plurk Tools",
@@ -38,6 +39,7 @@ export default function RootLayout({
             </header>
             {children}
           </div>
+          <SidePanel />
         </LoadingProvider>
       </body>
     </html>
