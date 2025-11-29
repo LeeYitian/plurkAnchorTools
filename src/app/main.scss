@@ -1,3 +1,6 @@
+@reference './globals.css';
+
+
 @layer components {
   .tabHover {
     display: none;
@@ -105,6 +108,14 @@
       100% {
         background-position: 100% 0, 100% 100%, 0 100%
       }
+    }
+  }
+
+  .sidePanel {
+    @apply fixed top-20 -left-9 z-10 text-sm leading-[1.1] text-center text-white bg-secondary h-[18vh] max-h-24 w-12 rounded-r-md [writing-mode:vertical-lr] flex flex-col items-center justify-around gap-2 cursor-pointer transition-all;
+
+    &.open {
+      left: 0;
     }
   }
 }
