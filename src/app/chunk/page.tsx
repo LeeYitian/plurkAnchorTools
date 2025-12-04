@@ -6,7 +6,7 @@ export default function Chunk() {
   return (
     <div className="max-w-xl px-4 xl:px-0 mx-auto mt-[calc(115px+var(--spacing)*7)] md:mt-[calc(70px+var(--spacing)*7)]">
       <h3 className="text-main mb-4 font-bold">
-        把長文斷成能夠發噗的長度 v1.4.0
+        把長文斷成能夠發噗的長度 v1.4.1
       </h3>
       <section>
         <p>
