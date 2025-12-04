@@ -20,7 +20,7 @@ export default function Unit() {
     <DBProvider>
       <PlurksDataProvider>
         <div className="w-full px-4 lg:px-0 mx-auto mt-[calc(115px+var(--spacing)*7)] md:mt-[calc(70px+var(--spacing)*7)] relative">
-          <h3 className="text-main font-bold mb-4">把安價整理成長文 v1.3.1</h3>
+          <h3 className="text-main font-bold mb-4">把安價整理成長文 v1.3.2</h3>
           <DeleteDB />
           <LinkArea />
           {/* 桌面版 */}

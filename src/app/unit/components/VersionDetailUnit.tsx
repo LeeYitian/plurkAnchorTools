@@ -51,6 +51,7 @@ export default function VersionDetailUnit() {
             <li>將骰點篩選功能作成 hook 以利重複使用</li>
           </ul>
         </li>
+        <li>v1.3.2：更新 Next.js 以及新增問題回報連結</li>
       </ul>
     </details>
   );

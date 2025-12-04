@@ -17,7 +17,7 @@ export default function VersionDetailChunk() {
         <li>v1.2.1：修正無法將文字複製到剪貼簿的問題。（改用 async/await ）</li>
         <li>
           v1.3.0：二次修正無法將文字複製到剪貼簿的問題。codepen 的 full page
-          模式會阻擋 clipboard API ，因此改用 execCommand 方法。
+          模式會阻擋 clipboard API ，因此改用 execCommand 方法
         </li>
         <li>
           v1.4.0：
@@ -26,6 +26,7 @@ export default function VersionDetailChunk() {
             <li>複製到剪貼簿功能改回 clipboard API</li>
           </ul>
         </li>
+        <li>v1.4.1：更新 Next.js 以及新增問題回報連結</li>
       </ul>
     </details>
   );
