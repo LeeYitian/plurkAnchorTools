@@ -52,6 +52,14 @@ export default function VersionDetailUnit() {
           </ul>
         </li>
         <li>v1.3.2：更新 Next.js 以及新增問題回報連結</li>
+        <li>
+          v1.3.3：修正
+          <ul>
+            <li>編輯紀錄在同一裝置的桌面版和手機版畫面顯示不同步的問題</li>
+            <li>在骰子上增加樣式，讓使用者更容易意識到該處有功能</li>
+            <li>桌面版除了勾選框之外，點擊噗文區塊亦可進行選擇</li>
+          </ul>
+        </li>
       </ul>
     </details>
   );
