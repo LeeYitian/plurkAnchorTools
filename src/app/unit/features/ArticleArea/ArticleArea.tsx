@@ -16,10 +16,9 @@ import useEditPlurks from "@/app/unit/utils/useEditPlurks";
 import useGetEmoticon, { getEmoticonName } from "@/app/unit/utils/getEmoticon";
 
 export default function ArticleArea() {
-  const [{ hasData, plurks, selectedPlurksIds }, dispatch] =
+  const [{ hasData, plurks, selectedPlurksIds, editedPlurks }, dispatch] =
     useContext(PlurksDataContext);
-  const { editedRecord, editing, handleEditClick, handleRestoreClick } =
-    useEditPlurks();
+  const { editing, handleEditClick, handleRestoreClick } = useEditPlurks();
   const {
     isOpen,
     // position: contextMenuPos,
@@ -85,7 +84,7 @@ export default function ArticleArea() {
                 id={plurk.id.toString()}
                 className={clsx(
                   "article",
-                  editedRecord[plurk.id] && ["border-l-cute border-l-3 "]
+                  editedPlurks[plurk.id] && ["border-l-cute border-l-3 "],
                 )}
                 onClick={() => {
                   if (editing || isOpen) return;
@@ -105,7 +104,7 @@ export default function ArticleArea() {
                     setEmoticonCustomContextItemsType(
                       EMOTICON_TYPE_MAP[
                         iconName as keyof typeof EMOTICON_TYPE_MAP
-                      ]
+                      ],
                     );
                     clickOnEmoticon(e, plurk.id, raw);
                   } else {
@@ -113,20 +112,20 @@ export default function ArticleArea() {
                   }
                 }}
                 dangerouslySetInnerHTML={{
-                  __html: editedRecord[plurk.id] || plurk.content,
+                  __html: editedPlurks[plurk.id] || plurk.content,
                 }}
               />
             ))}
           </div>
           <CopyBar
             selectedPlurks={selectedPlurks}
-            editedRecord={editedRecord}
+            editedRecord={editedPlurks}
           />
           <CustomContextMenu
             menuItems={
               emoticonCustomContextItemsType
                 ? customContextItemsForEmoticon.filter((item) =>
-                    emoticonCustomContextItemsType.includes(item.type)
+                    emoticonCustomContextItemsType.includes(item.type),
                   )
                 : customContextItems
             }

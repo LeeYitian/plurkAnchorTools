@@ -18,11 +18,10 @@ import useCustomContextMenu, {
 } from "@/app/unit/utils/useCustomContextMenu";
 
 export default function ArticleAreaMobile() {
-  const [{ hasData, plurks, selectedPlurksIds }, dispatch] =
+  const [{ hasData, plurks, selectedPlurksIds, editedPlurks }, dispatch] =
     useContext(PlurksDataContext);
   const [showOptions, setShowOptions] = useState<number | null>(null);
-  const { editedRecord, editing, handleEditClick, handleRestoreClick } =
-    useEditPlurks();
+  const { editing, handleEditClick, handleRestoreClick } = useEditPlurks();
   const {
     isOpen,
     // position: contextMenuPos,
@@ -95,11 +94,11 @@ export default function ArticleAreaMobile() {
                   id={plurk.id.toString()}
                   className={clsx(
                     "articleMobile p-1",
-                    editedRecord[plurk.id] && ["border-l-cute border-l-3 "],
-                    { "bg-cute/10": showOptions === plurk.id }
+                    editedPlurks[plurk.id] && ["border-l-cute border-l-3 "],
+                    { "bg-cute/10": showOptions === plurk.id },
                   )}
                   dangerouslySetInnerHTML={{
-                    __html: editedRecord[plurk.id] || plurk.content,
+                    __html: editedPlurks[plurk.id] || plurk.content,
                   }}
                   onClick={() => {
                     if (editing || isOpen) return;
@@ -122,7 +121,7 @@ export default function ArticleAreaMobile() {
                     "flex justify-end opacity-0 transition-all duration-300",
                     {
                       "opacity-100": showOptions === plurk.id,
-                    }
+                    },
                   )}
                 >
                   <button
@@ -142,7 +141,7 @@ export default function ArticleAreaMobile() {
           </div>
           <CopyBarMobile
             selectedPlurks={selectedPlurks}
-            editedRecord={editedRecord}
+            editedRecord={editedPlurks}
           />
           <CustomContextMenu menuItems={customContextItems} />
         </>
