@@ -34,10 +34,21 @@ export default function LinkArea() {
                   <br />
                   （可以看到 ** --等等語法的樣子。Notion 會讀 Markdown 格式）
                 </li>
-                <li>只複製 HTML：只複製內容的 HTML 碼。</li>
+                <li>只複製 HTML：將內容以 HTML 的格式複製起來。</li>
               </ul>
               <p>
-                目前並未提供強大的編輯功能，潤稿、修改格式等，建議貼到喜歡使用的平台後再進行細修。
+                可對已選擇的噗文連點兩下，或是在右鍵下拉選單中選擇「編輯」，進行簡易編輯。編輯紀錄會記錄在當前的瀏覽器中，下一次在
+                <b>同一個裝置上的同一個瀏覽器</b>
+                ，用同樣的安價噗網址進入會自動帶入之前的選擇紀錄和編輯紀錄。
+              </p>
+              <p>
+                <a
+                  className="text-main font-medium"
+                  href="https://www.plurk.com/p/3hpbvu5rum"
+                  target="_blank"
+                >
+                  → 詳細使用方式動態展示
+                </a>
               </p>
             </section>
           </div>
