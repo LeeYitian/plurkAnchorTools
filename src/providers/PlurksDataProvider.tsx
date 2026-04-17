@@ -8,6 +8,7 @@ type TInitialState = {
   hasData: boolean;
   selectedPlurksIds: number[];
   scrollToId: number | null;
+  editedPlurks: Record<string, string>;
 };
 
 const initialState = {
@@ -16,6 +17,7 @@ const initialState = {
   hasData: false,
   selectedPlurksIds: [],
   scrollToId: null,
+  editedPlurks: {},
 };
 
 export const PlurksDataContext = createContext<
@@ -24,7 +26,7 @@ export const PlurksDataContext = createContext<
 
 const reducer = (
   state: TInitialState,
-  action: TPlurkReducerAction
+  action: TPlurkReducerAction,
 ): TInitialState => {
   switch (action.type) {
     case "SET_PLURKS":
@@ -56,6 +58,19 @@ const reducer = (
       return {
         ...state,
         scrollToId: action.payload,
+      };
+    case "SET_EDITED_PLURKS":
+      return {
+        ...state,
+        editedPlurks: { ...state.editedPlurks, ...action.payload },
+      };
+    case "RESTORE_EDITED_PLURKS":
+      const id = action.payload;
+      const newObj = { ...state.editedPlurks };
+      delete newObj[id];
+      return {
+        ...state,
+        editedPlurks: newObj,
       };
     default:
       return state;

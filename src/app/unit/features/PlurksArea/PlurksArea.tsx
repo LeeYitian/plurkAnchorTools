@@ -18,7 +18,7 @@ export default function PlurksArea() {
     useContext(PlurksDataContext);
   const { filter, filteredPlurks, setFilter } = useFilterPlurks(
     plurks,
-    selectedPlurksIds
+    selectedPlurksIds,
   );
   const refs = useRef<{ [key: number]: HTMLDivElement | null }>({});
   const { CustomContextMenu, clickOnEmoticon } = useCustomContextMenu();
@@ -60,7 +60,7 @@ export default function PlurksArea() {
 
     const { iconName, raw } = getEmoticonName(emoticon);
     setCustomContextItemsType(
-      EMOTICON_TYPE_MAP[iconName as keyof typeof EMOTICON_TYPE_MAP] || ["same"]
+      EMOTICON_TYPE_MAP[iconName as keyof typeof EMOTICON_TYPE_MAP] || ["same"],
     );
 
     clickOnEmoticon(e, id, raw);
@@ -95,12 +95,12 @@ export default function PlurksArea() {
               checked={
                 filteredPlurks.length > 0 &&
                 filteredPlurks.every((plurk) =>
-                  selectedPlurksIds.includes(plurk.id)
+                  selectedPlurksIds.includes(plurk.id),
                 )
               }
               onChange={() => {
                 const patch = !filteredPlurks.every((plurk) =>
-                  selectedPlurksIds.includes(plurk.id)
+                  selectedPlurksIds.includes(plurk.id),
                 );
                 handleSelectAll(patch);
               }}
@@ -129,6 +129,7 @@ export default function PlurksArea() {
               else delete refs.current[plurk.id];
             }}
             data-id={plurk.id}
+            onClick={() => handleSelect(plurk.id)}
             onContextMenu={(e) => handleContextMenu(e, plurk.id)}
             className={clsx("plurk", {
               "bg-plain/40":
@@ -157,7 +158,7 @@ export default function PlurksArea() {
       </div>
       <CustomContextMenu
         menuItems={customContextItemsForEmoticon.filter((item) =>
-          customContextItemsType.includes(item.type)
+          customContextItemsType.includes(item.type),
         )}
       />
     </>

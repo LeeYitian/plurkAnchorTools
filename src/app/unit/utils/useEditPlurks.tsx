@@ -5,14 +5,13 @@ import { LoadingContext } from "@/providers/LoadingProvider";
 
 export default function useEditPlurks() {
   const [editing, setEditing] = useState(false);
-  const [editedRecord, setEditedRecord] = useState<Record<string, string>>({});
   const {
     isDBInitialized,
     saveEditedPlurk,
     deleteEditedPlurk,
     getSavedEditedPlurks,
   } = useIndexedDB();
-  const [{ plurk_id, plurks }] = useContext(PlurksDataContext);
+  const [{ plurk_id, plurks }, dispatch] = useContext(PlurksDataContext);
   const [, setLoading] = useContext(LoadingContext);
 
   const handleEditClick = useCallback(
@@ -36,31 +35,30 @@ export default function useEditPlurks() {
             editedPlurk: { id: Number(id), content: newContent, plurk_id },
           });
 
-          setEditedRecord((prev) => ({ ...prev, [id]: newContent }));
+          dispatch({
+            type: "SET_EDITED_PLURKS",
+            payload: { [id]: newContent },
+          });
         },
-        { once: true }
+        { once: true },
       );
     },
-    [plurk_id]
+    [plurk_id],
   );
 
   const handleRestoreClick = useCallback(
     async ({ target }: { target: HTMLElement }) => {
       const id = target.id;
       const originalContent = plurks.find(
-        (plurk) => plurk.id.toString() === id
+        (plurk) => plurk.id.toString() === id,
       )?.content;
       if (originalContent) {
         target.innerHTML = originalContent;
-        setEditedRecord((prev) => {
-          const newRecord = { ...prev };
-          delete newRecord[id];
-          return newRecord;
-        });
         await deleteEditedPlurk(Number(id));
+        dispatch({ type: "RESTORE_EDITED_PLURKS", payload: id });
       }
     },
-    [plurks]
+    [plurks],
   );
 
   useEffect(() => {
@@ -68,11 +66,10 @@ export default function useEditPlurks() {
     const getDBRecord = async () => {
       setLoading(true);
       const record = await getSavedEditedPlurks(plurk_id);
-      setEditedRecord(record);
       setLoading(false);
     };
     getDBRecord();
   }, [isDBInitialized, plurk_id]);
 
-  return { editedRecord, editing, handleEditClick, handleRestoreClick };
+  return { editing, handleEditClick, handleRestoreClick };
 }
