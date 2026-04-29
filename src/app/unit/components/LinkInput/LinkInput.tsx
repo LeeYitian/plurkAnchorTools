@@ -1,43 +1,16 @@
 "use client";
-import { LoadingContext } from "@/providers/LoadingProvider";
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
 import clsx from "clsx";
-import Image from "next/image";
+import { Icon } from "@iconify-icon/react";
 import { useContext, useEffect, useState } from "react";
 import "./LinkInput.scss";
+import useFetchPlurk from "@/app/unit/utils/useFetchPlurk";
 
 export default function LinkInput() {
   const [url, setUrl] = useState("");
   const [openChangeUrl, setOpenChangeUrl] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [{ hasData }, dispatch] = useContext(PlurksDataContext);
-  const [, setLoading] = useContext(LoadingContext);
-  const fetchPlurk = async (url: string) => {
-    if (!url) return;
-
-    const regex = new RegExp(/^https:\/\/www\.plurk\.com\/p\/[a-zA-Z0-9]+$/);
-    if (regex.test(url)) {
-      setLoading(true);
-      const plurk_id = url.split("/").pop();
-      const response = await fetch(`/api/fetchPlurks?id=${plurk_id}`);
-
-      if (!response.ok) {
-        const message = await response.json();
-        setErrorMessage(
-          `*取噗錯誤：${JSON.stringify(message.data)}。請檢查網址`
-        );
-        dispatch({ type: "SET_PLURKS", payload: [] });
-        setLoading(false);
-        return;
-      }
-
-      const { data } = await response.json();
-      dispatch({ type: "SET_PLURKS", payload: data });
-    } else {
-      setErrorMessage("無效的噗文網址");
-    }
-    setLoading(false);
-  };
+  const [{ hasData }] = useContext(PlurksDataContext);
+  const { fetchPlurk, errorMessage, clearErrorMessage } = useFetchPlurk();
 
   useEffect(() => {
     const handleCloseChangeUrl = (e: MouseEvent) => {
@@ -54,14 +27,14 @@ export default function LinkInput() {
   return (
     <>
       {!hasData && (
-        <div className="flex flex-col flex-[2_1_50%] justify-center order-1 md:order-2">
+        <div className="flex flex-col flex-[2_1_50%] justify-center order-1 md:order-2 self-start">
           <div className="flex h-7 mt-0 md:mt-4 mb-2 md:mb-0">
             <input
               type="text"
               placeholder="貼上噗浪網址"
               value={url}
               onChange={(e) => {
-                setErrorMessage("");
+                clearErrorMessage();
                 if (e.target.value.trim()) {
                   setUrl(e.target.value.trim());
                 } else {
@@ -75,7 +48,7 @@ export default function LinkInput() {
               }}
               className={clsx(
                 "w-full bg-light rounded-md outline-main px-3 py-1 text-sm font-extralight",
-                { "text-gray-400": !url }
+                { "text-gray-400": !url },
               )}
             />
             <button
@@ -99,7 +72,11 @@ export default function LinkInput() {
             className="urlBtn flex items-center justify-center text-white absolute -top-1 right-2 lg:right-1 h-8 w-8 rounded-full cursor-pointer bg-cute"
             onClick={(e) => {
               const target = e.target as HTMLElement;
-              if (target.tagName !== "IMG" && target.id !== "changeUrl") return;
+              if (
+                target.tagName !== "ICONIFY-ICON" &&
+                target.id !== "changeUrl"
+              )
+                return;
               if (!openChangeUrl) {
                 const btn = target.closest(".urlBtn");
                 const input = btn?.querySelector("input");
@@ -109,11 +86,12 @@ export default function LinkInput() {
             }}
             title="更換網址"
           >
-            <Image src="/urlLink.svg" alt="更換網址" width={25} height={25} />
+            <Icon icon="material-symbols:link-rounded" width={25} height={25} />
+            {/* <Image src="/urlLink.svg" alt="更換網址" width={25} height={25} /> */}
             <div
               className={clsx(
                 "absolute top-4/5 right-0 z-10 w-[30vw] min-w-[300px] max-w-[450px] h-[6vh] max-h-[42px] bg-white p-1 rounded-md shadow-md flex items-center justify-between transition transition-duration-700 ease-in-out",
-                !openChangeUrl && ["opacity-0", "pointer-events-none"]
+                !openChangeUrl && ["opacity-0", "pointer-events-none"],
               )}
             >
               <input
@@ -121,7 +99,7 @@ export default function LinkInput() {
                 placeholder="貼上噗浪網址"
                 value={url}
                 onChange={(e) => {
-                  setErrorMessage("");
+                  clearErrorMessage();
                   if (e.target.value.trim()) {
                     setUrl(e.target.value.trim());
                   } else {
@@ -135,7 +113,7 @@ export default function LinkInput() {
                 }}
                 className={clsx(
                   "w-8/10 bg-light rounded-md outline-main px-3 py-1 text-xs font-extralight text-gray-800",
-                  { "text-gray-400": !url }
+                  { "text-gray-400": !url },
                 )}
               />
               <button

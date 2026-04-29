@@ -1,7 +1,7 @@
 "use client";
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
 import {
-  MouseEventHandler,
+  Fragment,
   TouchEventHandler,
   useContext,
   useMemo,
@@ -88,7 +88,7 @@ export default function ArticleAreaMobile() {
               </div>
             )}
             {selectedPlurks.map((plurk) => (
-              <>
+              <Fragment key={plurk.id}>
                 <div
                   key={plurk.id}
                   id={plurk.id.toString()}
@@ -136,7 +136,7 @@ export default function ArticleAreaMobile() {
                     取消選取
                   </button>
                 </div>
-              </>
+              </Fragment>
             ))}
           </div>
           <CopyBarMobile
