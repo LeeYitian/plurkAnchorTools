@@ -4,7 +4,7 @@ import Draggable, { DraggableEvent } from "react-draggable";
 
 type DraggableEventHandler = (
   e: DraggableEvent,
-  data: DraggableData
+  data: DraggableData,
 ) => void | false;
 type DraggableData = {
   node: HTMLElement;
@@ -40,8 +40,12 @@ export default function SidePanel() {
       panelRef.current.classList.remove("open");
     };
 
-    document.body.addEventListener("click", closePanel, { once: true });
-  }, [panelOpen]);
+    document.body.addEventListener("click", closePanel);
+
+    return () => {
+      document.body.removeEventListener("click", closePanel);
+    };
+  }, []);
 
   // const handlePointerEnter = () => {
   //   if (!panelRef.current || noHoverDevice) return;
