@@ -9,11 +9,12 @@ import {
   PlurksDrawer,
   PlurksDrawerContent,
   PlurksDrawerSide,
-} from "./components/PlurksDrawer";
+} from "@/app/unit/components/PlurksDrawer";
 import { Toaster } from "sonner";
-import DeleteDB from "./components/DeleteDB";
-import SyncSelectedIds from "./components/SyncSelectedIds";
+import DeleteDB from "@/app/unit/components/DeleteDB";
+import SyncSelectedIds from "@/app/unit/components/SyncSelectedIds";
 import { DBProvider } from "@/providers/IndexedDBProvider";
+import SubHeader from "@/app/unit/components/SubHeader";
 
 export default function Unit() {
   return (
@@ -23,6 +24,7 @@ export default function Unit() {
           <h3 className="text-main font-bold mb-4">把安價整理成長文 v1.3.3</h3>
           <DeleteDB />
           <LinkAndInstructionArea />
+          <SubHeader />
           {/* 桌面版 */}
           <div className="hidden md:flex justify-between">
             <PlurksArea />

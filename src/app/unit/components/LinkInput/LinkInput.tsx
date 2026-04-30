@@ -6,7 +6,7 @@ import { useContext, useEffect, useState } from "react";
 import "./LinkInput.scss";
 import useFetchPlurk from "@/app/unit/utils/useFetchPlurk";
 
-export default function LinkInput() {
+export default function LinkInput({ style }: { style?: string }) {
   const [url, setUrl] = useState("");
   const [openChangeUrl, setOpenChangeUrl] = useState(false);
   const [{ hasData }] = useContext(PlurksDataContext);
@@ -69,7 +69,10 @@ export default function LinkInput() {
         <>
           <div
             id="changeUrl"
-            className="urlBtn flex items-center justify-center text-white absolute -top-1 right-2 lg:right-1 h-8 w-8 rounded-full cursor-pointer bg-cute"
+            className={clsx(
+              "urlBtn flex items-center justify-center text-white absolute -top-1 right-2 lg:right-1 h-8 w-8 rounded-full cursor-pointer bg-cute",
+              style,
+            )}
             onClick={(e) => {
               const target = e.target as HTMLElement;
               if (

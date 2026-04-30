@@ -29,7 +29,7 @@ const DELETEBTN_CONFIG = {
   },
 };
 
-export default function DeleteDB() {
+export default function DeleteDB({ style }: { style?: string }) {
   const [{ hasData, plurk_id }] = useContext(PlurksDataContext);
   const [showDialog, setShowDialog] = useState(false);
   const {
@@ -75,6 +75,7 @@ export default function DeleteDB() {
       <button
         className={clsx(
           "absolute py-1 rounded-full border-cute border-2 text-cute text-xs",
+          style,
           { "right-12 -top-1 px-1 flex justify-center items-center": hasData },
           { "right-3 px-2 top-0": !hasData },
         )}
