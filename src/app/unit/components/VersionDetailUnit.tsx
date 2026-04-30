@@ -60,6 +60,13 @@ export default function VersionDetailUnit() {
             <li>桌面版除了勾選框之外，點擊噗文區塊亦可進行選擇</li>
           </ul>
         </li>
+        <li>
+          v1.3.4：修正
+          <ul>
+            <li>修正一些小 Bug</li>
+            <li>更改手機版 Header 的樣式。增加滑動收合及副標題區塊</li>
+          </ul>
+        </li>
       </ul>
     </details>
   );
