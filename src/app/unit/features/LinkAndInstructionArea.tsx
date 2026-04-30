@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { useContext } from "react";
 import VersionDetailUnit from "../components/VersionDetailUnit";
 
-export default function LinkArea() {
+export default function LinkAndInstructionArea() {
   const [{ hasData }] = useContext(PlurksDataContext);
 
   return (

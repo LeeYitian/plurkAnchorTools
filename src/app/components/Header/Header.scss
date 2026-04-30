@@ -1,0 +1,7 @@
+@reference '../../globals.css';
+
+@media (max-width: 48rem) {
+  header.scrollHidden {
+    transform: translateY(-101%);
+  }
+}

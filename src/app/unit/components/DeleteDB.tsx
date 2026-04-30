@@ -2,7 +2,8 @@
 
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
 import { useContext, useEffect, useState } from "react";
-import useIndexedDB from "../utils/useIndexedDB";
+import { Icon } from "@iconify-icon/react";
+import useIndexedDB from "@/app/unit/utils/useIndexedDB";
 import clsx from "clsx";
 
 enum DELETE_TYPE {
@@ -17,12 +18,18 @@ const DELETEBTN_CONFIG = {
       `此瀏覽器上共儲存了 ${count} 筆噗文紀錄，確定要全部刪除嗎？`,
   },
   [DELETE_TYPE.SINGLE]: {
-    btnText: "刪除此噗紀錄",
+    btnText: (
+      <Icon
+        icon="material-symbols:delete-outline-rounded"
+        width={25}
+        height={25}
+      />
+    ),
     dialogText: (id: string) => `確定要刪除此噗（${id}）的紀錄嗎？`,
   },
 };
 
-export default function DeleteDB() {
+export default function DeleteDB({ style }: { style?: string }) {
   const [{ hasData, plurk_id }] = useContext(PlurksDataContext);
   const [showDialog, setShowDialog] = useState(false);
   const {
@@ -67,8 +74,13 @@ export default function DeleteDB() {
     <>
       <button
         className={clsx(
-          "absolute top-0 right-3 px-2 py-1 rounded-full border-cute border-2 text-cute text-xs",
-          { "right-12": hasData }
+          "absolute py-1 rounded-full border-cute border-2 text-cute text-xs",
+          style,
+          {
+            "right-12 -top-1 px-1 flex justify-center items-center max-w-8 max-h-8":
+              hasData,
+          },
+          { "right-3 px-2 top-0": !hasData },
         )}
         onClick={() => setShowDialog(true)}
       >
@@ -76,9 +88,9 @@ export default function DeleteDB() {
       </button>
       <div
         className={clsx(
-          "flex flex-col justify-between fixed z-50 top-[40%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 w-[80vw] md:w-[40vw] min-h-[200px] bg-white p-5 shadow-md rounded-lg border-gray-200 border-1 transition-opacity duration-300 ease-in-out",
+          "flex flex-col justify-between fixed z-50 top-[40%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 w-[80vw] md:w-[40vw] min-h-[150px] bg-white p-5 shadow-md rounded-2xl border-gray-200 border-1 transition-opacity duration-300 ease-in-out",
           showDialog ? "opacity-100" : "opacity-0",
-          !showDialog && "pointer-events-none"
+          !showDialog && "pointer-events-none",
         )}
       >
         <span>{DELETEBTN_CONFIG[deleteType].dialogText(text)}</span>

@@ -129,7 +129,11 @@ export default function PlurksArea() {
               else delete refs.current[plurk.id];
             }}
             data-id={plurk.id}
-            onClick={() => handleSelect(plurk.id)}
+            onClick={(e) => {
+              const target = e.target as HTMLElement;
+              if (target.tagName === "INPUT") return;
+              handleSelect(plurk.id);
+            }}
             onContextMenu={(e) => handleContextMenu(e, plurk.id)}
             className={clsx("plurk", {
               "bg-plain/40":
@@ -139,9 +143,7 @@ export default function PlurksArea() {
             <input
               type="checkbox"
               checked={selectedPlurksIds.includes(plurk.id)}
-              onChange={() => {
-                handleSelect(plurk.id);
-              }}
+              onChange={() => handleSelect(plurk.id)}
             />
             <div
               className="plurkContent"

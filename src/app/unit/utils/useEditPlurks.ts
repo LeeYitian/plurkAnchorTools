@@ -1,18 +1,11 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import useIndexedDB from "./useIndexedDB";
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
-import { LoadingContext } from "@/providers/LoadingProvider";
 
 export default function useEditPlurks() {
   const [editing, setEditing] = useState(false);
-  const {
-    isDBInitialized,
-    saveEditedPlurk,
-    deleteEditedPlurk,
-    getSavedEditedPlurks,
-  } = useIndexedDB();
+  const { saveEditedPlurk, deleteEditedPlurk } = useIndexedDB();
   const [{ plurk_id, plurks }, dispatch] = useContext(PlurksDataContext);
-  const [, setLoading] = useContext(LoadingContext);
 
   const handleEditClick = useCallback(
     ({ target }: { target: HTMLElement }) => {
@@ -60,16 +53,6 @@ export default function useEditPlurks() {
     },
     [plurks],
   );
-
-  useEffect(() => {
-    if (!isDBInitialized) return;
-    const getDBRecord = async () => {
-      setLoading(true);
-      const record = await getSavedEditedPlurks(plurk_id);
-      setLoading(false);
-    };
-    getDBRecord();
-  }, [isDBInitialized, plurk_id]);
 
   return { editing, handleEditClick, handleRestoreClick };
 }

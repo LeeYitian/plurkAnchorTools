@@ -1,7 +1,7 @@
 // import Image from next/image;
 import { PlurksDataProvider } from "@/providers/PlurksDataProvider";
 import PlurksArea from "./features/PlurksArea/PlurksArea";
-import LinkArea from "./features/LinkArea";
+import LinkAndInstructionArea from "./features/LinkAndInstructionArea";
 import ArticleArea from "./features/ArticleArea/ArticleArea";
 import PlurksAreaMobile from "./features/PlurksAreaMobile/PlurksAreaMobile";
 import ArticleAreaMobile from "./features/ArticleAreaMobile/ArticleAreaMobile";
@@ -9,20 +9,22 @@ import {
   PlurksDrawer,
   PlurksDrawerContent,
   PlurksDrawerSide,
-} from "./components/PlurksDrawer";
+} from "@/app/unit/components/PlurksDrawer";
 import { Toaster } from "sonner";
-import DeleteDB from "./components/DeleteDB";
-import SyncSelectedIds from "./components/SyncSelectedIds";
+import DeleteDB from "@/app/unit/components/DeleteDB";
+import SyncSelectedIds from "@/app/unit/components/SyncSelectedIds";
 import { DBProvider } from "@/providers/IndexedDBProvider";
+import SubHeader from "@/app/unit/components/SubHeader";
 
 export default function Unit() {
   return (
     <DBProvider>
       <PlurksDataProvider>
         <div className="w-full px-4 lg:px-0 mx-auto mt-[calc(115px+var(--spacing)*7)] md:mt-[calc(70px+var(--spacing)*7)] relative">
-          <h3 className="text-main font-bold mb-4">把安價整理成長文 v1.3.3</h3>
+          <h3 className="text-main font-bold mb-4">把安價整理成長文 v1.3.4</h3>
           <DeleteDB />
-          <LinkArea />
+          <LinkAndInstructionArea />
+          <SubHeader />
           {/* 桌面版 */}
           <div className="hidden md:flex justify-between">
             <PlurksArea />

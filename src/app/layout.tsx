@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import "@/app/globals.css";
 import "@/app/main.scss";
 import { LoadingProvider } from "@/providers/LoadingProvider";
-import LoadingMask from "./components/LoadingMask";
+import LoadingMask from "@/app/components/LoadingMask";
 import { Suspense } from "react";
-import Navigator from "./components/Navigator";
-import SidePanel from "./components/SidePanel";
+import SidePanel from "@/app/components/SidePanel";
+import Header from "@/app/components/Header/Header";
 
 export const metadata: Metadata = {
   title: "噗浪安價小工具 | Plurk Tools",
@@ -26,17 +26,7 @@ export default function RootLayout({
             <LoadingMask />
           </Suspense>
           <div className="max-w-4xl mx-auto">
-            <header className="fixed z-10 w-full left-0 top-0 p-3 bg-plain">
-              <div className="flex flex-col gap-2 justify-between items-center md:flex-row max-w-4xl mx-auto">
-                <h1
-                  className="text-main font-bold text-2xl strokeText select-none"
-                  data-stroke="噗浪安價小工具"
-                >
-                  噗浪安價小工具
-                </h1>
-                <Navigator />
-              </div>
-            </header>
+            <Header />
             {children}
           </div>
           <SidePanel />
