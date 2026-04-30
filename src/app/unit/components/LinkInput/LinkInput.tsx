@@ -27,7 +27,7 @@ export default function LinkInput() {
   return (
     <>
       {!hasData && (
-        <div className="flex flex-col flex-[2_1_50%] justify-center order-1 md:order-2 self-start">
+        <div className="flex flex-col flex-[2_1_50%] justify-center order-1 md:order-2 md:self-start">
           <div className="flex h-7 mt-0 md:mt-4 mb-2 md:mb-0">
             <input
               type="text"
@@ -87,7 +87,6 @@ export default function LinkInput() {
             title="更換網址"
           >
             <Icon icon="material-symbols:link-rounded" width={25} height={25} />
-            {/* <Image src="/urlLink.svg" alt="更換網址" width={25} height={25} /> */}
             <div
               className={clsx(
                 "absolute top-4/5 right-0 z-10 w-[30vw] min-w-[300px] max-w-[450px] h-[6vh] max-h-[42px] bg-white p-1 rounded-md shadow-md flex items-center justify-between transition transition-duration-700 ease-in-out",

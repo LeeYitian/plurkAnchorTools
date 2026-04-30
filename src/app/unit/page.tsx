@@ -1,7 +1,7 @@
 // import Image from next/image;
 import { PlurksDataProvider } from "@/providers/PlurksDataProvider";
 import PlurksArea from "./features/PlurksArea/PlurksArea";
-import LinkAndInstructionArea from "./features/LinkArea";
+import LinkAndInstructionArea from "./features/LinkAndInstructionArea";
 import ArticleArea from "./features/ArticleArea/ArticleArea";
 import PlurksAreaMobile from "./features/PlurksAreaMobile/PlurksAreaMobile";
 import ArticleAreaMobile from "./features/ArticleAreaMobile/ArticleAreaMobile";
