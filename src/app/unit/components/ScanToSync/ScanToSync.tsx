@@ -5,6 +5,7 @@ import clsx from "clsx";
 import QRCode from "react-qr-code";
 import { useContext, useEffect, useRef, useState } from "react";
 import "./ScanToSync.scss";
+import { indexedDBService } from "../../lib/indexDB";
 
 enum INPUT_TYPE {
   UNCHOOSE = "UNCHOOSE",
@@ -12,20 +13,27 @@ enum INPUT_TYPE {
   RECEIVE = "RECEIVE",
 }
 
-export default function ScanToSync({ style }: { style: string }) {
-  const [{ hasData }] = useContext(PlurksDataContext);
-  const [showQRCode, setShowQRCode] = useState(false);
+export default function ScanToSync({ style }: { style?: string }) {
+  const [{ hasData, plurk_id }] = useContext(PlurksDataContext);
+  const [openDialog, setOpenDialog] = useState(false);
   const [inputType, setInputType] = useState(INPUT_TYPE.UNCHOOSE);
   const inputAreaRef = useRef<HTMLInputElement>(null);
+  const [disableReceive, setDisableReceive] = useState(true);
+  const [creatingQRCode, setCreatingQRCode] = useState(false);
+  const [keyForStorage, setKeyForStorage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const { getSavedEditedPlurks } = indexedDBService();
 
   const handleClick = () => {
-    setShowQRCode(!showQRCode);
+    setOpenDialog(!openDialog);
     setInputType(INPUT_TYPE.UNCHOOSE);
+    setDisableReceive(true);
   };
 
   const closeQRCode = () => {
-    setShowQRCode(false);
+    setOpenDialog(false);
     setInputType(INPUT_TYPE.UNCHOOSE);
+    setDisableReceive(true);
   };
 
   const distributeValue = (el: HTMLInputElement) => {
@@ -42,6 +50,16 @@ export default function ScanToSync({ style }: { style: string }) {
       cursor.value = chars[i].match(/[0-9a-zA-Z]/g) ? chars[i] : "";
     }
     cursor?.focus();
+
+    disableCheck();
+  };
+
+  const disableCheck = () => {
+    setDisableReceive(
+      Array.from(inputAreaRef.current?.children || [])
+        .filter((el) => el instanceof HTMLInputElement)
+        .some((el) => el.value === ""),
+    );
   };
 
   const handleReceiveTyping = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,7 +84,7 @@ export default function ScanToSync({ style }: { style: string }) {
     distributeValue(e.currentTarget);
   };
 
-  const checkInput = () => {
+  const confirmInput = () => {
     const children = Array.from(
       inputAreaRef.current?.children || [],
     ) as HTMLInputElement[];
@@ -89,7 +107,31 @@ export default function ScanToSync({ style }: { style: string }) {
     }
 
     if (keyPress === "Enter") {
-      checkInput();
+      confirmInput();
+    }
+  };
+
+  const sendDataToCloud = async () => {
+    setCreatingQRCode(true);
+    try {
+      const allSavedPlurks = await getSavedEditedPlurks(plurk_id);
+
+      const res = await fetch("/api/saveData", {
+        method: "POST",
+        body: JSON.stringify({ data: allSavedPlurks, plurk_id }),
+      });
+      const { data } = await res.json();
+
+      if (!res.ok) {
+        setErrorMessage(data);
+      } else {
+        setKeyForStorage(data);
+      }
+    } catch (error) {
+      console.log("sendDataToCloud error", error);
+      setErrorMessage(JSON.stringify(error));
+    } finally {
+      setCreatingQRCode(false);
     }
   };
 
@@ -99,10 +141,6 @@ export default function ScanToSync({ style }: { style: string }) {
       firstInput?.focus();
     }
   }, [inputType]);
-
-  const disableCheck = Array.from(inputAreaRef.current?.children || [])
-    .filter((el) => el instanceof HTMLInputElement)
-    .every((el) => el.value);
 
   if (!hasData) return null;
 
@@ -124,8 +162,8 @@ export default function ScanToSync({ style }: { style: string }) {
       <div
         className={clsx(
           "QRCodeDialog",
-          showQRCode && "opacity-100",
-          !showQRCode && "pointer-events-none opacity-0",
+          openDialog && "opacity-100",
+          !openDialog && "pointer-events-none opacity-0",
         )}
       >
         <div className="text-gray-400 cursor-pointer group p-2 w-full flex justify-end items-center">
@@ -141,7 +179,10 @@ export default function ScanToSync({ style }: { style: string }) {
           <div className="h-[75%] w-full p-10 flex justify-center gap-4 items-center flex-col">
             <button
               className="selectBtn"
-              onClick={() => setInputType(INPUT_TYPE.SEND)}
+              onClick={() => {
+                setInputType(INPUT_TYPE.SEND);
+                sendDataToCloud();
+              }}
             >
               傳送編輯紀錄
             </button>
@@ -174,9 +215,9 @@ export default function ScanToSync({ style }: { style: string }) {
               ))}
             </div>
             <button
-              disabled={disableCheck}
+              disabled={disableReceive}
               className="selectBtn"
-              onClick={checkInput}
+              onClick={confirmInput}
             >
               確認
             </button>
@@ -184,15 +225,27 @@ export default function ScanToSync({ style }: { style: string }) {
         )}
         {inputType === INPUT_TYPE.SEND && (
           <div className="h-[90%] flex justify-center items-center flex-col">
-            <QRCode value="123" style={{ height: "100%", width: "100%" }} />
-            <span className="my-1 text-black font-bold text-4xl tracking-widest">
-              090909
-            </span>
-            <span className="text-gray-500 mb-6 text-center text-md font-light">
-              掃描 QRCode 或輸入驗證碼
-              <br />
-              在另一台裝置繼續編輯
-            </span>
+            {creatingQRCode && (
+              <div className="h-[25%] w-[100%]">
+                <div className="sendAndReceive"></div>
+              </div>
+            )}
+            {!creatingQRCode && (
+              <>
+                <QRCode
+                  value={`${window.location.origin}/unit?key=${keyForStorage}`}
+                  style={{ height: "100%", width: "100%" }}
+                />
+                <span className="my-1 text-black font-bold text-4xl tracking-widest">
+                  {keyForStorage}
+                </span>
+                <span className="text-gray-500 mb-6 text-center text-md font-light">
+                  掃描 QRCode 或輸入驗證碼
+                  <br />
+                  在另一台裝置繼續編輯
+                </span>
+              </>
+            )}
           </div>
         )}
       </div>

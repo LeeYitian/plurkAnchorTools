@@ -76,7 +76,7 @@ export const indexedDBService = () => ({
     await db.put("edited-plurks", editedPlurk);
   },
 
-  /** 取得某則所有被編輯過的噗文內容 */
+  /** 取得某則噗文下所有被編輯過的內容 */
   getSavedEditedPlurks: async (plurk_id: number) => {
     const db = await getDB();
     const result = await db.getAllFromIndex(
