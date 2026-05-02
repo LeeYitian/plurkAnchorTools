@@ -14,6 +14,7 @@ import { Toaster } from "sonner";
 import DeleteDB from "@/app/unit/components/DeleteDB";
 import SyncPlurksData from "@/app/unit/components/SyncPlurksData";
 import SubHeader from "@/app/unit/components/SubHeader";
+import ScanToSync from "./components/ScanToSync/ScanToSync";
 
 export default function Unit() {
   return (
@@ -22,6 +23,7 @@ export default function Unit() {
         <h3 className="text-main font-bold mb-4">把安價整理成長文 v1.3.5</h3>
         <DeleteDB />
         <LinkAndInstructionArea />
+        <ScanToSync />
         <SubHeader />
         {/* 桌面版 */}
         <div className="hidden md:flex justify-between">

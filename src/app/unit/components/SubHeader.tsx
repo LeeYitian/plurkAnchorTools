@@ -3,6 +3,7 @@ import DeleteDB from "@/app/unit/components/DeleteDB";
 import LinkInput from "@/app/unit/components/LinkInput/LinkInput";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
+import ScanToSync from "./ScanToSync/ScanToSync";
 
 export default function SubHeader() {
   const [showSubHeader, setShowSubHeader] = useState(false);
@@ -26,6 +27,7 @@ export default function SubHeader() {
     >
       <DeleteDB style={"top-2 right-14"} />
       <LinkInput style={"top-2 right-4"} />
+      <ScanToSync style={"top-2 right-24"} />
     </div>
   );
 }

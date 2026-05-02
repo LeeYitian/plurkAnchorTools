@@ -118,6 +118,14 @@
       left: 0;
     }
   }
+
+  .outlineBtn {
+    @apply py-1 rounded-full border-2 text-xs
+  }
+
+  .icon {
+    @apply px-1 flex justify-center items-center max-w-8 max-h-8
+  }
 }
 
 img.emoticon {
