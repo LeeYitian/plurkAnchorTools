@@ -67,6 +67,10 @@ export default function VersionDetailUnit() {
             <li>更改手機版 Header 的樣式。增加滑動收合及副標題區塊</li>
           </ul>
         </li>
+        <li>
+          v1.3.5：簡化 IndexedDB 相關的程式碼結構。移除 React provider 和 custom
+          hook 的用法
+        </li>
       </ul>
     </details>
   );
