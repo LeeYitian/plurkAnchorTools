@@ -4,10 +4,11 @@ import { PlurksDataContext } from "@/providers/PlurksDataProvider";
 import { useContext, useEffect } from "react";
 import { indexedDBService } from "@/app/unit/lib/indexDB";
 
-export default function SyncSelectedIds() {
+export default function SyncPlurksData() {
   const [{ hasData, plurk_id, selectedPlurksIds }, dispatch] =
     useContext(PlurksDataContext);
-  const { getStoredIds, storeSelectedIds } = indexedDBService();
+  const { getStoredIds, storeSelectedIds, getSavedEditedPlurks } =
+    indexedDBService();
 
   useEffect(() => {
     if (!selectedPlurksIds.length) return;
@@ -32,5 +33,14 @@ export default function SyncSelectedIds() {
     };
     getSelectedIds();
   }, [hasData, plurk_id]);
+
+  useEffect(() => {
+    if (!plurk_id) return;
+    const getSavedPlurks = async () => {
+      const plurks = await getSavedEditedPlurks(plurk_id);
+      dispatch({ type: "SET_EDITED_PLURKS", payload: plurks });
+    };
+    getSavedPlurks();
+  }, [plurk_id]);
   return null;
 }

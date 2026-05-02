@@ -86,16 +86,6 @@ const reducer = (
 
 export const PlurksDataProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { getSavedEditedPlurks } = indexedDBService();
-
-  useEffect(() => {
-    if (!state.plurk_id) return;
-    const getSavedPlurks = async () => {
-      const plurks = await getSavedEditedPlurks(state.plurk_id);
-      dispatch({ type: "SET_EDITED_PLURKS", payload: plurks });
-    };
-    getSavedPlurks();
-  }, [state.plurk_id]);
 
   return (
     <PlurksDataContext value={[state, dispatch]}>{children}</PlurksDataContext>
