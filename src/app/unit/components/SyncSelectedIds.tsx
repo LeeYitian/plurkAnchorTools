@@ -2,15 +2,15 @@
 
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
 import { useContext, useEffect } from "react";
-import useIndexedDB from "../utils/useIndexedDB";
+import { indexedDBService } from "@/app/unit/lib/indexDB";
 
 export default function SyncSelectedIds() {
   const [{ hasData, plurk_id, selectedPlurksIds }, dispatch] =
     useContext(PlurksDataContext);
-  const { isDBInitialized, getStoredIds, storeSelectedIds } = useIndexedDB();
+  const { getStoredIds, storeSelectedIds } = indexedDBService();
 
   useEffect(() => {
-    if (!selectedPlurksIds.length || !isDBInitialized) return;
+    if (!selectedPlurksIds.length) return;
     const updateSelectedIds = async () => {
       await storeSelectedIds({
         storeIds: {
@@ -20,10 +20,10 @@ export default function SyncSelectedIds() {
       });
     };
     updateSelectedIds();
-  }, [selectedPlurksIds, isDBInitialized, plurk_id]);
+  }, [selectedPlurksIds, plurk_id]);
 
   useEffect(() => {
-    if (!isDBInitialized || !hasData) return;
+    if (!hasData) return;
     const getSelectedIds = async () => {
       const ids = await getStoredIds(plurk_id);
       if (ids.length) {
@@ -31,6 +31,6 @@ export default function SyncSelectedIds() {
       }
     };
     getSelectedIds();
-  }, [isDBInitialized, hasData, plurk_id]);
+  }, [hasData, plurk_id]);
   return null;
 }

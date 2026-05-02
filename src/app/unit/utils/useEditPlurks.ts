@@ -1,10 +1,10 @@
 import { useCallback, useContext, useState } from "react";
-import useIndexedDB from "./useIndexedDB";
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
+import { indexedDBService } from "@/app/unit/lib/indexDB";
 
 export default function useEditPlurks() {
   const [editing, setEditing] = useState(false);
-  const { saveEditedPlurk, deleteEditedPlurk } = useIndexedDB();
+  const { saveEditedPlurk, deleteEditedPlurk } = indexedDBService();
   const [{ plurk_id, plurks }, dispatch] = useContext(PlurksDataContext);
 
   const handleEditClick = useCallback(
