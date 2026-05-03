@@ -1,13 +1,6 @@
 "use client";
-import {
-  createContext,
-  Dispatch,
-  ReactNode,
-  useEffect,
-  useReducer,
-} from "react";
+import { createContext, Dispatch, ReactNode, useReducer } from "react";
 import { TPlurkReducerAction, TPlurkResponse } from "../types/plurks";
-import { indexedDBService } from "@/app/unit/lib/indexDB";
 
 type TInitialState = {
   plurks: TPlurkResponse[];

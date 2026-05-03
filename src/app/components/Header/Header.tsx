@@ -3,8 +3,6 @@ import Navigator from "@/app/components/Navigator";
 import { useEffect, useRef, useState } from "react";
 import "./Header.scss";
 import clsx from "clsx";
-import DeleteDB from "@/app/unit/components/DeleteDB";
-import LinkInput from "@/app/unit/components/LinkInput/LinkInput";
 
 let ticking = false;
 export default function Header() {
