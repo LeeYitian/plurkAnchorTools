@@ -118,9 +118,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await redis.set(key, sanitizedData, {
-      ex: 60 * 60,
-    });
+    await redis.set(
+      key,
+      { plurk_id, data: sanitizedData },
+      {
+        ex: 60 * 60,
+      },
+    );
 
     return Response.json({ state: "SUCCESS", data: key }, { status: 200 });
   } catch (error) {

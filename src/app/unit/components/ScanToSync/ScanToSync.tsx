@@ -230,7 +230,14 @@ export default function ScanToSync({ style }: { style?: string }) {
                 <div className="sendAndReceive"></div>
               </div>
             )}
-            {!creatingQRCode && (
+            {!creatingQRCode && errorMessage && (
+              <div className="h-[25%] w-[100%]">
+                <div className="text-red-500 font-light text-xs text-center">
+                  {`出現錯誤：${errorMessage}`}
+                </div>
+              </div>
+            )}
+            {!creatingQRCode && keyForStorage && (
               <>
                 <QRCode
                   value={`${window.location.origin}/unit?key=${keyForStorage}`}

@@ -6,11 +6,12 @@ const LIMIT = 10;
 const WINDOW = 60;
 
 export const config = {
-  matcher: ["/api/save/:path*"],
+  matcher: ["/api/saveData/:path*", "/api/saveData"],
 };
 
 //避免短時間請求過多
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
+  console.log("middleware------");
   const forwarded = request.headers.get("x-forwarded-for");
   const ip = forwarded?.split(",")[0]?.trim() ?? "unknown";
   const pathname = request.nextUrl.pathname;
