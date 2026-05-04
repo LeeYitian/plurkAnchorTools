@@ -6,7 +6,12 @@ const LIMIT = 10;
 const WINDOW = 60;
 
 export const config = {
-  matcher: ["/api/saveData/:path*", "/api/saveData"],
+  matcher: [
+    "/api/saveData/:path*",
+    "/api/saveData",
+    "/api/getData/:path*",
+    "/api/getData",
+  ],
 };
 
 //避免短時間請求過多

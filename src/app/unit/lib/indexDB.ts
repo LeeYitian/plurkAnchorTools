@@ -2,10 +2,11 @@ import { deleteDB, IDBPDatabase, openDB } from "idb";
 
 let dbPromise: Promise<IDBPDatabase> | null = null;
 
-type TSavedEditedPlurks = {
+type TSavedEditedPlurk = {
   editedPlurk: { id: number; content: string; plurk_id: number };
 };
 
+//TODO: 優化 indexedDB 的使用方法。 edited-plurks 的資料格式？ upgrade version？
 const getDB = () => {
   if (!dbPromise) {
     dbPromise = openDB("edit-plurks", 1, {
@@ -71,12 +72,26 @@ export const indexedDBService = () => ({
   },
 
   /** 儲存被編輯過的噗文內容，及原本所屬的噗文（plurk_id） */
-  saveEditedPlurk: async ({ editedPlurk }: TSavedEditedPlurks) => {
+  saveEditedPlurk: async ({ editedPlurk }: TSavedEditedPlurk) => {
     const db = await getDB();
     await db.put("edited-plurks", editedPlurk);
   },
 
-  /** 取得某則噗文下所有被編輯過的內容 */
+  /** 一次儲存所有從 redis 取得的編輯紀錄按照原本的結構存入*/
+  saveEditedPlurks: async (
+    editedPlurks: TSavedEditedPlurk["editedPlurk"][],
+  ) => {
+    const db = await getDB();
+    const tx = db.transaction("edited-plurks", "readwrite");
+    for (const editedPlurk of editedPlurks) {
+      await tx.store.put(editedPlurk);
+    }
+    await tx.done;
+  },
+
+  /** 取得某則噗文下所有被編輯過的內容
+   * @returns {Record<string, string>} { id: content }
+   */
   getSavedEditedPlurks: async (plurk_id: number) => {
     const db = await getDB();
     const result = await db.getAllFromIndex(
@@ -110,10 +125,36 @@ export const indexedDBService = () => ({
 
     const tx = db.transaction("edited-plurks", "readwrite");
     const allEditedRecords = await tx.store.getAll();
-    const editedToDelete: TSavedEditedPlurks["editedPlurk"][] =
+    const editedToDelete: TSavedEditedPlurk["editedPlurk"][] =
       allEditedRecords.filter((record) => record.plurk_id === plurk_id);
     for (const data of editedToDelete) {
       await tx.store.delete(data.id);
+    }
+    await tx.done;
+  },
+  replaceSinglePlurkData: async ({
+    plurk_id,
+    selectedPlurksIds,
+    editedPlurks,
+  }: {
+    plurk_id: number;
+    selectedPlurksIds: number[];
+    editedPlurks: TSavedEditedPlurk["editedPlurk"][];
+  }) => {
+    const db = await getDB();
+    await db.delete("selected-ids", plurk_id);
+    const storeIds = { plurk_id, ids: selectedPlurksIds };
+    await db.put("selected-ids", storeIds);
+
+    const tx = db.transaction("edited-plurks", "readwrite");
+    const allEditedRecords = await tx.store.getAll();
+    const editedToDelete: TSavedEditedPlurk["editedPlurk"][] =
+      allEditedRecords.filter((record) => record.plurk_id === plurk_id);
+    for (const data of editedToDelete) {
+      await tx.store.delete(data.id);
+    }
+    for (const editedPlurk of editedPlurks) {
+      await tx.store.put(editedPlurk);
     }
     await tx.done;
   },

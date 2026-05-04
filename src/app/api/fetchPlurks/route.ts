@@ -1,11 +1,14 @@
 import { NextRequest } from "next/server";
 
+/**
+ * 用 36 進位的 id 取得噗文內容 ，非 36 進位的 id 取回噗首
+ */
 export async function GET(request: NextRequest) {
   const id = request.nextUrl.searchParams.get("id");
   if (!id) {
     return Response.json(
       { state: "FAILURE", data: "Missing plurk_id" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -34,7 +37,7 @@ export async function GET(request: NextRequest) {
         /new Date\((.*?)\)/g,
         (_, dateStr) => {
           return JSON.stringify(eval(dateStr));
-        }
+        },
       );
       const headPlurkJson = JSON.parse(headPlurkData);
       const data = [headPlurkJson, ...plurksData.responses];
@@ -42,14 +45,14 @@ export async function GET(request: NextRequest) {
     } else {
       return Response.json(
         { state: "SUCCESS", data: [...plurksData.responses] },
-        { status: 200 }
+        { status: 200 },
       );
     }
   } catch (error) {
     console.error("Error fetching Plurks:", error);
     return Response.json(
       { state: "FAILURE", data: String(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

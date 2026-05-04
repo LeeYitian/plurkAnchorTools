@@ -6,6 +6,7 @@ type TInitialState = {
   plurks: TPlurkResponse[];
   plurk_id: number;
   hasData: boolean;
+  hasEditedPlurks: boolean;
   selectedPlurksIds: number[];
   scrollToId: number | null;
   editedPlurks: Record<string, string>;
@@ -15,6 +16,7 @@ const initialState = {
   plurks: [],
   plurk_id: 0,
   hasData: false,
+  hasEditedPlurks: false,
   selectedPlurksIds: [],
   scrollToId: null,
   editedPlurks: {},
@@ -38,6 +40,7 @@ const reducer = (
         plurk_id: action.payload[0]?.plurk_id || 0,
         hasData: action.payload.length > 0,
         selectedPlurksIds: isSamePlurk ? state.selectedPlurksIds : [],
+        editedPlurks: isSamePlurk ? state.editedPlurks : {},
       };
     case "SELECT_PLURKS_IDS":
       const temp = new Set(state.selectedPlurksIds);
@@ -60,8 +63,11 @@ const reducer = (
         scrollToId: action.payload,
       };
     case "SET_EDITED_PLURKS":
+      const hasEditedPlurks =
+        Object.keys({ ...state.editedPlurks, ...action.payload }).length > 0;
       return {
         ...state,
+        hasEditedPlurks,
         editedPlurks: { ...state.editedPlurks, ...action.payload },
       };
     case "RESTORE_EDITED_PLURKS":

@@ -7,7 +7,7 @@ function generateKey() {
   return randomBytes(8).toString("base64url").replace(/[-_]/g, "").slice(0, 6);
 }
 
-//可能需要壓縮文字。前端傳進來的時候就壓縮？可考慮 lz-string.js
+//TODO: 可能需要壓縮文字。前端傳進來的時候就壓縮？可考慮 lz-string.js
 const MAX_BODY_SIZE = 500 * 1024;
 const MAX_FIELDS = 1500;
 const MAX_PER_FIELD = 100 * 1024;
@@ -30,9 +30,11 @@ export async function POST(request: NextRequest) {
     const {
       data,
       plurk_id,
+      selectedPlurksIds,
     }: {
       data: Record<string, string>;
       plurk_id: number;
+      selectedPlurksIds: number[];
     } = JSON.parse(raw);
 
     //驗證噗文確實存在
@@ -87,6 +89,8 @@ export async function POST(request: NextRequest) {
               "width",
               "height",
               "loading",
+              "class",
+              "rndnum",
             ],
             br: ["class"],
           },
@@ -120,7 +124,7 @@ export async function POST(request: NextRequest) {
 
     await redis.set(
       key,
-      { plurk_id, data: sanitizedData },
+      { plurk_id, data: sanitizedData, selectedPlurksIds },
       {
         ex: 60 * 60,
       },

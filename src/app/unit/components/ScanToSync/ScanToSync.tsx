@@ -5,35 +5,38 @@ import clsx from "clsx";
 import QRCode from "react-qr-code";
 import { useContext, useEffect, useRef, useState } from "react";
 import "./ScanToSync.scss";
-import { indexedDBService } from "../../lib/indexDB";
+import useSendAndReceive from "@/app/unit/utils/useSendAndReceive";
+import { indexedDBService } from "@/app/unit/lib/indexDB";
 
-enum INPUT_TYPE {
-  UNCHOOSE = "UNCHOOSE",
-  SEND = "SEND",
-  RECEIVE = "RECEIVE",
-}
-
+//TODO：拆成更小的 component？
+//TODO：error message 的管理
 export default function ScanToSync({ style }: { style?: string }) {
-  const [{ hasData, plurk_id }] = useContext(PlurksDataContext);
+  const [{ hasData, hasEditedPlurks }] = useContext(PlurksDataContext);
   const [openDialog, setOpenDialog] = useState(false);
-  const [inputType, setInputType] = useState(INPUT_TYPE.UNCHOOSE);
   const inputAreaRef = useRef<HTMLInputElement>(null);
   const [disableReceive, setDisableReceive] = useState(true);
-  const [creatingQRCode, setCreatingQRCode] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [keyForStorage, setKeyForStorage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [askForReplace, setAskForReplace] = useState(false);
+  const [tempData, setTempData] = useState<{
+    data: Record<string, string>;
+    plurk_id: number;
+    selectedPlurksIds: number[];
+  } | null>(null);
+  const {
+    sendDataToCloud,
+    receiveDataFromCloud,
+    replaceExistedData,
+    errorMessage,
+  } = useSendAndReceive();
   const { getSavedEditedPlurks } = indexedDBService();
-
-  const handleClick = () => {
+  const toggleQRCode = () => {
     setOpenDialog(!openDialog);
-    setInputType(INPUT_TYPE.UNCHOOSE);
     setDisableReceive(true);
-  };
-
-  const closeQRCode = () => {
-    setOpenDialog(false);
-    setInputType(INPUT_TYPE.UNCHOOSE);
-    setDisableReceive(true);
+    const children = Array.from(
+      inputAreaRef.current?.children || [],
+    ) as HTMLInputElement[];
+    children.forEach((el) => (el.value = ""));
   };
 
   const distributeValue = (el: HTMLInputElement) => {
@@ -84,15 +87,48 @@ export default function ScanToSync({ style }: { style?: string }) {
     distributeValue(e.currentTarget);
   };
 
-  const confirmInput = () => {
+  const confirmInput = async () => {
     const children = Array.from(
       inputAreaRef.current?.children || [],
     ) as HTMLInputElement[];
     const typedValue = children.map((el) => el.value).join("");
 
     if (typedValue.length === 6) {
-      alert(typedValue);
+      setLoading(true);
+      const res = await receiveDataFromCloud(typedValue);
+      if (res) {
+        const { data, plurk_id, selectedPlurksIds } = res;
+        const existedPlurks = await getSavedEditedPlurks(plurk_id);
+        if (Object.keys(existedPlurks).length > 0) {
+          setTempData({ data, plurk_id, selectedPlurksIds });
+          setAskForReplace(true);
+        } else {
+          replaceExistedData(data, plurk_id, selectedPlurksIds);
+          toggleQRCode();
+        }
+      }
+      setLoading(false);
     }
+  };
+
+  const confirmReplace = async (confirm: boolean) => {
+    if (!confirm) {
+      setTempData(null);
+      setAskForReplace(false);
+      toggleQRCode();
+      return;
+    }
+    if (tempData) {
+      setLoading(true);
+      const { data, plurk_id, selectedPlurksIds } = tempData;
+      await replaceExistedData(data, plurk_id, selectedPlurksIds);
+      setTempData(null);
+      setAskForReplace(false);
+    } else {
+      alert("出現錯誤請重試");
+    }
+    toggleQRCode();
+    setLoading(false);
   };
 
   const handleReceiveKeyUp = (e: React.KeyboardEvent) => {
@@ -111,47 +147,39 @@ export default function ScanToSync({ style }: { style?: string }) {
     }
   };
 
-  const sendDataToCloud = async () => {
-    setCreatingQRCode(true);
-    try {
-      const allSavedPlurks = await getSavedEditedPlurks(plurk_id);
-
-      const res = await fetch("/api/saveData", {
-        method: "POST",
-        body: JSON.stringify({ data: allSavedPlurks, plurk_id }),
-      });
-      const { data } = await res.json();
-
-      if (!res.ok) {
-        setErrorMessage(data);
-      } else {
-        setKeyForStorage(data);
-      }
-    } catch (error) {
-      console.log("sendDataToCloud error", error);
-      setErrorMessage(JSON.stringify(error));
-    } finally {
-      setCreatingQRCode(false);
+  const sendData = async () => {
+    setLoading(true);
+    const data = await sendDataToCloud();
+    if (data) {
+      setKeyForStorage(data);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
-    if (inputType === INPUT_TYPE.RECEIVE) {
-      const firstInput = inputAreaRef.current?.querySelector("input");
-      firstInput?.focus();
-    }
-  }, [inputType]);
-
-  if (!hasData) return null;
+    const firstInput = inputAreaRef.current?.querySelector("input");
+    firstInput?.focus();
+  }, [openDialog]);
 
   return (
     <>
       <button
         className={clsx(
-          "outlineBtn absolute border-cute text-cute icon -top-1 right-21",
+          "outlineBtn absolute border-cute text-cute icon",
           style,
+          { "-top-1 right-21": hasData },
+          { "-top-0.5 right-28": !hasData },
+          {
+            "pointer-events-none text-gray-400 border-gray-400":
+              hasData && !hasEditedPlurks,
+          },
         )}
-        onClick={handleClick}
+        onClick={() => {
+          toggleQRCode();
+          if (hasData && hasEditedPlurks) {
+            sendData();
+          }
+        }}
       >
         <Icon
           icon="streamline-ultimate:cloud-data-transfer-bold"
@@ -172,72 +200,84 @@ export default function ScanToSync({ style }: { style?: string }) {
             className="group-hover:scale-110"
             width={30}
             height={30}
-            onClick={closeQRCode}
+            onClick={toggleQRCode}
           />
         </div>
-        {inputType === INPUT_TYPE.UNCHOOSE && (
-          <div className="h-[75%] w-full p-10 flex justify-center gap-4 items-center flex-col">
-            <button
-              className="selectBtn"
-              onClick={() => {
-                setInputType(INPUT_TYPE.SEND);
-                sendDataToCloud();
-              }}
-            >
-              傳送編輯紀錄
-            </button>
-            <span className="text-gray-700 text-md">或</span>
-            <button
-              className="selectBtn plain"
-              onClick={() => setInputType(INPUT_TYPE.RECEIVE)}
-            >
-              接收編輯紀錄
-            </button>
-          </div>
-        )}
-        {inputType === INPUT_TYPE.RECEIVE && (
+        {!hasData && !askForReplace && (
           <div className="h-[70%] flex justify-center items-center flex-col">
-            <span className="text-gray-500 mb-6 text-center text-md font-light">
-              請輸入驗證碼
-            </span>
-            <div
-              ref={inputAreaRef}
-              className="flex justify-center items-center gap-3 mb-8"
-            >
-              {Array.from({ length: 6 }).map((_, i) => (
-                <input
-                  className="input"
-                  onChange={handleReceiveTyping}
-                  onKeyUp={handleReceiveKeyUp}
-                  onCompositionEnd={handleReceiveCompositionEnd}
-                  key={i}
-                />
-              ))}
-            </div>
-            <button
-              disabled={disableReceive}
-              className="selectBtn"
-              onClick={confirmInput}
-            >
-              確認
-            </button>
-          </div>
-        )}
-        {inputType === INPUT_TYPE.SEND && (
-          <div className="h-[90%] flex justify-center items-center flex-col">
-            {creatingQRCode && (
+            {loading && (
               <div className="h-[25%] w-[100%]">
                 <div className="sendAndReceive"></div>
               </div>
             )}
-            {!creatingQRCode && errorMessage && (
-              <div className="h-[25%] w-[100%]">
-                <div className="text-red-500 font-light text-xs text-center">
-                  {`出現錯誤：${errorMessage}`}
+            {!loading && (
+              <>
+                <span className="text-gray-500 mb-6 text-center text-md font-light">
+                  輸入驗證碼接收編輯紀錄
+                </span>
+                <div
+                  ref={inputAreaRef}
+                  className="flex justify-center items-center gap-3 mb-8"
+                >
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <input
+                      className="input"
+                      onChange={handleReceiveTyping}
+                      onKeyUp={handleReceiveKeyUp}
+                      onCompositionEnd={handleReceiveCompositionEnd}
+                      key={i}
+                    />
+                  ))}
                 </div>
+                <button
+                  disabled={disableReceive}
+                  className="selectBtn"
+                  onClick={confirmInput}
+                >
+                  確認
+                </button>
+              </>
+            )}
+          </div>
+        )}
+        {!hasData && askForReplace && (
+          <div className="h-[70%] p-5 flex justify-center items-center flex-col">
+            {loading && (
+              <div className="h-[25%] w-[100%]">
+                <div className="sendAndReceive"></div>
               </div>
             )}
-            {!creatingQRCode && keyForStorage && (
+            {!loading && (
+              <>
+                <span className="text-gray-500 mb-3 text-center text-md font-light">
+                  {`本瀏覽器中存在同噗文（${tempData?.plurk_id.toString(36)}）的編輯紀錄，是否覆蓋？`}
+                </span>
+                <div className="flex gap-2 w-full">
+                  <button
+                    className="selectBtn plain"
+                    onClick={() => confirmReplace(false)}
+                  >
+                    否
+                  </button>
+                  <button
+                    className="selectBtn"
+                    onClick={() => confirmReplace(true)}
+                  >
+                    是
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+        {hasData && (
+          <div className="h-[90%] flex justify-center items-center flex-col">
+            {loading && (
+              <div className="h-[25%] w-[100%]">
+                <div className="sendAndReceive"></div>
+              </div>
+            )}
+            {!loading && keyForStorage && (
               <>
                 <QRCode
                   value={`${window.location.origin}/unit?key=${keyForStorage}`}
@@ -253,6 +293,13 @@ export default function ScanToSync({ style }: { style?: string }) {
                 </span>
               </>
             )}
+          </div>
+        )}
+        {errorMessage && (
+          <div className="h-[25%] w-[100%]">
+            <div className="text-red-500 font-light text-xs text-center">
+              {`出現錯誤：${errorMessage}`}
+            </div>
           </div>
         )}
       </div>
