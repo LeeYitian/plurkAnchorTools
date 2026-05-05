@@ -1,6 +1,6 @@
 import { LoadingContext } from "@/providers/LoadingProvider";
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
-import { useContext, useState } from "react";
+import { use, useContext, useEffect, useState } from "react";
 import { indexedDBService } from "@/app/unit/lib/indexDB";
 import useFetchPlurk from "@/app/unit/utils/useFetchPlurk";
 
@@ -116,6 +116,18 @@ export default function useSendAndReceive() {
     }
     setLoading(false);
   };
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (errorMessage) {
+      timer = setTimeout(() => {
+        setErrorMessage("");
+      }, 3000);
+    }
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [errorMessage]);
 
   return {
     sendDataToCloud,
