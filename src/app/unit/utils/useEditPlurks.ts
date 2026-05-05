@@ -17,6 +17,32 @@ export default function useEditPlurks() {
       target.focus();
 
       target.addEventListener(
+        "beforeinput",
+        (e) => {
+          if (e.inputType === "insertParagraph") {
+            e.preventDefault();
+            const br = document.createElement("br");
+            const dblBr = document.createElement("br");
+            dblBr.classList.add("double-br");
+            const selection = window.getSelection();
+            const range = selection?.getRangeAt(0);
+            if (range) {
+              range.insertNode(dblBr);
+              range.insertNode(br);
+
+              // 移動游標到 <br> 後面
+              range.setStartAfter(dblBr);
+              range.setEndAfter(dblBr);
+              selection?.removeAllRanges();
+              selection?.addRange(range);
+            }
+            // 自訂你的換行邏輯
+          }
+        },
+        { once: true },
+      );
+
+      target.addEventListener(
         "blur",
         () => {
           target.removeAttribute("contentEditable");

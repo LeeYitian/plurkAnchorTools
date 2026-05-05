@@ -21,7 +21,10 @@ export default function SubHeader() {
     <div
       className={clsx(
         "fixed w-full z-10 top-0 left-0 bg-white h-12 opacity-0 transition-all duration-300 ease-in-out",
-        { "opacity-100": showSubHeader },
+        {
+          "opacity-100 md:opacity-0 md:user-select-none md:pointer-events-none":
+            showSubHeader,
+        },
         { "user-select-none pointer-events-none": !showSubHeader },
       )}
     >
