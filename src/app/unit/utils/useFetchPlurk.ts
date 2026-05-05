@@ -7,6 +7,12 @@ export default function useFetchPlurk() {
   const [, dispatch] = useContext(PlurksDataContext);
   const [errorMessage, setErrorMessage] = useState("");
 
+  /**
+   * 取回噗文，並將噗文（包含噗首）存進 context 裡
+   * 存進 context 時會順便設定 hasData、selectedPlurksIds、plurk_id
+   * @param url 從噗浪複製來的噗文網址（id 非 36 進位）
+   *
+   */
   const fetchPlurk = async (url: string) => {
     if (!url) return;
 

@@ -67,6 +67,21 @@ export default function VersionDetailUnit() {
             <li>更改手機版 Header 的樣式。增加滑動收合及副標題區塊</li>
           </ul>
         </li>
+        <li>
+          v1.3.5：簡化 IndexedDB 相關的程式碼結構。移除 React provider 和 custom
+          hook 的用法
+        </li>
+        <li>
+          v1.4.0：新增／修正
+          <ul>
+            <li>
+              新增跨裝置同步紀錄功能：藉由「掃描 QRCode」
+              或「輸入短碼」取回遠端資料（redis）存入 IndexedDB 中
+            </li>
+            <li>改變在 contenteditable 下 Enter 分行的行為</li>
+            <li>其他樣式及元件結構調整</li>
+          </ul>
+        </li>
       </ul>
     </details>
   );

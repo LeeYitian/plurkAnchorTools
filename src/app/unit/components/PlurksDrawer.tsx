@@ -1,7 +1,7 @@
 "use client";
 import { Drawer, DrawerContent, DrawerTitle } from "@/lib/ui/drawer";
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 
 const SNAP_POINTS = ["550px", "800px"];
 export function PlurksDrawer({ children }: { children: React.ReactNode }) {

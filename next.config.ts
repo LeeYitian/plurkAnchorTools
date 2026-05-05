@@ -10,6 +10,17 @@ const nextConfig: NextConfig = {
         destination: "/chunk",
         permanent: true,
       },
+      {
+        source: "/unit",
+        destination: "/unit/fromscan",
+        permanent: false,
+        has: [
+          {
+            type: "query",
+            key: "key",
+          },
+        ],
+      },
     ];
   },
 };

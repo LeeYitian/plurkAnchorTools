@@ -3,6 +3,7 @@ import DeleteDB from "@/app/unit/components/DeleteDB";
 import LinkInput from "@/app/unit/components/LinkInput/LinkInput";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
+import ScanToSync from "@/app/unit/features/ScanToSync/ScanToSync";
 
 export default function SubHeader() {
   const [showSubHeader, setShowSubHeader] = useState(false);
@@ -16,16 +17,20 @@ export default function SubHeader() {
     });
   }, []);
 
-  console.log("subheader", showSubHeader);
   return (
     <div
       className={clsx(
         "fixed w-full z-10 top-0 left-0 bg-white h-12 opacity-0 transition-all duration-300 ease-in-out",
-        { "opacity-100": showSubHeader },
+        {
+          "opacity-100 md:opacity-0 md:user-select-none md:pointer-events-none":
+            showSubHeader,
+        },
+        { "user-select-none pointer-events-none": !showSubHeader },
       )}
     >
       <DeleteDB style={"top-2 right-14"} />
       <LinkInput style={"top-2 right-4"} />
+      <ScanToSync style={"top-2 right-24"} />
     </div>
   );
 }

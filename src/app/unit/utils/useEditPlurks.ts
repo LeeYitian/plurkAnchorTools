@@ -1,10 +1,10 @@
 import { useCallback, useContext, useState } from "react";
-import useIndexedDB from "./useIndexedDB";
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
+import { indexedDBService } from "@/app/unit/lib/indexDB";
 
 export default function useEditPlurks() {
   const [editing, setEditing] = useState(false);
-  const { saveEditedPlurk, deleteEditedPlurk } = useIndexedDB();
+  const { saveEditedPlurk, deleteEditedPlurk } = indexedDBService();
   const [{ plurk_id, plurks }, dispatch] = useContext(PlurksDataContext);
 
   const handleEditClick = useCallback(
@@ -16,9 +16,34 @@ export default function useEditPlurks() {
       target.setAttribute("contentEditable", "true");
       target.focus();
 
+      const beforeInput = (e: InputEvent) => {
+        if (e.inputType === "insertParagraph") {
+          e.preventDefault();
+          const br = document.createElement("br");
+          const dblBr = document.createElement("br");
+          dblBr.classList.add("double-br");
+          const selection = window.getSelection();
+          const range = selection?.getRangeAt(0);
+          if (range) {
+            range.insertNode(dblBr);
+            range.insertNode(br);
+
+            // 移動游標到 <br> 後面
+            range.setStartAfter(dblBr);
+            range.setEndAfter(dblBr);
+            selection?.removeAllRanges();
+            selection?.addRange(range);
+          }
+        }
+      };
+
+      target.addEventListener("beforeinput", beforeInput);
+
       target.addEventListener(
         "blur",
         () => {
+          target.removeEventListener("beforeinput", beforeInput);
+
           target.removeAttribute("contentEditable");
           const newContent = target.innerHTML;
           setEditing(false);

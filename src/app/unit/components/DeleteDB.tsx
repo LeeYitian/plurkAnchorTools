@@ -3,8 +3,8 @@
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
 import { useContext, useEffect, useState } from "react";
 import { Icon } from "@iconify-icon/react";
-import useIndexedDB from "@/app/unit/utils/useIndexedDB";
 import clsx from "clsx";
+import { indexedDBService } from "@/app/unit/lib/indexDB";
 
 enum DELETE_TYPE {
   ALL = "ALL",
@@ -32,12 +32,8 @@ const DELETEBTN_CONFIG = {
 export default function DeleteDB({ style }: { style?: string }) {
   const [{ hasData, plurk_id }] = useContext(PlurksDataContext);
   const [showDialog, setShowDialog] = useState(false);
-  const {
-    isDBInitialized,
-    getAllPlurkIds,
-    deleteIndexedDB,
-    deleteSinglePlurkData,
-  } = useIndexedDB();
+  const { getAllPlurkIds, deleteIndexedDB, deleteSinglePlurkData } =
+    indexedDBService();
   const deleteType = hasData ? DELETE_TYPE.SINGLE : DELETE_TYPE.ALL;
   const [text, setText] = useState<string>("0");
   const handleConfirm = async (deleteType: DELETE_TYPE) => {
@@ -55,13 +51,13 @@ export default function DeleteDB({ style }: { style?: string }) {
   };
 
   useEffect(() => {
-    if (!isDBInitialized) return;
+    if (hasData) return;
     const getCount = async () => {
       const allIds = await getAllPlurkIds();
       setText(allIds.length.toString());
     };
     getCount();
-  }, [isDBInitialized]);
+  }, [getAllPlurkIds, hasData]);
 
   useEffect(() => {
     if (hasData) {
@@ -74,11 +70,10 @@ export default function DeleteDB({ style }: { style?: string }) {
     <>
       <button
         className={clsx(
-          "absolute py-1 rounded-full border-cute border-2 text-cute text-xs",
+          "outlineBtn absolute border-cute text-cute",
           style,
           {
-            "right-12 -top-1 px-1 flex justify-center items-center max-w-8 max-h-8":
-              hasData,
+            "icon right-11 -top-1": hasData,
           },
           { "right-3 px-2 top-0": !hasData },
         )}
