@@ -6,15 +6,24 @@ import QRCode from "react-qr-code";
 import { useContext, useEffect, useRef, useState } from "react";
 import "./ScanToSync.scss";
 import useSendAndReceive from "@/app/unit/utils/useSendAndReceive";
+import ReceiveInputDialog from "@/app/unit/components/ReceiveInputDialog";
 import { indexedDBService } from "@/app/unit/lib/indexDB";
 
+enum TRANSFER_TYPE {
+  UNCHOOSE = "UNCHOOSE",
+  RECEIVE = "RECEIVE",
+  SEND = "SEND",
+}
+
 //TODO：拆成更小的 component？
-//TODO：error message 的管理
+//TODO：error message 的管理，尤其是 send/receive 和 fetchPlurks 之間沒有統一行為。Hook 的設計問題？改用 tanstack？
 export default function ScanToSync({ style }: { style?: string }) {
   const [{ hasData, hasEditedPlurks }] = useContext(PlurksDataContext);
+  const [transferType, setTransferType] = useState<TRANSFER_TYPE>(
+    TRANSFER_TYPE.UNCHOOSE,
+  );
   const [openDialog, setOpenDialog] = useState(false);
   const inputAreaRef = useRef<HTMLInputElement>(null);
-  const [disableReceive, setDisableReceive] = useState(true);
   const [loading, setLoading] = useState(false);
   const [keyForStorage, setKeyForStorage] = useState("");
   const [askForReplace, setAskForReplace] = useState(false);
@@ -30,61 +39,23 @@ export default function ScanToSync({ style }: { style?: string }) {
     errorMessage,
   } = useSendAndReceive();
   const { getSavedEditedPlurks } = indexedDBService();
+
   const toggleQRCode = () => {
     setOpenDialog(!openDialog);
-    setDisableReceive(true);
+    setTransferType(!hasData ? TRANSFER_TYPE.RECEIVE : TRANSFER_TYPE.UNCHOOSE);
     const children = Array.from(
       inputAreaRef.current?.children || [],
     ) as HTMLInputElement[];
     children.forEach((el) => (el.value = ""));
   };
 
-  const distributeValue = (el: HTMLInputElement) => {
-    const value = el.value.trim();
-    if (!value) return;
-
-    const chars = value.split("");
-    el.value = chars[0];
-
-    let cursor: HTMLInputElement | null = el;
-    for (let i = 1; i < chars.length; i++) {
-      cursor = cursor?.nextElementSibling as HTMLInputElement | null;
-      if (!cursor) break;
-      cursor.value = chars[i].match(/[0-9a-zA-Z]/g) ? chars[i] : "";
+  const sendData = async () => {
+    setLoading(true);
+    const data = await sendDataToCloud();
+    if (data) {
+      setKeyForStorage(data);
     }
-    cursor?.focus();
-
-    disableCheck();
-  };
-
-  const disableCheck = () => {
-    setDisableReceive(
-      Array.from(inputAreaRef.current?.children || [])
-        .filter((el) => el instanceof HTMLInputElement)
-        .some((el) => el.value === ""),
-    );
-  };
-
-  const handleReceiveTyping = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //防止中文輸入法一次會跳兩格
-    if ("nativeEvent" in e) {
-      const native = e.nativeEvent as InputEvent;
-      if (native.isComposing) return;
-    }
-    const value = e.currentTarget.value.trim();
-    if (!value.match(/[0-9a-zA-Z]/g)) {
-      e.currentTarget.value = "";
-      return;
-    }
-
-    distributeValue(e.currentTarget);
-  };
-
-  //中文輸入狀態下停止輸入時自動分配數字
-  const handleReceiveCompositionEnd = (
-    e: React.CompositionEvent<HTMLInputElement>,
-  ) => {
-    distributeValue(e.currentTarget);
+    setLoading(false);
   };
 
   const confirmInput = async () => {
@@ -98,12 +69,16 @@ export default function ScanToSync({ style }: { style?: string }) {
       const res = await receiveDataFromCloud(typedValue);
       if (res) {
         const { data, plurk_id, selectedPlurksIds } = res;
+
         const existedPlurks = await getSavedEditedPlurks(plurk_id);
         if (Object.keys(existedPlurks).length > 0) {
           setTempData({ data, plurk_id, selectedPlurksIds });
           setAskForReplace(true);
         } else {
-          replaceExistedData(data, plurk_id, selectedPlurksIds);
+          await replaceExistedData(
+            { data, plurk_id, selectedPlurksIds },
+            !hasData,
+          );
           toggleQRCode();
         }
       }
@@ -121,7 +96,7 @@ export default function ScanToSync({ style }: { style?: string }) {
     if (tempData) {
       setLoading(true);
       const { data, plurk_id, selectedPlurksIds } = tempData;
-      await replaceExistedData(data, plurk_id, selectedPlurksIds);
+      await replaceExistedData({ data, plurk_id, selectedPlurksIds }, !hasData);
       setTempData(null);
       setAskForReplace(false);
     } else {
@@ -131,35 +106,9 @@ export default function ScanToSync({ style }: { style?: string }) {
     setLoading(false);
   };
 
-  const handleReceiveKeyUp = (e: React.KeyboardEvent) => {
-    const currentInput = e.currentTarget as HTMLInputElement;
-    const value = currentInput.value.trim();
-    const keyPress = e.key;
-
-    if (keyPress === "Backspace" && !value) {
-      const previousInput =
-        currentInput.previousSibling as HTMLInputElement | null;
-      if (previousInput) previousInput.focus();
-    }
-
-    if (keyPress === "Enter") {
-      confirmInput();
-    }
-  };
-
-  const sendData = async () => {
-    setLoading(true);
-    const data = await sendDataToCloud();
-    if (data) {
-      setKeyForStorage(data);
-    }
-    setLoading(false);
-  };
-
   useEffect(() => {
-    const firstInput = inputAreaRef.current?.querySelector("input");
-    firstInput?.focus();
-  }, [openDialog]);
+    setTransferType(!hasData ? TRANSFER_TYPE.RECEIVE : TRANSFER_TYPE.UNCHOOSE);
+  }, [hasData]);
 
   return (
     <>
@@ -176,9 +125,6 @@ export default function ScanToSync({ style }: { style?: string }) {
         )}
         onClick={() => {
           toggleQRCode();
-          if (hasData && hasEditedPlurks) {
-            sendData();
-          }
         }}
       >
         <Icon
@@ -203,52 +149,41 @@ export default function ScanToSync({ style }: { style?: string }) {
             onClick={toggleQRCode}
           />
         </div>
-        {!hasData && !askForReplace && (
-          <div className="h-[70%] flex justify-center items-center flex-col">
-            {loading && (
-              <div className="h-[25%] w-[100%]">
-                <div className="sendAndReceive"></div>
-              </div>
-            )}
-            {!loading && (
-              <>
-                <span className="text-gray-500 mb-6 text-center text-md font-light">
-                  輸入驗證碼接收編輯紀錄
-                </span>
-                <div
-                  ref={inputAreaRef}
-                  className="flex justify-center items-center gap-3 mb-8"
-                >
-                  {Array.from({ length: 6 }).map((_, i) => (
-                    <input
-                      className="input"
-                      onChange={handleReceiveTyping}
-                      onKeyUp={handleReceiveKeyUp}
-                      onCompositionEnd={handleReceiveCompositionEnd}
-                      key={i}
-                    />
-                  ))}
-                </div>
-                <button
-                  disabled={disableReceive}
-                  className="selectBtn"
-                  onClick={confirmInput}
-                >
-                  確認
-                </button>
-              </>
-            )}
+        {loading ? (
+          <div className="h-[100%] w-[100%] flex justify-center items-center">
+            <div className="sendAndReceive"></div>
           </div>
-        )}
-        {!hasData && askForReplace && (
-          <div className="h-[70%] p-5 flex justify-center items-center flex-col">
-            {loading && (
-              <div className="h-[25%] w-[100%]">
-                <div className="sendAndReceive"></div>
+        ) : (
+          <>
+            {transferType === TRANSFER_TYPE.UNCHOOSE && (
+              <div className="h-[75%] w-full p-10 flex justify-center gap-4 items-center flex-col">
+                <button
+                  className="selectBtn"
+                  onClick={() => {
+                    setTransferType(TRANSFER_TYPE.SEND);
+                    sendData();
+                  }}
+                >
+                  傳送編輯紀錄
+                </button>
+                <span className="text-gray-700 text-md">或</span>
+                <button
+                  className="selectBtn plain"
+                  onClick={() => setTransferType(TRANSFER_TYPE.RECEIVE)}
+                >
+                  接收編輯紀錄
+                </button>
               </div>
             )}
-            {!loading && (
-              <>
+            {transferType === TRANSFER_TYPE.RECEIVE && !askForReplace && (
+              <ReceiveInputDialog
+                inputAreaRef={inputAreaRef}
+                confirmInput={confirmInput}
+                openDialog={openDialog}
+              />
+            )}
+            {transferType === TRANSFER_TYPE.RECEIVE && askForReplace && (
+              <div className="h-[70%] p-5 flex justify-center items-center flex-col">
                 <span className="text-gray-500 mb-3 text-center text-md font-light">
                   {`本瀏覽器中存在同噗文（${tempData?.plurk_id.toString(36)}）的編輯紀錄，是否覆蓋？`}
                 </span>
@@ -266,19 +201,10 @@ export default function ScanToSync({ style }: { style?: string }) {
                     是
                   </button>
                 </div>
-              </>
-            )}
-          </div>
-        )}
-        {hasData && (
-          <div className="h-[90%] flex justify-center items-center flex-col">
-            {loading && (
-              <div className="h-[25%] w-[100%]">
-                <div className="sendAndReceive"></div>
               </div>
             )}
-            {!loading && keyForStorage && (
-              <>
+            {transferType === TRANSFER_TYPE.SEND && (
+              <div className="h-[90%] flex justify-center items-center flex-col">
                 <QRCode
                   value={`${window.location.origin}/unit?key=${keyForStorage}`}
                   style={{ height: "100%", width: "100%" }}
@@ -291,9 +217,9 @@ export default function ScanToSync({ style }: { style?: string }) {
                   <br />
                   在另一台裝置繼續編輯
                 </span>
-              </>
+              </div>
             )}
-          </div>
+          </>
         )}
         {errorMessage && (
           <div className="h-[25%] w-[100%]">

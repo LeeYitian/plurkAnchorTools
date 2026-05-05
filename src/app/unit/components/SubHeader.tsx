@@ -3,7 +3,7 @@ import DeleteDB from "@/app/unit/components/DeleteDB";
 import LinkInput from "@/app/unit/components/LinkInput/LinkInput";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
-import ScanToSync from "./ScanToSync/ScanToSync";
+import ScanToSync from "@/app/unit/features/ScanToSync/ScanToSync";
 
 export default function SubHeader() {
   const [showSubHeader, setShowSubHeader] = useState(false);

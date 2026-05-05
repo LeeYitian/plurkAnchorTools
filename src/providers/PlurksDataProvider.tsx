@@ -57,6 +57,11 @@ const reducer = (
         ...state,
         selectedPlurksIds: Array.from(temp),
       };
+    case "SET_PLURKS_IDS":
+      return {
+        ...state,
+        selectedPlurksIds: action.payload,
+      };
     case "SCROLL_TO_ID":
       return {
         ...state,

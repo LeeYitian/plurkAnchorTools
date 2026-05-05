@@ -3,7 +3,7 @@
 
 @layer components {
   .plurkMobile {
-    @apply flex bg-light text-[0.8rem] p-3 mb-1 items-start gap-4 relative;
+    @apply flex bg-light text-[1rem] p-3 mb-1 items-start gap-4 relative;
 
     div.plurkContent {
       @apply text-gray-800;

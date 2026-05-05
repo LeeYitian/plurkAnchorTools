@@ -14,7 +14,7 @@ import { Toaster } from "sonner";
 import DeleteDB from "@/app/unit/components/DeleteDB";
 import SyncPlurksData from "@/app/unit/components/SyncPlurksData";
 import SubHeader from "@/app/unit/components/SubHeader";
-import ScanToSync from "./components/ScanToSync/ScanToSync";
+import ScanToSync from "@/app/unit/features/ScanToSync/ScanToSync";
 
 export default function Unit() {
   return (
