@@ -53,16 +53,17 @@ export default function useSendAndReceive() {
   const receiveDataFromCloud = async (value: string) => {
     setLoading(true);
     try {
-      const res = await fetch("api/getData?key=" + value);
-      const {
-        data: { plurk_id, data, selectedPlurksIds },
-      } = await res.json();
+      const res = await fetch("/api/getData?key=" + value);
+      const { data: resData } = await res.json();
+      const { plurk_id, data: data, selectedPlurksIds } = resData;
 
       if (res.ok && plurk_id) {
         return { plurk_id, data, selectedPlurksIds };
+      } else {
+        setErrorMessage("缺少必要資料欄位，請重新上傳編輯紀錄");
       }
       if (!res.ok) {
-        setErrorMessage(data);
+        setErrorMessage(resData);
       }
     } catch (error) {
       setErrorMessage(JSON.stringify(error));

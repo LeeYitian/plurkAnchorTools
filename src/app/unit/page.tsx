@@ -12,13 +12,12 @@ import {
 } from "@/app/unit/components/PlurksDrawer";
 import { Toaster } from "sonner";
 import DeleteDB from "@/app/unit/components/DeleteDB";
-import SyncPlurksData from "@/app/unit/components/SyncPlurksData";
 import SubHeader from "@/app/unit/components/SubHeader";
 import ScanToSync from "@/app/unit/features/ScanToSync/ScanToSync";
 
 export default function Unit() {
   return (
-    <PlurksDataProvider>
+    <>
       <div className="w-full px-4 lg:px-0 mx-auto mt-[calc(115px+var(--spacing)*7)] md:mt-[calc(70px+var(--spacing)*7)] relative">
         <h3 className="text-main font-bold mb-4">把安價整理成長文 v1.3.5</h3>
         <DeleteDB />
@@ -42,7 +41,6 @@ export default function Unit() {
           </PlurksDrawer>
         </div>
       </div>
-      <SyncPlurksData />
       <Toaster
         position="top-left"
         offset={{ left: "40%", top: "5%" }}
@@ -59,6 +57,6 @@ export default function Unit() {
           duration: 1000,
         }}
       />
-    </PlurksDataProvider>
+    </>
   );
 }

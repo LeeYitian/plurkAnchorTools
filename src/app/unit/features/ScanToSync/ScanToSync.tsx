@@ -8,6 +8,7 @@ import "./ScanToSync.scss";
 import useSendAndReceive from "@/app/unit/utils/useSendAndReceive";
 import ReceiveInputDialog from "@/app/unit/components/ReceiveInputDialog";
 import { indexedDBService } from "@/app/unit/lib/indexDB";
+import AskForReplace from "../../components/AskForReplace";
 
 enum TRANSFER_TYPE {
   UNCHOOSE = "UNCHOOSE",
@@ -15,7 +16,6 @@ enum TRANSFER_TYPE {
   SEND = "SEND",
 }
 
-//TODO：拆成更小的 component？
 //TODO：error message 的管理，尤其是 send/receive 和 fetchPlurks 之間沒有統一行為。Hook 的設計問題？改用 tanstack？
 export default function ScanToSync({ style }: { style?: string }) {
   const [{ hasData, hasEditedPlurks }] = useContext(PlurksDataContext);
@@ -183,25 +183,10 @@ export default function ScanToSync({ style }: { style?: string }) {
               />
             )}
             {transferType === TRANSFER_TYPE.RECEIVE && askForReplace && (
-              <div className="h-[70%] p-5 flex justify-center items-center flex-col">
-                <span className="text-gray-500 mb-3 text-center text-md font-light">
-                  {`本瀏覽器中存在同噗文（${tempData?.plurk_id.toString(36)}）的編輯紀錄，是否覆蓋？`}
-                </span>
-                <div className="flex gap-2 w-full">
-                  <button
-                    className="selectBtn plain"
-                    onClick={() => confirmReplace(false)}
-                  >
-                    否
-                  </button>
-                  <button
-                    className="selectBtn"
-                    onClick={() => confirmReplace(true)}
-                  >
-                    是
-                  </button>
-                </div>
-              </div>
+              <AskForReplace
+                plurk_id={tempData?.plurk_id}
+                confirmReplace={confirmReplace}
+              />
             )}
             {transferType === TRANSFER_TYPE.SEND && (
               <div className="h-[90%] flex justify-center items-center flex-col">
