@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import "@/app/unit/features/ScanToSync/ScanToSync.scss";
 
 type TReceiveInputDialo = {
   inputAreaRef: React.RefObject<HTMLInputElement | null>;
@@ -85,8 +86,11 @@ export default function ReceiveInputDialog({
 
   return (
     <div className="h-[70%] flex justify-center items-center flex-col">
-      <span className="text-gray-500 mb-6 text-center text-md font-light">
+      <span className="text-gray-500 text-center text-md font-light">
         輸入驗證碼接收編輯紀錄
+      </span>
+      <span className="text-gray-500 mb-6 text-center text-xs font-light">
+        ※區分大小寫
       </span>
       <div
         ref={inputAreaRef}

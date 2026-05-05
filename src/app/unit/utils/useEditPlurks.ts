@@ -16,35 +16,34 @@ export default function useEditPlurks() {
       target.setAttribute("contentEditable", "true");
       target.focus();
 
-      target.addEventListener(
-        "beforeinput",
-        (e) => {
-          if (e.inputType === "insertParagraph") {
-            e.preventDefault();
-            const br = document.createElement("br");
-            const dblBr = document.createElement("br");
-            dblBr.classList.add("double-br");
-            const selection = window.getSelection();
-            const range = selection?.getRangeAt(0);
-            if (range) {
-              range.insertNode(dblBr);
-              range.insertNode(br);
+      const beforeInput = (e: InputEvent) => {
+        if (e.inputType === "insertParagraph") {
+          e.preventDefault();
+          const br = document.createElement("br");
+          const dblBr = document.createElement("br");
+          dblBr.classList.add("double-br");
+          const selection = window.getSelection();
+          const range = selection?.getRangeAt(0);
+          if (range) {
+            range.insertNode(dblBr);
+            range.insertNode(br);
 
-              // 移動游標到 <br> 後面
-              range.setStartAfter(dblBr);
-              range.setEndAfter(dblBr);
-              selection?.removeAllRanges();
-              selection?.addRange(range);
-            }
-            // 自訂你的換行邏輯
+            // 移動游標到 <br> 後面
+            range.setStartAfter(dblBr);
+            range.setEndAfter(dblBr);
+            selection?.removeAllRanges();
+            selection?.addRange(range);
           }
-        },
-        { once: true },
-      );
+        }
+      };
+
+      target.addEventListener("beforeinput", beforeInput);
 
       target.addEventListener(
         "blur",
         () => {
+          target.removeEventListener("beforeinput", beforeInput);
+
           target.removeAttribute("contentEditable");
           const newContent = target.innerHTML;
           setEditing(false);

@@ -52,6 +52,7 @@ export default function RetrivePage() {
               { data, plurk_id, selectedPlurksIds },
               true,
             );
+            router.push("/unit");
           }
         }
         setLoading(false);
