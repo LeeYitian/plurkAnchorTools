@@ -46,7 +46,7 @@ export default function PlurksAreaMobile() {
 
   return (
     <div className="overflow-y-auto scrollbar max-h-[80vh] max-h-[80dvh] flex-[1_0_auto] p-1 min-h-[300px]">
-      <div className="flex justify-between items-center px-3 py-3 sticky -top-1 z-1 bg-white">
+      <div className="flex justify-between items-center px-3 py-3 sticky -top-1 z-1 bg-white dark:bg-plain">
         <div className="flex items-center text-[0.8rem] text-gray-800 gap-1">
           <input
             type="checkbox"
@@ -64,13 +64,15 @@ export default function PlurksAreaMobile() {
               handleSelectAll(patch);
             }}
           />
-          <label htmlFor="select-all">全選</label>
+          <label htmlFor="select-all" className="dark:text-black">
+            全選
+          </label>
         </div>
         <div className="flex items-center justify-around gap-2">
           {Object.keys(FILTER_OPTIONS).map((key) => (
             <div
               key={key}
-              className={clsx("filterBtn", {
+              className={clsx("filterBtnMobile", {
                 active: filter[key],
               })}
               onClick={() => handleFilterChange(key)}
@@ -84,7 +86,7 @@ export default function PlurksAreaMobile() {
         <div
           key={plurk.id}
           className={clsx("plurkMobile", {
-            "bg-plain/40 dark:bg-secondary/20":
+            "bg-plain/40 dark:bg-secondary/30":
               plurk.handle === OWNER && plurk.content.includes(DICE_EMOTICON),
           })}
           onClick={() => {

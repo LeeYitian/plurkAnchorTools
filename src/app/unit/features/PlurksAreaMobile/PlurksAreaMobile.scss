@@ -3,7 +3,7 @@
 
 @layer components {
   .plurkMobile {
-    @apply flex bg-light text-[1rem] p-3 mb-1 items-start gap-4 relative;
+    @apply flex bg-light dark:bg-main/30 text-[1rem] p-3 mb-1 items-start gap-4 relative;
 
     div.plurkContent {
       @apply text-gray-800 dark:text-black;
@@ -48,11 +48,11 @@
     }
 
 
-  .filterBtn {
-    @apply flex border-[1px] border-main text-main rounded-full text-[0.75rem] px-2 py-1 cursor-pointer;
+  .filterBtnMobile {
+    @apply flex border-[1px] border-main text-main dark:text-light/50 dark:border-light/50 rounded-full text-[0.75rem] px-2 py-1 cursor-pointer;
     // background: var(--color-main);
     &.active {
-      @apply  bg-plain text-main border-none dark:text-white; 
+      @apply  bg-secondary/60 text-light border-none dark:text-white; 
     }
   }
 }
