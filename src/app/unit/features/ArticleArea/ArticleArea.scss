@@ -2,7 +2,7 @@
 
 @layer components {
   .article {
-    @apply text-[0.8rem] px-3 cursor-pointer hover:bg-light/50;
+    @apply text-[0.9rem] px-3 cursor-pointer hover:bg-light/50 dark:text-black dark:hover:bg-light/20;
     &:focus-visible {
       @apply outline-main outline-2 outline-dashed;
     }

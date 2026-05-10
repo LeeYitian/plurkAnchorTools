@@ -87,7 +87,7 @@ export default function PlurksArea() {
   return (
     <>
       <div className="w-[41%] overflow-y-auto max-h-[calc(100vh-200px)] max-h-[calc(100dvh-200px)] scrollbar relative">
-        <div className="flex justify-between items-center px-3 pb-3 sticky top-0 z-1 bg-white">
+        <div className="flex justify-between items-center px-3 pb-3 sticky top-0 z-1 bg-white dark:bg-bg">
           <div className="flex items-center text-[0.8rem] text-gray-800 gap-1">
             <input
               type="checkbox"

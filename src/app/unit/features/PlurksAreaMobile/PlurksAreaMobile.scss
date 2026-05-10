@@ -6,7 +6,7 @@
     @apply flex bg-light text-[1rem] p-3 mb-1 items-start gap-4 relative;
 
     div.plurkContent {
-      @apply text-gray-800;
+      @apply text-gray-800 dark:text-black;
       overflow-y: hidden;
       overflow-x: hidden;
       max-height: 1.15rem;
@@ -52,7 +52,7 @@
     @apply flex border-[1px] border-main text-main rounded-full text-[0.75rem] px-2 py-1 cursor-pointer;
     // background: var(--color-main);
     &.active {
-      @apply  bg-plain text-main border-none; 
+      @apply  bg-plain text-main border-none dark:text-white; 
     }
   }
 }

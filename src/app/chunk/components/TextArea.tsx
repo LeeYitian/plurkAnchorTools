@@ -13,7 +13,7 @@ export default function TextArea({ clearTexts, setText }: TextAreaProps) {
       <textarea
         ref={textareaRef}
         rows={10}
-        className="text-sm w-full p-2 mt-2 rounded-md bg-plain/20 border-2 border-plain"
+        className="text-md md:text-[0.9rem] dark:text-black w-full p-2 mt-2 rounded-md bg-plain/20 border-2 border-plain"
       ></textarea>
       <div className="flex justify-end gap-4 mt-1">
         <button

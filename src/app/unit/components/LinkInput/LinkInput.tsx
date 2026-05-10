@@ -48,7 +48,7 @@ export default function LinkInput({ style }: { style?: string }) {
               }}
               className={clsx(
                 "w-full bg-light rounded-md outline-main px-3 py-1 text-sm font-extralight",
-                { "text-gray-400": !url },
+                { "text-gray-400 dark:text-gray-700": !url },
               )}
             />
             <button

@@ -19,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-TW">
+    <html lang="zh-TW" className="dark:bg-bg">
       <body className={"antialiased"}>
         <LoadingProvider>
           <Suspense fallback={null}>

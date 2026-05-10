@@ -192,7 +192,11 @@ export default function ScanToSync({ style }: { style?: string }) {
               <div className="h-[90%] flex justify-center items-center flex-col">
                 <QRCode
                   value={`${window.location.origin}/unit?key=${keyForStorage}`}
-                  style={{ height: "100%", width: "100%" }}
+                  bgColor="#E3DBDB"
+                  style={{
+                    height: "100%",
+                    width: "100%",
+                  }}
                 />
                 <span className="my-1 text-black font-bold text-4xl tracking-widest">
                   {keyForStorage}

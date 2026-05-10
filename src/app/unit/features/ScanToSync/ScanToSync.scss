@@ -13,7 +13,7 @@ input.input {
 }
 
 .selectBtn.plain {
-  @apply bg-plain text-main font-semibold
+  @apply bg-plain text-main dark:text-light font-semibold
 }
 
 .sendAndReceive {
@@ -22,7 +22,7 @@ input.input {
   display: grid;
   border: 4px solid #0000;
   border-radius: 50%;
-  border-right-color: #F08B51;
+  border-right-color: var(--color-2);
   animation: l15 1s infinite linear;
 }
 .sendAndReceive::before,

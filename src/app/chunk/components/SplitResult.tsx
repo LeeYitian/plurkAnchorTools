@@ -38,7 +38,7 @@ export default function SplitResult({ splitTexts }: SplitResultProps) {
             key={text}
             className="mt-4 relative bg-cute/20 text-justify flex flex-col justify-between p-4 rounded-xl mx-1/10"
           >
-            <p className="mb-2.5 color-gray-900 flex-1 whitespace-pre-line break-all">
+            <p className="mb-2.5 text-md md:text-[0.9rem] text-gray-900 dark:text-black flex-1 whitespace-pre-line break-all">
               {text}
             </p>
             {deleteSuggestion && (

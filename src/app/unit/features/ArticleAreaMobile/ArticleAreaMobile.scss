@@ -2,7 +2,7 @@
 
 @layer components {
   .articleMobile {
-    @apply text-[1rem];
+    @apply text-[1rem] dark:text-black;
     &:focus-visible {
       @apply outline-main outline-2 outline-dashed;
     }

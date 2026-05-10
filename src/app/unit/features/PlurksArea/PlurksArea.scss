@@ -13,10 +13,10 @@
 
 @layer components {
   .plurk {
-    @apply flex bg-light text-[0.8rem] p-3 rounded-sm mb-2 items-start gap-4 relative;
+    @apply flex bg-light dark:bg-plain text-[0.9rem] p-3 rounded-sm mb-2 items-start gap-4 relative;
 
     div.plurkContent {
-      @apply text-gray-800;
+      @apply text-gray-800 dark:text-black;
       // color: var(--color-gray-800);
       // line-height: 1.15;
     }
@@ -43,7 +43,7 @@
     @apply flex border-[1px] border-main text-main rounded-full text-[0.75rem] px-2 py-1 cursor-pointer;
     // background: var(--color-main);
     &.active {
-      @apply  bg-plain text-main border-none; 
+      @apply  bg-plain text-main border-none dark:text-white; 
     }
   }
 }

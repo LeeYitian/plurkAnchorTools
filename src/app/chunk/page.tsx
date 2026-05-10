@@ -8,7 +8,7 @@ export default function Chunk() {
       <h3 className="text-main mb-4 font-bold">
         把長文斷成能夠發噗的長度 v1.4.1
       </h3>
-      <section>
+      <section className="dark:text-black">
         <p>
           噗浪一則留言長度為 360 字，包含空格和空行；11 行斷行，不包含空行。
         </p>

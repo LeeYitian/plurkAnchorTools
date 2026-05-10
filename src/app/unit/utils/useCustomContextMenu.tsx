@@ -115,7 +115,7 @@ export default function useCustomContextMenu() {
   }) => (
     <ContextMenu position={{ x: state.x, y: state.y }} isOpen={state.isOpen}>
       {iconName && (
-        <div className="p-1 flex items-center text-gray-300">
+        <div className="p-1 flex items-center text-gray-300 dark:text-gray-600">
           以
           <img
             className="h-[1.1rem] inline mx-1"
