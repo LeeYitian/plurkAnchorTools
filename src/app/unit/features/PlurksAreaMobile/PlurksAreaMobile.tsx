@@ -12,7 +12,7 @@ export default function PlurksAreaMobile() {
   const [showFullPlurk, setShowFullPlurk] = useState<number | null>(null);
   const { filter, filteredPlurks, setFilter } = useFilterPlurks(
     plurks,
-    selectedPlurksIds
+    selectedPlurksIds,
   );
 
   const handleFilterChange = (filterType: string) => {
@@ -54,12 +54,12 @@ export default function PlurksAreaMobile() {
             checked={
               filteredPlurks.length > 0 &&
               filteredPlurks.every((plurk) =>
-                selectedPlurksIds.includes(plurk.id)
+                selectedPlurksIds.includes(plurk.id),
               )
             }
             onChange={() => {
               const patch = !filteredPlurks.every((plurk) =>
-                selectedPlurksIds.includes(plurk.id)
+                selectedPlurksIds.includes(plurk.id),
               );
               handleSelectAll(patch);
             }}
@@ -84,7 +84,7 @@ export default function PlurksAreaMobile() {
         <div
           key={plurk.id}
           className={clsx("plurkMobile", {
-            "bg-plain/40":
+            "bg-plain/40 dark:bg-secondary/20":
               plurk.handle === OWNER && plurk.content.includes(DICE_EMOTICON),
           })}
           onClick={() => {
@@ -111,7 +111,7 @@ export default function PlurksAreaMobile() {
                 "whitespace-normal",
                 "width-initial",
                 "text-overflow-visible",
-              ]
+              ],
             )}
             key={plurk.id}
             dangerouslySetInnerHTML={{ __html: plurk.content }}

@@ -74,6 +74,10 @@ export default function SidePanel() {
     }
   };
 
+  const handleStop: DraggableEventHandler = () => {
+    isDragging.current = false;
+  };
+
   // const handleStop: DraggableEventHandler = (e, data) => {
   //   // 若沒有移動距離 → 視為點擊
   //   if (data.y === startPos.current.y) {
@@ -117,7 +121,8 @@ export default function SidePanel() {
       axis="y"
       onStart={handleStart}
       onDrag={handleDrag}
-      // onStop={handleStop}
+      onStop={handleStop}
+      cancel=".cancelDrag"
     >
       <div
         className={clsx("sidePanel", { open: panelOpen })}
@@ -128,6 +133,7 @@ export default function SidePanel() {
       >
         <MaterialSymbolsDarkModeOutlineRounded
           className={clsx(
+            "cancelDrag",
             !panelOpen && "hidden",
             colorMode === COLOR_MODE.LIGHT ? "block" : "hidden",
           )}
@@ -140,6 +146,7 @@ export default function SidePanel() {
         />
         <MaterialSymbolsLightModeOutlineRounded
           className={clsx(
+            "cancelDrag",
             !panelOpen && "hidden",
             colorMode === COLOR_MODE.DARK ? "block" : "hidden",
           )}
@@ -151,14 +158,16 @@ export default function SidePanel() {
           }}
         />
         <a
-          className={clsx({ hidden: !panelOpen })}
+          className={clsx("cancelDrag", { hidden: !panelOpen })}
           href="https://www.plurk.com/p/3hpbx8t2r0"
           target="_blank"
           rel="noopener noreferrer"
         >
-          問題回報
+          問題
+          <br />
+          回報
         </a>
-        <div className="absolute top-1/2 right-1 -translate-y-1/2 h-8 w-1 border-white border-l-3 rounded-sm" />
+        <div className="cancelDrag absolute top-1/2 right-1 -translate-y-1/2 h-9 w-1 border-white border-l-4 rounded-sm" />
       </div>
     </Draggable>
   );
