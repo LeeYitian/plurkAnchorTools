@@ -2,7 +2,7 @@
 
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
 import { useContext, useEffect, useState } from "react";
-import { Icon } from "@iconify-icon/react";
+import MaterialSymbolsDeleteOutlineRounded from "~icons/material-symbols/delete-outline-rounded";
 import clsx from "clsx";
 import { indexedDBService } from "@/app/unit/lib/indexDB";
 
@@ -18,13 +18,7 @@ const DELETEBTN_CONFIG = {
       `此瀏覽器上共儲存了 ${count} 筆噗文紀錄，確定要全部刪除嗎？`,
   },
   [DELETE_TYPE.SINGLE]: {
-    btnText: (
-      <Icon
-        icon="material-symbols:delete-outline-rounded"
-        width={25}
-        height={25}
-      />
-    ),
+    btnText: <MaterialSymbolsDeleteOutlineRounded width={25} height={25} />,
     dialogText: (id: string) => `確定要刪除此噗（${id}）的紀錄嗎？`,
   },
 };

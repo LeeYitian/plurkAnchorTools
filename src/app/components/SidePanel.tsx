@@ -1,6 +1,14 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Draggable, { DraggableEvent } from "react-draggable";
+import clsx from "clsx";
+import MaterialSymbolsDarkModeOutlineRounded from "~icons/material-symbols/dark-mode-outline-rounded";
+import MaterialSymbolsLightModeOutlineRounded from "~icons/material-symbols/light-mode-outline-rounded";
+
+enum COLOR_MODE {
+  LIGHT = "light",
+  DARK = "dark",
+}
 
 type DraggableEventHandler = (
   e: DraggableEvent,
@@ -21,11 +29,11 @@ export default function SidePanel() {
   const [panelOpen, setPanelOpen] = useState(true);
   const startPos = useRef({ x: 0, y: 0 });
   const isDragging = useRef(false);
+  const [colorMode, setColorMode] = useState(COLOR_MODE.LIGHT);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (!panelRef.current) return;
-      panelRef.current.classList.remove("open");
+      setPanelOpen(false);
     }, 500);
 
     return () => {
@@ -36,8 +44,8 @@ export default function SidePanel() {
   useEffect(() => {
     const closePanel = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (!panelRef.current || target.closest(".sidePanel")) return;
-      panelRef.current.classList.remove("open");
+      if (target.closest(".sidePanel")) return;
+      setPanelOpen(false);
     };
 
     document.body.addEventListener("click", closePanel);
@@ -47,25 +55,8 @@ export default function SidePanel() {
     };
   }, []);
 
-  // const handlePointerEnter = () => {
-  //   if (!panelRef.current || noHoverDevice) return;
-  //   panelRef.current.classList.add("open");
-  //   setPanelOpen(true);
-  // };
-
-  // const handlePointerLeave = () => {
-  //   if (!panelRef.current || noHoverDevice) return;
-  //   panelRef.current.classList.remove("open");
-  //   setPanelOpen(false);
-  // };
-
   const handleClick = () => {
-    if (!panelRef.current || isDragging.current) return;
-    if (panelOpen) {
-      panelRef.current.classList.remove("open");
-    } else {
-      panelRef.current.classList.add("open");
-    }
+    if (isDragging.current) return;
     setPanelOpen((prev) => !prev);
   };
 
@@ -91,6 +82,35 @@ export default function SidePanel() {
   //   }
   // };
 
+  const changeColorMode = (mode: COLOR_MODE) => {
+    setColorMode(mode);
+    if (mode === COLOR_MODE.LIGHT) {
+      document.documentElement.classList.remove("dark");
+    } else {
+      document.documentElement.classList.add("dark");
+    }
+  };
+
+  useEffect(() => {
+    const colorChange = (e: MediaQueryListEvent) => {
+      changeColorMode(e.matches ? COLOR_MODE.DARK : COLOR_MODE.LIGHT);
+    };
+
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", colorChange);
+
+    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      changeColorMode(COLOR_MODE.DARK);
+    }
+
+    return () => {
+      window
+        .matchMedia("(prefers-color-scheme: dark)")
+        .removeEventListener("change", colorChange);
+    };
+  }, []);
+
   return (
     <Draggable
       nodeRef={panelRef}
@@ -100,21 +120,45 @@ export default function SidePanel() {
       // onStop={handleStop}
     >
       <div
-        className="sidePanel open"
+        className={clsx("sidePanel", { open: panelOpen })}
         // onPointerEnter={handlePointerEnter}
         // onPointerLeave={handlePointerLeave}
         onClick={handleClick}
         ref={panelRef}
       >
+        <MaterialSymbolsDarkModeOutlineRounded
+          className={clsx(
+            !panelOpen && "hidden",
+            colorMode === COLOR_MODE.LIGHT ? "block" : "hidden",
+          )}
+          width={35}
+          height={35}
+          onClick={(e) => {
+            e.stopPropagation();
+            changeColorMode(COLOR_MODE.DARK);
+          }}
+        />
+        <MaterialSymbolsLightModeOutlineRounded
+          className={clsx(
+            !panelOpen && "hidden",
+            colorMode === COLOR_MODE.DARK ? "block" : "hidden",
+          )}
+          width={35}
+          height={35}
+          onClick={(e) => {
+            e.stopPropagation();
+            changeColorMode(COLOR_MODE.LIGHT);
+          }}
+        />
         <a
-          className="p-1.5"
+          className={clsx({ hidden: !panelOpen })}
           href="https://www.plurk.com/p/3hpbx8t2r0"
           target="_blank"
           rel="noopener noreferrer"
         >
           問題回報
         </a>
-        <div className="h-8 w-1 border-white border-l-3 rounded-sm" />
+        <div className="absolute top-1/2 right-1 -translate-y-1/2 h-8 w-1 border-white border-l-3 rounded-sm" />
       </div>
     </Draggable>
   );

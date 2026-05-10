@@ -1,16 +1,18 @@
 "use client";
 import Navigator from "@/app/components/Navigator";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import "./Header.scss";
 import clsx from "clsx";
+import { PlurksDataContext } from "@/providers/PlurksDataProvider";
 
-let ticking = false;
 export default function Header() {
+  const [{ hasData }] = useContext(PlurksDataContext);
   const lastScroll = useRef(0);
   const accumulatedUpScroll = useRef(0);
   const [hideHeader, setHideHeader] = useState(false);
 
   useEffect(() => {
+    if (!hasData) return;
     const handleScroll = () => {
       const currentScroll = window.scrollY;
       if (currentScroll > lastScroll.current && currentScroll > 100) {
@@ -24,13 +26,11 @@ export default function Header() {
         }
       }
       lastScroll.current = currentScroll;
-      ticking = false;
     };
     window.addEventListener("scroll", () => {
-      if (ticking) return;
       window.requestAnimationFrame(handleScroll);
     });
-  }, []);
+  }, [hasData]);
 
   return (
     <>

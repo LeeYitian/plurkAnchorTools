@@ -82,6 +82,30 @@
   --color-cute: var(--color-5);
   --color-gray-600: var(--color-gray);
   --color-bg: var(--color-bg);
+
+  --animate-tilt-n-move-shaking: tilt-n-move-shaking .1s 3;
+
+  @keyframes tilt-n-move-shaking {
+    0% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+
+    25% {
+      transform: translate(5px, 5px) rotate(5deg);
+    }
+
+    50% {
+      transform: translate(0, 0) rotate(0eg);
+    }
+
+    75% {
+      transform: translate(-5px, 5px) rotate(-5deg);
+    }
+
+    100% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+  }
 }
 
 @layer base {

@@ -113,7 +113,7 @@
   }
 
   .sidePanel {
-    @apply fixed top-20 -left-9 z-10 text-sm leading-[1.1] text-center text-white bg-secondary h-[18vh] max-h-24 w-12 rounded-r-md [writing-mode:vertical-lr] flex flex-col items-center justify-around gap-2 cursor-pointer transition-all;
+    @apply fixed top-20 -left-12 z-10 py-2 pl-2 pr-4 text-sm text-center text-white bg-secondary h-[18vh] max-h-24 w-16 rounded-r-md flex flex-col items-center justify-start gap-2 cursor-pointer transition-all animate-tilt-n-move-shaking;
 
     &.open {
       left: 0;

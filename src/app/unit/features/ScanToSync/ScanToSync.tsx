@@ -1,6 +1,5 @@
 "use client";
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
-import { Icon } from "@iconify-icon/react";
 import clsx from "clsx";
 import QRCode from "react-qr-code";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -8,7 +7,9 @@ import "./ScanToSync.scss";
 import useSendAndReceive from "@/app/unit/utils/useSendAndReceive";
 import ReceiveInputDialog from "@/app/unit/components/ReceiveInputDialog";
 import { indexedDBService } from "@/app/unit/lib/indexDB";
-import AskForReplace from "../../components/AskForReplace";
+import AskForReplace from "@/app/unit/components/AskForReplace";
+import StreamlineUltimateCloudDataTransferBold from "~icons/streamline-ultimate/cloud-data-transfer-bold";
+import MaterialSymbolsCloseRounded from "~icons/material-symbols/close-rounded";
 
 enum TRANSFER_TYPE {
   UNCHOOSE = "UNCHOOSE",
@@ -39,6 +40,7 @@ export default function ScanToSync({ style }: { style?: string }) {
     errorMessage,
   } = useSendAndReceive();
   const { getSavedEditedPlurks } = indexedDBService();
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const toggleQRCode = () => {
     setOpenDialog(!openDialog);
@@ -110,6 +112,23 @@ export default function ScanToSync({ style }: { style?: string }) {
     setTransferType(!hasData ? TRANSFER_TYPE.RECEIVE : TRANSFER_TYPE.UNCHOOSE);
   }, [hasData]);
 
+  useEffect(() => {
+    const changeQRCodeBG = (e: MediaQueryListEvent) => {
+      setIsDarkMode(e.matches);
+    };
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", changeQRCodeBG);
+
+    setIsDarkMode(window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+    return () => {
+      window
+        .matchMedia("(prefers-color-scheme: dark)")
+        .removeEventListener("change", changeQRCodeBG);
+    };
+  }, []);
+
   return (
     <>
       <button
@@ -127,11 +146,7 @@ export default function ScanToSync({ style }: { style?: string }) {
           toggleQRCode();
         }}
       >
-        <Icon
-          icon="streamline-ultimate:cloud-data-transfer-bold"
-          width={25}
-          height={25}
-        />
+        <StreamlineUltimateCloudDataTransferBold width={25} height={25} />
       </button>
       <div
         className={clsx(
@@ -141,8 +156,7 @@ export default function ScanToSync({ style }: { style?: string }) {
         )}
       >
         <div className="text-gray-400 cursor-pointer group p-2 w-full flex justify-end items-center">
-          <Icon
-            icon="material-symbols:close-rounded"
+          <MaterialSymbolsCloseRounded
             className="group-hover:scale-110"
             width={30}
             height={30}
@@ -192,7 +206,7 @@ export default function ScanToSync({ style }: { style?: string }) {
               <div className="h-[90%] flex justify-center items-center flex-col">
                 <QRCode
                   value={`${window.location.origin}/unit?key=${keyForStorage}`}
-                  bgColor="#E3DBDB"
+                  bgColor={isDarkMode ? "#E3DBDB" : "#FFF"}
                   style={{
                     height: "100%",
                     width: "100%",

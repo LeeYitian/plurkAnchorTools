@@ -1,9 +1,8 @@
 "use client";
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
 import clsx from "clsx";
-import { Icon } from "@iconify-icon/react";
+import MaterialSymbolsLinkRounded from "~icons/material-symbols/link-rounded";
 import { useContext, useEffect, useState } from "react";
-import "./LinkInput.scss";
 import useFetchPlurk from "@/app/unit/utils/useFetchPlurk";
 
 export default function LinkInput({ style }: { style?: string }) {
@@ -89,7 +88,7 @@ export default function LinkInput({ style }: { style?: string }) {
             }}
             title="更換網址"
           >
-            <Icon icon="material-symbols:link-rounded" width={25} height={25} />
+            <MaterialSymbolsLinkRounded width={25} height={25} />
             <div
               className={clsx(
                 "absolute top-4/5 right-0 z-10 w-[30vw] min-w-[300px] max-w-[450px] h-[6vh] max-h-[42px] bg-white p-1 rounded-md shadow-md flex items-center justify-between transition transition-duration-700 ease-in-out",
