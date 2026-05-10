@@ -27,6 +27,7 @@ export default function VersionDetailChunk() {
           </ul>
         </li>
         <li>v1.4.1：更新 Next.js 以及新增問題回報連結</li>
+        <li>v1.4.2：新增深色模式</li>
       </ul>
     </details>
   );

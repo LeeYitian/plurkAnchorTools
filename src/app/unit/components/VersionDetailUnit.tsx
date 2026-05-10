@@ -82,6 +82,7 @@ export default function VersionDetailUnit() {
             <li>其他樣式及元件結構調整</li>
           </ul>
         </li>
+        <li>v1.4.1：新增深色模式</li>
       </ul>
     </details>
   );

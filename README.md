@@ -58,6 +58,7 @@
 - 在 route 切換及 fetch 時加上 loading
 - 覆蓋資料前進行提示
 - 編輯過內容後有醒目提示
+- 深色模式（prefers-color-scheme 搭配手動切換）
 
 ## 使用者回饋紀錄
 
