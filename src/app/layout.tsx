@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ThemeProvider } from "next-themes";
 import "@/app/globals.css";
 import "@/app/main.scss";
 import { LoadingProvider } from "@/providers/LoadingProvider";
@@ -19,18 +20,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-TW" className="dark:bg-bg">
+    <html lang="zh-TW" className="dark:bg-bg" suppressHydrationWarning>
       <body className={"antialiased"}>
-        <LoadingProvider>
-          <Suspense fallback={null}>
-            <LoadingMask />
-          </Suspense>
-          <div className="max-w-4xl mx-auto">
-            <Header />
-            {children}
-          </div>
-          <SidePanel />
-        </LoadingProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          storageKey="theme"
+        >
+          <LoadingProvider>
+            <Suspense fallback={null}>
+              <LoadingMask />
+            </Suspense>
+            <div className="max-w-4xl mx-auto">
+              <Header />
+              {children}
+            </div>
+            <SidePanel />
+          </LoadingProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import Draggable, { DraggableEvent } from "react-draggable";
 import clsx from "clsx";
+import { useTheme } from "next-themes";
 import MaterialSymbolsDarkModeOutlineRounded from "~icons/material-symbols/dark-mode-outline-rounded";
 import MaterialSymbolsLightModeOutlineRounded from "~icons/material-symbols/light-mode-outline-rounded";
 
@@ -25,11 +26,11 @@ type DraggableData = {
 };
 
 export default function SidePanel() {
+  const { theme, setTheme, resolvedTheme } = useTheme();
   const panelRef = useRef<null | HTMLDivElement>(null);
   const [panelOpen, setPanelOpen] = useState(true);
   const startPos = useRef({ x: 0, y: 0 });
   const isDragging = useRef(false);
-  const [colorMode, setColorMode] = useState(COLOR_MODE.LIGHT);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -86,35 +87,6 @@ export default function SidePanel() {
   //   }
   // };
 
-  const changeColorMode = (mode: COLOR_MODE) => {
-    setColorMode(mode);
-    if (mode === COLOR_MODE.LIGHT) {
-      document.documentElement.classList.remove("dark");
-    } else {
-      document.documentElement.classList.add("dark");
-    }
-  };
-
-  useEffect(() => {
-    const colorChange = (e: MediaQueryListEvent) => {
-      changeColorMode(e.matches ? COLOR_MODE.DARK : COLOR_MODE.LIGHT);
-    };
-
-    window
-      .matchMedia("(prefers-color-scheme: dark)")
-      .addEventListener("change", colorChange);
-
-    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      changeColorMode(COLOR_MODE.DARK);
-    }
-
-    return () => {
-      window
-        .matchMedia("(prefers-color-scheme: dark)")
-        .removeEventListener("change", colorChange);
-    };
-  }, []);
-
   return (
     <Draggable
       nodeRef={panelRef}
@@ -135,26 +107,26 @@ export default function SidePanel() {
           className={clsx(
             "cancelDrag",
             !panelOpen && "hidden",
-            colorMode === COLOR_MODE.LIGHT ? "block" : "hidden",
+            resolvedTheme === COLOR_MODE.LIGHT ? "block" : "hidden",
           )}
           width={35}
           height={35}
           onClick={(e) => {
             e.stopPropagation();
-            changeColorMode(COLOR_MODE.DARK);
+            setTheme(COLOR_MODE.DARK);
           }}
         />
         <MaterialSymbolsLightModeOutlineRounded
           className={clsx(
             "cancelDrag",
             !panelOpen && "hidden",
-            colorMode === COLOR_MODE.DARK ? "block" : "hidden",
+            resolvedTheme === COLOR_MODE.DARK ? "block" : "hidden",
           )}
           width={35}
           height={35}
           onClick={(e) => {
             e.stopPropagation();
-            changeColorMode(COLOR_MODE.LIGHT);
+            setTheme(COLOR_MODE.LIGHT);
           }}
         />
         <a
