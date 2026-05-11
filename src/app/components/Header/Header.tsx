@@ -13,7 +13,6 @@ export default function Header() {
     const handleScroll = () => {
       const currentScroll = window.scrollY;
       const drawer = document.querySelector('div[data-slot="drawer-overlay"]');
-      console.log("drawer", drawer);
       if (currentScroll > lastScroll.current && currentScroll > 100) {
         accumulatedUpScroll.current = 0;
         setHideHeader(true);

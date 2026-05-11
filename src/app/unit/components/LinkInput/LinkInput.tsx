@@ -74,7 +74,6 @@ export default function LinkInput({ style }: { style?: string }) {
             )}
             onClick={(e) => {
               const target = e.target as HTMLElement;
-              console.log("target", target, target.closest("#urlBtnIcon"));
               if (!target.closest("#urlBtnIcon") && target.id !== "changeUrl")
                 return;
               if (!openChangeUrl) {
