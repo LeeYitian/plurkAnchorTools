@@ -74,10 +74,8 @@ export default function LinkInput({ style }: { style?: string }) {
             )}
             onClick={(e) => {
               const target = e.target as HTMLElement;
-              if (
-                target.tagName !== "ICONIFY-ICON" &&
-                target.id !== "changeUrl"
-              )
+              console.log("target", target, target.closest("#urlBtnIcon"));
+              if (!target.closest("#urlBtnIcon") && target.id !== "changeUrl")
                 return;
               if (!openChangeUrl) {
                 const btn = target.closest(".urlBtn");
@@ -88,7 +86,11 @@ export default function LinkInput({ style }: { style?: string }) {
             }}
             title="更換網址"
           >
-            <MaterialSymbolsLinkRounded width={25} height={25} />
+            <MaterialSymbolsLinkRounded
+              id="urlBtnIcon"
+              width={25}
+              height={25}
+            />
             <div
               className={clsx(
                 "absolute top-4/5 right-0 z-10 w-[30vw] min-w-[300px] max-w-[450px] h-[6vh] max-h-[42px] bg-white p-1 rounded-md shadow-md flex items-center justify-between transition transition-duration-700 ease-in-out",
