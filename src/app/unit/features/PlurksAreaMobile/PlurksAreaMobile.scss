@@ -3,10 +3,10 @@
 
 @layer components {
   .plurkMobile {
-    @apply flex bg-light dark:bg-main/30 text-[1rem] p-3 mb-1 items-start gap-4 relative;
+    @apply flex bg-light dark:bg-plain text-[1rem] p-3 mb-1 items-start gap-4 relative;
 
     div.plurkContent {
-      @apply text-gray-800 dark:text-black;
+      @apply text-gray-800 dark:text-white/70;
       overflow-y: hidden;
       overflow-x: hidden;
       max-height: 1.15rem;
@@ -49,7 +49,7 @@
 
 
   .filterBtnMobile {
-    @apply flex border-[1px] border-main text-main dark:text-light/50 dark:border-light/50 rounded-full text-[0.75rem] px-2 py-1 cursor-pointer;
+    @apply flex border-[1px] border-main text-main dark:text-main dark:border-main rounded-full text-[0.75rem] px-2 py-1 cursor-pointer;
     // background: var(--color-main);
     &.active {
       @apply  bg-secondary/60 text-light border-none dark:text-white; 

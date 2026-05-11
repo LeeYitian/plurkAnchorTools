@@ -38,11 +38,11 @@ export default function SplitResult({ splitTexts }: SplitResultProps) {
             key={text}
             className="mt-4 relative bg-cute/20 text-justify flex flex-col justify-between p-4 rounded-xl mx-1/10"
           >
-            <p className="mb-2.5 text-md md:text-[0.9rem] text-gray-900 dark:text-black flex-1 whitespace-pre-line break-all">
+            <p className="mb-2.5 text-[1rem] md:text-[0.9rem] text-gray-900 dark:text-black flex-1 whitespace-pre-line break-all">
               {text}
             </p>
             {deleteSuggestion && (
-              <span className="absolute bottom-5 text-[0.8rem] font-light text-gray-400">
+              <span className="absolute bottom-5 text-[0.9rem] md:text-[0.8rem] font-light text-gray-400">
                 {deleteSuggestion > 0
                   ? `想把下一段分配至此，需刪除 ${deleteSuggestion} 字`
                   : "想把下一段分配至此，需刪除 1 行"}

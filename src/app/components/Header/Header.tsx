@@ -1,27 +1,29 @@
 "use client";
 import Navigator from "@/app/components/Navigator";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./Header.scss";
 import clsx from "clsx";
-import { PlurksDataContext } from "@/providers/PlurksDataProvider";
 
 export default function Header() {
-  const [{ hasData }] = useContext(PlurksDataContext);
   const lastScroll = useRef(0);
   const accumulatedUpScroll = useRef(0);
   const [hideHeader, setHideHeader] = useState(false);
 
   useEffect(() => {
-    if (!hasData) return;
     const handleScroll = () => {
       const currentScroll = window.scrollY;
+      const drawer = document.querySelector('div[data-slot="drawer-overlay"]');
+      console.log("drawer", drawer);
       if (currentScroll > lastScroll.current && currentScroll > 100) {
         accumulatedUpScroll.current = 0;
         setHideHeader(true);
       } else {
         accumulatedUpScroll.current += lastScroll.current - currentScroll;
 
-        if (accumulatedUpScroll.current >= 1500 || currentScroll < 100) {
+        if (
+          (accumulatedUpScroll.current >= 1500 || currentScroll < 100) &&
+          !drawer
+        ) {
           setHideHeader(false);
         }
       }
@@ -30,7 +32,7 @@ export default function Header() {
     window.addEventListener("scroll", () => {
       window.requestAnimationFrame(handleScroll);
     });
-  }, [hasData]);
+  }, []);
 
   return (
     <>

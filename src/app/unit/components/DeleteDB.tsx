@@ -77,7 +77,7 @@ export default function DeleteDB({ style }: { style?: string }) {
       </button>
       <div
         className={clsx(
-          "flex flex-col justify-between fixed z-50 top-[40%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 w-[80vw] md:w-[40vw] min-h-[150px] bg-white p-5 shadow-md rounded-2xl border-gray-200 border-1 transition-opacity duration-300 ease-in-out",
+          "flex flex-col justify-between fixed z-50 top-[40%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 w-[80vw] md:w-[40vw] min-h-[150px] bg-white dark:text-gray-700 p-5 shadow-md rounded-2xl border-gray-200 border-1 transition-opacity duration-300 ease-in-out",
           showDialog ? "opacity-100" : "opacity-0",
           !showDialog && "pointer-events-none",
         )}

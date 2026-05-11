@@ -2,20 +2,28 @@
 import DeleteDB from "@/app/unit/components/DeleteDB";
 import LinkInput from "@/app/unit/components/LinkInput/LinkInput";
 import clsx from "clsx";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ScanToSync from "@/app/unit/features/ScanToSync/ScanToSync";
+import { PlurksDataContext } from "@/providers/PlurksDataProvider";
 
 export default function SubHeader() {
+  const [{ hasData }] = useContext(PlurksDataContext);
   const [showSubHeader, setShowSubHeader] = useState(false);
 
   useEffect(() => {
-    window.addEventListener("scroll", () => {
+    if (!hasData) return;
+    const showSubHeader = () => {
       requestAnimationFrame(() => {
         const headerHide = document.querySelector("header.scrollHidden");
         setShowSubHeader(!!headerHide);
       });
-    });
-  }, []);
+    };
+    window.addEventListener("scroll", showSubHeader);
+
+    return () => {
+      window.removeEventListener("scroll", showSubHeader);
+    };
+  }, [hasData]);
 
   return (
     <div

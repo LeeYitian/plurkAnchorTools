@@ -26,7 +26,7 @@ type DraggableData = {
 };
 
 export default function SidePanel() {
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { setTheme } = useTheme();
   const panelRef = useRef<null | HTMLDivElement>(null);
   const [panelOpen, setPanelOpen] = useState(true);
   const startPos = useRef({ x: 0, y: 0 });
@@ -105,9 +105,8 @@ export default function SidePanel() {
       >
         <MaterialSymbolsDarkModeOutlineRounded
           className={clsx(
-            "cancelDrag",
+            "cancelDrag block dark:hidden",
             !panelOpen && "hidden",
-            resolvedTheme === COLOR_MODE.LIGHT ? "block" : "hidden",
           )}
           width={35}
           height={35}
@@ -118,9 +117,8 @@ export default function SidePanel() {
         />
         <MaterialSymbolsLightModeOutlineRounded
           className={clsx(
-            "cancelDrag",
+            "cancelDrag hidden dark:block",
             !panelOpen && "hidden",
-            resolvedTheme === COLOR_MODE.DARK ? "block" : "hidden",
           )}
           width={35}
           height={35}
@@ -139,7 +137,12 @@ export default function SidePanel() {
           <br />
           回報
         </a>
-        <div className="cancelDrag absolute top-1/2 right-1 -translate-y-1/2 h-9 w-1 border-white border-l-4 rounded-sm" />
+        <div
+          className={clsx(
+            "absolute top-1/2 right-1 -translate-y-1/2 h-9 w-1 border-white border-l-4 rounded-sm",
+            { cancelDrag: !panelOpen },
+          )}
+        />
       </div>
     </Draggable>
   );
