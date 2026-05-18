@@ -1,6 +1,6 @@
 "use client";
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
-import { useContext, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import "./ArticleArea.scss";
 import {
   EMOTICON_TYPE_MAP,
@@ -14,6 +14,7 @@ import useCustomContextMenu, {
 } from "@/app/unit/utils/useCustomContextMenu";
 import useEditPlurks from "@/app/unit/utils/useEditPlurks";
 import useGetEmoticon, { getEmoticonName } from "@/app/unit/utils/getEmoticon";
+import { getCaretPosition } from "@/app/unit/utils/caret";
 
 export default function ArticleArea() {
   const [{ hasData, plurks, selectedPlurksIds, editedPlurks }, dispatch] =
@@ -29,6 +30,8 @@ export default function ArticleArea() {
   const { customContextItemsForEmoticon } = useGetEmoticon();
   const [emoticonCustomContextItemsType, setEmoticonCustomContextItemsType] =
     useState<string[] | null>(null);
+  const caretPosition = useRef<{ nodeIndex: number; offset: number }>(null);
+  const timeout = useRef<NodeJS.Timeout | null>(null);
 
   const handleDeselectClick = ({ target }: { target: HTMLElement }) => {
     const id = parseInt(target.id);
@@ -70,6 +73,27 @@ export default function ArticleArea() {
       });
   }, [plurks, selectedPlurksIds]);
 
+  // 進入 contenteditable 時讓滑鼠游標可以出現在使用者點兩下的位置
+  useEffect(() => {
+    if (editing && caretPosition.current) {
+      const selection = document.getSelection();
+      const node = document.querySelector('div[contenteditable="true"]');
+      if (selection && node) {
+        const range = document.createRange();
+        const startNode =
+          caretPosition.current.nodeIndex > 0
+            ? node.childNodes[caretPosition.current.nodeIndex]
+            : node;
+
+        range.setStart(startNode, caretPosition.current.offset);
+        range.collapse(true);
+
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+    }
+  }, [editing]);
+
   return (
     <>
       {hasData && (
@@ -88,11 +112,36 @@ export default function ArticleArea() {
                 )}
                 onClick={() => {
                   if (editing || isOpen) return;
-                  dispatch({ type: "SCROLL_TO_ID", payload: plurk.id });
+                  if (timeout.current) clearTimeout(timeout.current); // 用 timeout 防止 double click 和 click 互相干擾
+                  timeout.current = setTimeout(() => {
+                    dispatch({ type: "SCROLL_TO_ID", payload: plurk.id });
+                  }, 500);
                 }}
-                onDoubleClick={(e) =>
-                  handleEditClick({ target: e.currentTarget })
-                }
+                onDoubleClick={(e) => {
+                  e.preventDefault();
+                  if (timeout.current) {
+                    clearTimeout(timeout.current);
+                  }
+
+                  if (editing) return;
+
+                  // 獲取使用者點兩下的位置，之後用來調整游標
+                  const range = getCaretPosition(e.clientX, e.clientY);
+                  if (!range) return;
+
+                  const nodeIndex = Array.from(
+                    e.currentTarget.childNodes,
+                  ).indexOf(range!.offsetNode as ChildNode);
+
+                  caretPosition.current = {
+                    nodeIndex,
+                    offset: range!.offset,
+                  };
+
+                  handleEditClick({
+                    target: e.currentTarget,
+                  });
+                }}
                 onContextMenu={(e) => {
                   setEmoticonCustomContextItemsType(null);
 

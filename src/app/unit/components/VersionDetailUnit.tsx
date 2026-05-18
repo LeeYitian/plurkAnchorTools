@@ -83,6 +83,7 @@ export default function VersionDetailUnit() {
           </ul>
         </li>
         <li>v1.4.1：新增深色模式</li>
+        <li>v1.4.2：調整滑鼠連點兩下進入編輯模式後的游標位置</li>
       </ul>
     </details>
   );

@@ -4,6 +4,7 @@ import {
   Fragment,
   TouchEventHandler,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -16,6 +17,7 @@ import useEditPlurks from "@/app/unit/utils/useEditPlurks";
 import useCustomContextMenu, {
   TextContextMenuItem,
 } from "@/app/unit/utils/useCustomContextMenu";
+import { getCaretPosition } from "@/app/unit/utils/caret";
 
 export default function ArticleAreaMobile() {
   const [{ hasData, plurks, selectedPlurksIds, editedPlurks }, dispatch] =
@@ -29,6 +31,8 @@ export default function ArticleAreaMobile() {
     CustomContextMenu,
   } = useCustomContextMenu();
   const touchTimeout = useRef<NodeJS.Timeout | null>(null);
+  const caretPosition = useRef<{ nodeIndex: number; offset: number }>(null);
+  const clickTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const customContextItems: TextContextMenuItem[] = [
     {
@@ -74,6 +78,27 @@ export default function ArticleAreaMobile() {
     }
   };
 
+  // 進入 contenteditable 時讓滑鼠游標可以出現在使用者點兩下的位置
+  useEffect(() => {
+    if (editing && caretPosition.current) {
+      const selection = document.getSelection();
+      const node = document.querySelector('div[contenteditable="true"]');
+      if (selection && node) {
+        const range = document.createRange();
+        const startNode =
+          caretPosition.current.nodeIndex > 0
+            ? node.childNodes[caretPosition.current.nodeIndex]
+            : node;
+
+        range.setStart(startNode, caretPosition.current.offset);
+        range.collapse(true);
+
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+    }
+  }, [editing]);
+
   return (
     <>
       {hasData && (
@@ -102,6 +127,12 @@ export default function ArticleAreaMobile() {
                   }}
                   onClick={() => {
                     if (editing || isOpen) return;
+                    if (clickTimeout.current)
+                      clearTimeout(clickTimeout.current); // 用 timeout 防止 double click 和 click 互相干擾
+                    clickTimeout.current = setTimeout(() => {
+                      dispatch({ type: "SCROLL_TO_ID", payload: plurk.id });
+                    }, 500);
+
                     if (showOptions === plurk.id) {
                       setShowOptions(null);
                     } else {
@@ -111,9 +142,27 @@ export default function ArticleAreaMobile() {
                   onTouchStart={handleTouchStart}
                   onTouchEnd={handleTouchEnd}
                   onContextMenu={(e) => e.preventDefault()}
-                  onDoubleClick={(e) =>
-                    handleEditClick({ target: e.currentTarget })
-                  }
+                  onDoubleClick={(e) => {
+                    e.preventDefault();
+                    if (clickTimeout.current) {
+                      clearTimeout(clickTimeout.current);
+                    }
+                    if (editing) return;
+
+                    // 獲取使用者點兩下的位置，之後用來調整游標
+                    const range = getCaretPosition(e.clientX, e.clientY);
+                    if (!range) return;
+                    const nodeIndex = Array.from(
+                      e.currentTarget.childNodes,
+                    ).indexOf(range!.offsetNode as ChildNode);
+
+                    caretPosition.current = {
+                      nodeIndex,
+                      offset: range!.offset,
+                    };
+
+                    handleEditClick({ target: e.currentTarget });
+                  }}
                 />
                 <div
                   key={`cancel-${plurk.id}`}
