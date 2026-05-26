@@ -81,7 +81,7 @@ export default function ArticleArea() {
       if (selection && node) {
         const range = document.createRange();
         const startNode =
-          caretPosition.current.nodeIndex > 0
+          caretPosition.current.nodeIndex >= 0
             ? node.childNodes[caretPosition.current.nodeIndex]
             : node;
 

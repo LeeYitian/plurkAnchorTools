@@ -32,7 +32,6 @@ export default function ArticleAreaMobile() {
   } = useCustomContextMenu();
   const touchTimeout = useRef<NodeJS.Timeout | null>(null);
   const caretPosition = useRef<{ nodeIndex: number; offset: number }>(null);
-  const clickTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const customContextItems: TextContextMenuItem[] = [
     {
@@ -86,7 +85,7 @@ export default function ArticleAreaMobile() {
       if (selection && node) {
         const range = document.createRange();
         const startNode =
-          caretPosition.current.nodeIndex > 0
+          caretPosition.current.nodeIndex >= 0
             ? node.childNodes[caretPosition.current.nodeIndex]
             : node;
 
@@ -127,11 +126,6 @@ export default function ArticleAreaMobile() {
                   }}
                   onClick={() => {
                     if (editing || isOpen) return;
-                    if (clickTimeout.current)
-                      clearTimeout(clickTimeout.current); // 用 timeout 防止 double click 和 click 互相干擾
-                    clickTimeout.current = setTimeout(() => {
-                      dispatch({ type: "SCROLL_TO_ID", payload: plurk.id });
-                    }, 500);
 
                     if (showOptions === plurk.id) {
                       setShowOptions(null);
@@ -144,9 +138,6 @@ export default function ArticleAreaMobile() {
                   onContextMenu={(e) => e.preventDefault()}
                   onDoubleClick={(e) => {
                     e.preventDefault();
-                    if (clickTimeout.current) {
-                      clearTimeout(clickTimeout.current);
-                    }
                     if (editing) return;
 
                     // 獲取使用者點兩下的位置，之後用來調整游標

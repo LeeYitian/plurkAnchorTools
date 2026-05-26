@@ -84,6 +84,10 @@ export default function VersionDetailUnit() {
         </li>
         <li>v1.4.1：新增深色模式</li>
         <li>v1.4.2：調整滑鼠連點兩下進入編輯模式後的游標位置</li>
+        <li>
+          v1.4.3：修正滑鼠連點兩下無法正確判斷游標位置的問題（手機版特別容易發生），以及手機版點選文章區塊沒有必要
+          dispatch 滾動位置
+        </li>
       </ul>
     </details>
   );
