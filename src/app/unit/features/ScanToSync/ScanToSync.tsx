@@ -10,6 +10,8 @@ import { indexedDBService } from "@/app/unit/lib/indexDB";
 import AskForReplace from "@/app/unit/components/AskForReplace";
 import StreamlineUltimateCloudDataTransferBold from "~icons/streamline-ultimate/cloud-data-transfer-bold";
 import MaterialSymbolsCloseRounded from "~icons/material-symbols/close-rounded";
+import { useTheme } from "next-themes";
+import { COLOR_MODE } from "@/types/constants";
 
 enum TRANSFER_TYPE {
   UNCHOOSE = "UNCHOOSE",
@@ -40,7 +42,7 @@ export default function ScanToSync({ style }: { style?: string }) {
     errorMessage,
   } = useSendAndReceive();
   const { getSavedEditedPlurks } = indexedDBService();
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { resolvedTheme } = useTheme();
 
   const toggleQRCode = () => {
     setOpenDialog(!openDialog);
@@ -111,23 +113,6 @@ export default function ScanToSync({ style }: { style?: string }) {
   useEffect(() => {
     setTransferType(!hasData ? TRANSFER_TYPE.RECEIVE : TRANSFER_TYPE.UNCHOOSE);
   }, [hasData]);
-
-  useEffect(() => {
-    const changeQRCodeBG = (e: MediaQueryListEvent) => {
-      setIsDarkMode(e.matches);
-    };
-    window
-      .matchMedia("(prefers-color-scheme: dark)")
-      .addEventListener("change", changeQRCodeBG);
-
-    setIsDarkMode(window.matchMedia("(prefers-color-scheme: dark)").matches);
-
-    return () => {
-      window
-        .matchMedia("(prefers-color-scheme: dark)")
-        .removeEventListener("change", changeQRCodeBG);
-    };
-  }, []);
 
   return (
     <>
@@ -206,7 +191,9 @@ export default function ScanToSync({ style }: { style?: string }) {
               <div className="h-[90%] flex justify-center items-center flex-col">
                 <QRCode
                   value={`${window.location.origin}/unit?key=${keyForStorage}`}
-                  bgColor={isDarkMode ? "#E3DBDB" : "#FFF"}
+                  bgColor={
+                    resolvedTheme === COLOR_MODE.dark ? "#E3DBDB" : "#FFF"
+                  }
                   style={{
                     height: "100%",
                     width: "100%",

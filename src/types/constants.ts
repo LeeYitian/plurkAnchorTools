@@ -47,3 +47,8 @@ export const EMOTICON_TYPE_MAP = {
   "(rock-paper-scissors)": ["same", "winLose"],
   "(bzzz)": ["same"],
 };
+
+export const COLOR_MODE = {
+  light: "light",
+  dark: "dark",
+};

@@ -5,11 +5,7 @@ import clsx from "clsx";
 import { useTheme } from "next-themes";
 import MaterialSymbolsDarkModeOutlineRounded from "~icons/material-symbols/dark-mode-outline-rounded";
 import MaterialSymbolsLightModeOutlineRounded from "~icons/material-symbols/light-mode-outline-rounded";
-
-enum COLOR_MODE {
-  LIGHT = "light",
-  DARK = "dark",
-}
+import { COLOR_MODE } from "@/types/constants";
 
 type DraggableEventHandler = (
   e: DraggableEvent,
@@ -112,7 +108,7 @@ export default function SidePanel() {
           height={35}
           onClick={(e) => {
             e.stopPropagation();
-            setTheme(COLOR_MODE.DARK);
+            setTheme(COLOR_MODE.dark);
           }}
         />
         <MaterialSymbolsLightModeOutlineRounded
@@ -124,7 +120,7 @@ export default function SidePanel() {
           height={35}
           onClick={(e) => {
             e.stopPropagation();
-            setTheme(COLOR_MODE.LIGHT);
+            setTheme(COLOR_MODE.light);
           }}
         />
         <a
