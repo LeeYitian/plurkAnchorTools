@@ -24,13 +24,19 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  webpack(config) {
+  webpack(config, { dev }) {
     config.plugins.push(
       Icons({
         compiler: "jsx",
         jsx: "react",
       }),
     );
+
+    // unplugin-icons virtual modules can't be serialized to the filesystem cache;
+    // webpack tries to stat the virtual paths on restart and throws ENOENT.
+    if (dev) {
+      config.cache = { type: "memory" };
+    }
 
     return config;
   },
