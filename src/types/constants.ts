@@ -52,3 +52,6 @@ export const COLOR_MODE = {
   light: "light",
   dark: "dark",
 };
+
+export const CHUNKS_SESSION_KEY = "plurk_anchor_chunks";
+export const DEVICE_ID_KEY = "plurk_anchor_device_id";

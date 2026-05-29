@@ -1,19 +1,24 @@
 import { useEffect, useState } from "react";
 import { splitTextUtils } from "../utils/splitText";
+import { usePlurkAuth } from "../utils/usePlurkAuth";
 
 type SplitResultProps = {
   splitTexts: string[];
 };
 
+const sendBtnStyle =
+  "px-2 py-3/10 h-7 bg-main text-white cursor-pointer border-none rounded-md hover:saturate-150";
+
 const copyBtnStyle = {
   default:
-    "inline mt-3/10 px-2 py-3/10 h-7 self-end bg-cute text-white cursor-pointer border-none rounded-md hover:saturate-150",
+    "px-2 py-3/10 h-7 bg-cute text-white cursor-pointer border-none rounded-md hover:saturate-150",
   copied:
-    "inline mt-3/10 px-2 py-3/10 h-7 self-end bg-gray-200 text-gray-300 cursor-default border-none rounded-md hover:transform-none",
+    "px-2 py-3/10 h-7 bg-gray-200 text-gray-300 cursor-default border-none rounded-md hover:transform-none",
 };
 
 export default function SplitResult({ splitTexts }: SplitResultProps) {
   const { copyParagraph, suggestDeleteCount } = splitTextUtils;
+  const { handleSend } = usePlurkAuth(splitTexts);
   const [copyIndex, setCopyIndex] = useState<number[]>([]);
 
   const handleCopy = async (text: string, index: number) => {
@@ -48,16 +53,21 @@ export default function SplitResult({ splitTexts }: SplitResultProps) {
                   : "想把下一段分配至此，需刪除 1 行"}
               </span>
             )}
-            <button
-              className={
-                copyIndex.includes(index)
-                  ? copyBtnStyle.copied
-                  : copyBtnStyle.default
-              }
-              onClick={() => handleCopy(text, index)}
-            >
-              {copyIndex.includes(index) ? "已複製" : "複製"}
-            </button>
+            <div className="flex gap-2 self-end mt-3/10">
+              <button className={sendBtnStyle} onClick={handleSend}>
+                發送
+              </button>
+              <button
+                className={
+                  copyIndex.includes(index)
+                    ? copyBtnStyle.copied
+                    : copyBtnStyle.default
+                }
+                onClick={() => handleCopy(text, index)}
+              >
+                {copyIndex.includes(index) ? "已複製" : "複製"}
+              </button>
+            </div>
           </div>
         );
       })}
