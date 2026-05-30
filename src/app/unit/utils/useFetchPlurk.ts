@@ -1,5 +1,6 @@
 import { LoadingContext } from "@/providers/LoadingProvider";
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
+import { PLURK_URL_REGEX } from "@/types/constants";
 import { useContext, useState } from "react";
 
 export default function useFetchPlurk() {
@@ -15,11 +16,10 @@ export default function useFetchPlurk() {
    */
   const fetchPlurk = async (url: string) => {
     if (!url) return;
-
-    const regex = new RegExp(/^https:\/\/www\.plurk\.com\/p\/[a-zA-Z0-9]+$/);
-    if (regex.test(url)) {
+    const match = url.match(PLURK_URL_REGEX);
+    if (match) {
       setLoading(true);
-      const plurk_id = url.split("/").pop();
+      const plurk_id = match[1];
       const response = await fetch(`/api/fetchPlurks?id=${plurk_id}`);
 
       if (!response.ok) {

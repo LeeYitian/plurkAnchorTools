@@ -48,6 +48,10 @@ export const EMOTICON_TYPE_MAP = {
   "(bzzz)": ["same"],
 };
 
+export const PLURK_URL_REGEX = new RegExp(
+  /^https:\/\/www\.plurk\.com\/p\/[a-zA-Z0-9]+$/,
+);
+
 export const COLOR_MODE = {
   light: "light",
   dark: "dark",

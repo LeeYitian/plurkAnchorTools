@@ -13,7 +13,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { oauthSignedFetch } from "@/app/api/utils/oauthSignedFetch";
+import { oauthSignedFetch } from "@/app/chunk/utils/oauthSignedFetch";
 import { AUTHORIZE_URL, REQUEST_TOKEN_URL } from "@/app/api/constants";
 
 export async function GET(request: NextRequest) {

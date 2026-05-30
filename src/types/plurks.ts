@@ -1,3 +1,9 @@
+export type TPlurkItem = {
+  plurk_id: number;
+  content_raw: string;
+  posted: string;
+};
+
 export type TPlurkResponse = {
   id: number;
   user_id: number;

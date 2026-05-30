@@ -6,7 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { oauthSignedFetch } from "@/app/api/utils/oauthSignedFetch";
+import { oauthSignedFetch } from "@/app/chunk/utils/oauthSignedFetch";
 import { ACCESS_TOKEN_URL, ONE_MONTH } from "@/app/api/constants";
 
 export async function GET(request: NextRequest) {
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
   const isLocal = request.url.includes("localhost");
   const secure = !isLocal;
 
-  const response = NextResponse.redirect(new URL("/chunk", request.url));
+  const response = NextResponse.redirect(new URL("/chunk?from_oauth=1", request.url));
   response.cookies.set("plurk_access_token", accessToken, {
     httpOnly: true,
     secure,
