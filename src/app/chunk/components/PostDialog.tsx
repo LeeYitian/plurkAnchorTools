@@ -25,6 +25,7 @@ export default function PostDialog({
   const [urlInput, setUrlInput] = useState("");
   const [sendAll, setSendAll] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
+  const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -46,9 +47,23 @@ export default function PostDialog({
   const targetPlurkId = selectedId || extractPlurkId(urlInput);
 
   const handleConfirm = async () => {
-    if (!targetPlurkId) return;
-    // Step 4: posting logic will be wired here
-    onOpenChange(false);
+    if (!targetPlurkId || isSending) return;
+    const toSend = sendAll ? chunks : [chunks[0]];
+    setIsSending(true);
+    try {
+      for (const content of toSend) {
+        await fetch("/api/postResponse", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ plurk_id: targetPlurkId, content }),
+        });
+      }
+      onOpenChange(false);
+    } catch {
+      // 忽略錯誤
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
@@ -105,10 +120,10 @@ export default function PostDialog({
             </Dialog.Close>
             <button
               className="rounded-md bg-main px-4 py-1.5 text-sm text-white disabled:opacity-40"
-              disabled={!targetPlurkId}
+              disabled={!targetPlurkId || isSending}
               onClick={handleConfirm}
             >
-              確認發送
+              {isSending ? "發送中..." : "確認發送"}
             </button>
           </div>
         </Dialog.Content>
