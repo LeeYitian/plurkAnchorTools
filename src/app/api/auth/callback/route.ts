@@ -2,13 +2,10 @@
  * Plurk OAuth callback handler。
  * 收到 Plurk 在授權完成後導回的 oauth_token 與 oauth_verifier，
  * 搭配暫存的 request token secret 換取永久 access token，
- * 將 token 寫入 httpOnly cookie。
+ * 將 token 寫入 httpOnly cookie，然後導向中繼頁 /auth/complete。
  *
- * 成功與失敗都回傳內嵌 script 的 HTML（而非 redirect 或 JSON）：
- * - postMessage 是瀏覽器 API，只能在 client 執行，server route 無法直接呼叫
- * - 讓瀏覽器載入這段 HTML 後由 script 完成剩餘工作：
- *   成功 → 通知主視窗授權完成，popup 關閉自己
- *   失敗 → 通知主視窗顯示錯誤訊息，popup 關閉自己
+ * 成功與失敗都導向 /auth/complete，由該頁顯示結果並讓使用者關閉 popup。
+ * 錯誤訊息透過 query string 傳入，不需要 postMessage。
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -22,21 +19,14 @@ export async function GET(request: NextRequest) {
   const requestSecret = request.cookies.get("plurk_request_secret")?.value;
   const isLocal = request.url.includes("localhost");
   const secure = !isLocal;
-  const origin = new URL(request.url).origin;
 
-  // 錯誤一律回傳 HTML script，讓 popup 通知主視窗顯示錯誤後關閉自己，
-  // 避免 popup 卡住顯示 raw JSON 讓使用者不知所措
-  const errorHtml = (message: string) =>
-    new Response(
-      `<script>
-        window.opener?.postMessage({ type: "OAUTH_ERROR", message: "${message}" }, "${origin}");
-        window.close();
-      </script>`,
-      { headers: { "Content-Type": "text/html" } },
+  const errorRedirect = (message: string) =>
+    NextResponse.redirect(
+      new URL(`/auth/complete?error=${encodeURIComponent(message)}`, request.url),
     );
 
   if (!oauthToken || !oauthVerifier || !requestSecret) {
-    return errorHtml("缺少授權參數");
+    return errorRedirect("缺少授權參數");
   }
 
   const res = await oauthSignedFetch(
@@ -46,7 +36,7 @@ export async function GET(request: NextRequest) {
   );
 
   if (!res.ok) {
-    return errorHtml("取得存取權杖失敗，請重新授權");
+    return errorRedirect("取得存取權杖失敗，請重新授權");
   }
 
   const params = new URLSearchParams(await res.text());
@@ -54,24 +44,10 @@ export async function GET(request: NextRequest) {
   const accessTokenSecret = params.get("oauth_token_secret");
 
   if (!accessToken || !accessTokenSecret) {
-    return errorHtml("噗浪回傳資料有誤，請重新授權");
+    return errorRedirect("噗浪回傳資料有誤，請重新授權");
   }
 
-  // 回傳 HTML，讓 popup 裡的 script 通知主視窗授權完成後關閉自己。
-  // 使用 origin 限制 postMessage 的目標，避免訊息被其他網站接收。
-  // 若使用者直接在瀏覽器開啟此網址（opener 不存在），則 fallback 導回 /chunk。
-  const html = `<script>
-    if (window.opener) {
-      window.opener.postMessage({ type: "OAUTH_COMPLETE" }, "${origin}");
-      window.close();
-    } else {
-      window.location.href = "/chunk";
-    }
-  </script>`;
-
-  const response = new NextResponse(html, {
-    headers: { "Content-Type": "text/html" },
-  });
+  const response = NextResponse.redirect(new URL("/auth/complete", request.url));
   response.cookies.set("plurk_access_token", accessToken, {
     httpOnly: true,
     secure,

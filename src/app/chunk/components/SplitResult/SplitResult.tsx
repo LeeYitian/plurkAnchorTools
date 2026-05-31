@@ -8,8 +8,6 @@ import "./SplitResult.scss";
 type SplitResultProps = {
   splitTexts: string[];
   onConfirmOAuth: () => void;
-  oauthError: string | null;
-  onClearOAuthError: () => void;
 };
 
 const sendBtnStyle = {
@@ -25,12 +23,14 @@ const copyBtnStyle = {
     "px-2 py-3/10 h-7 bg-gray-200 text-gray-300 cursor-default border-none rounded-md hover:transform-none",
 };
 
-export default function SplitResult({ splitTexts, onConfirmOAuth, oauthError, onClearOAuthError }: SplitResultProps) {
+export default function SplitResult({ splitTexts, onConfirmOAuth }: SplitResultProps) {
   const { copyParagraph, suggestDeleteCount } = splitTextUtils;
   const [copyIndex, setCopyIndex] = useState<number[]>([]);
   const [consentOpen, setConsentOpen] = useState(false);
   const [postedIndex, setPostedIndex] = useState<number[]>([]);
-  const [openPostDialogIndex, setOpenPostDialogIndex] = useState<number | null>(null);
+  const [openPostDialogIndex, setOpenPostDialogIndex] = useState<number | null>(
+    null,
+  );
 
   const handleSend = useCallback((index: number) => {
     if (!checkAuthed()) {
@@ -73,7 +73,7 @@ export default function SplitResult({ splitTexts, onConfirmOAuth, oauthError, on
           <br />
           此行為不會讓本網站取得你的帳號密碼，授權僅用於在選定的噗文中留言。
           <br />
-          你可隨時前往
+          你隨時可以前往
           <a
             href="https://www.plurk.com/settings/sessions"
             target="_blank"
@@ -96,26 +96,6 @@ export default function SplitResult({ splitTexts, onConfirmOAuth, oauthError, on
             onClick={handleConsentConfirm}
           >
             確認授權
-          </button>
-        </div>
-      </div>
-
-      <div
-        className={clsx(
-          "consentDialog",
-          oauthError ? "opacity-100" : "opacity-0 pointer-events-none",
-        )}
-      >
-        <p className="mb-3 text-base font-bold text-main">授權失敗</p>
-        {oauthError && (
-          <p className="mb-6 text-xs text-red-500">{`出現錯誤：${oauthError}`}</p>
-        )}
-        <div className="flex justify-end">
-          <button
-            className="rounded-md bg-gray-300 text-gray-500 px-4 py-1.5 text-sm"
-            onClick={onClearOAuthError}
-          >
-            關閉
           </button>
         </div>
       </div>
