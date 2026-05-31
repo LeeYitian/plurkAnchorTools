@@ -11,6 +11,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { oauthSignedFetch } from "@/app/chunk/utils/oauthSignedFetch";
 import { ACCESS_TOKEN_URL, ONE_MONTH } from "@/app/api/constants";
+import { createSession } from "@/lib/session";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
@@ -22,7 +23,10 @@ export async function GET(request: NextRequest) {
 
   const errorRedirect = (message: string) =>
     NextResponse.redirect(
-      new URL(`/auth/complete?error=${encodeURIComponent(message)}`, request.url),
+      new URL(
+        `/auth/complete?error=${encodeURIComponent(message)}`,
+        request.url,
+      ),
     );
 
   if (!oauthToken || !oauthVerifier || !requestSecret) {
@@ -47,19 +51,20 @@ export async function GET(request: NextRequest) {
     return errorRedirect("噗浪回傳資料有誤，請重新授權");
   }
 
-  const response = NextResponse.redirect(new URL("/auth/complete", request.url));
-  response.cookies.set("plurk_access_token", accessToken, {
+  const sessionId = await createSession(accessToken, accessTokenSecret);
+
+  const response = NextResponse.redirect(
+    new URL("/auth/complete", request.url),
+  );
+  response.cookies.set("plurk_session", sessionId, {
     httpOnly: true,
     secure,
     sameSite: "lax",
     maxAge: ONE_MONTH,
   });
-  response.cookies.set("plurk_access_token_secret", accessTokenSecret, {
-    httpOnly: true,
-    secure,
-    sameSite: "lax",
-    maxAge: ONE_MONTH,
-  });
+  // 清除舊版直接存 token 的 cookie（遷移清理）功能未上線所以不會有人的 cookie 存到這兩個
+  // response.cookies.delete("plurk_access_token");
+  // response.cookies.delete("plurk_access_token_secret");
   response.cookies.set("plurk_authed", "true", {
     httpOnly: false,
     secure,

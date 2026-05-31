@@ -1,22 +1,32 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { oauthSignedFetch } from "@/app/chunk/utils/oauthSignedFetch";
 import { RESPONSE_ADD_URL } from "@/app/api/constants";
+import { getSession, deleteSession } from "@/lib/session";
+
+function clearAuthResponse(message: string) {
+  const res = NextResponse.json(
+    { state: "FAILURE", data: message },
+    { status: 401 },
+  );
+  res.cookies.delete("plurk_session");
+  res.cookies.delete("plurk_authed");
+  return res;
+}
 
 export async function POST(request: NextRequest) {
-  const accessToken = request.cookies.get("plurk_access_token")?.value;
-  const accessTokenSecret = request.cookies.get(
-    "plurk_access_token_secret",
-  )?.value;
+  const sessionId = request.cookies.get("plurk_session")?.value;
 
-  if (!accessToken || !accessTokenSecret) {
-    return Response.json(
-      { state: "FAILURE", data: "尚未授權" },
-      {
-        status: 401,
-        headers: { "Set-Cookie": "plurk_authed=; Max-Age=0; path=/" },
-      },
-    );
+  if (!sessionId) {
+    return clearAuthResponse("尚未授權");
   }
+
+  const session = await getSession(sessionId);
+
+  if (!session) {
+    return clearAuthResponse("授權已失效，請重新授權");
+  }
+
+  const { token: accessToken, secret: accessTokenSecret } = session;
 
   const { plurk_id, content } = await request.json();
 
@@ -35,12 +45,10 @@ export async function POST(request: NextRequest) {
 
   if (!res.ok) {
     const data = await res.json();
-    // Plurk 回 401/403 代表 token 已失效，清除 cookie 並通知前端清除授權狀態
+    // Plurk 回 401/403 代表 token 已失效，刪除 Redis session 並清除 cookie
     if (res.status === 401 || res.status === 403) {
-      return Response.json(
-        { state: "FAILURE", data: "授權已失效，請重新授權" },
-        { status: 401, headers: { "Set-Cookie": "plurk_authed=; Max-Age=0; path=/" } },
-      );
+      await deleteSession(sessionId);
+      return clearAuthResponse("授權已失效，請重新授權");
     }
     // 其他錯誤（invalid plurk_id 等）帶入 Plurk 的錯誤訊息，授權狀態不變
     return Response.json(

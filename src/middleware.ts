@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { redis } from "@/app/unit/lib/redis";
+import { redis } from "@/app/lib/redis";
 
 const LIMIT = 10;
 const WINDOW = 60;

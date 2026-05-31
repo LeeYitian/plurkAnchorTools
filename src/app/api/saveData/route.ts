@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { randomBytes } from "crypto";
-import { redis } from "@/app/unit/lib/redis";
+import { redis } from "@/app/lib/redis";
 import sanitizeHtml from "sanitize-html";
 
 function generateKey() {
