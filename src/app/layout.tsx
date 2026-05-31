@@ -25,7 +25,7 @@ export default function RootLayout({
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
-          storageKey="theme"
+          storageKey="plurk-anchor-theme"
         >
           <LoadingProvider>
             <Suspense fallback={null}>

@@ -49,7 +49,7 @@ export const EMOTICON_TYPE_MAP = {
 };
 
 export const PLURK_URL_REGEX = new RegExp(
-  /^https:\/\/www\.plurk\.com\/p\/[a-zA-Z0-9]+$/,
+  /^https:\/\/www\.plurk\.com\/p\/([a-zA-Z0-9]+)$/,
 );
 
 export const COLOR_MODE = {

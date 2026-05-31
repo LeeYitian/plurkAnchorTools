@@ -28,7 +28,7 @@ export default function PostDialog({
   const [plurks, setPlurks] = useState<TPlurkItem[]>([]);
   const [selectedId, setSelectedId] = useState("");
   const [urlInput, setUrlInput] = useState("");
-  const [sendAll, setSendAll] = useState(true);
+  const [sendAll, setSendAll] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState("");
@@ -101,68 +101,67 @@ export default function PostDialog({
         </div>
       ) : (
         <>
-      <p className="mb-4 text-base font-bold text-main">發送留言</p>
-      {error && (
-        <p className="mb-4 text-xs text-red-500">{`出現錯誤：${error}`}</p>
-      )}
-      <label className="mb-1 block text-sm text-gray-500">選擇安價噗</label>
-      <select
-        className="mb-4 w-full rounded-md border border-plain bg-plain/10 py-2 pl-2 pr-3 text-sm text-gray-500 disabled:opacity-50"
-        value={selectedId}
-        onChange={(e) => setSelectedId(e.target.value)}
-        disabled={isFetching || !!urlInput}
-      >
-        <option value="">
-          {isFetching ? "載入中..." : "-- 選擇安價噗 --"}
-        </option>
-        {plurks.map((p) => (
-          <option key={p.plurk_id} value={p.plurk_id.toString()}>
-            {p.content_raw.length > 40
-              ? `${p.content_raw.slice(0, 25)}...`
-              : p.content_raw}
-          </option>
-        ))}
-      </select>
+          <p className="mb-4 text-base font-bold text-main">發送留言</p>
+          {error && (
+            <p className="mb-4 text-xs text-red-500">{`出現錯誤：${error}`}</p>
+          )}
+          <label className="mb-1 block text-sm text-gray-500">選擇安價噗</label>
+          <select
+            className="mb-4 w-full rounded-md border border-plain bg-plain/10 py-2 pl-2 pr-3 text-sm text-gray-500 disabled:opacity-50"
+            value={selectedId}
+            onChange={(e) => setSelectedId(e.target.value)}
+            disabled={isFetching || !!urlInput}
+          >
+            <option value="">
+              {isFetching ? "載入中..." : "-- 選擇安價噗 --"}
+            </option>
+            {plurks.map((p) => (
+              <option key={p.plurk_id} value={p.plurk_id.toString()}>
+                {p.content_raw.length > 40
+                  ? `${p.content_raw.slice(0, 25)}...`
+                  : p.content_raw}
+              </option>
+            ))}
+          </select>
 
-      <label className="mb-1 block text-sm text-gray-500">
-        或直接貼上噗浪網址
-      </label>
-      <input
-        type="text"
-        className="mb-4 w-full rounded-md border border-plain bg-plain/10 p-2 text-sm text-gray-500"
-        placeholder="https://www.plurk.com/p/xxxxxxx"
-        value={urlInput}
-        onChange={(e) => {
-          setUrlInput(e.target.value);
-          if (e.target.value) setSelectedId("");
-        }}
-      />
+          <label className="mb-1 block text-sm text-gray-500">
+            或直接貼上噗浪網址
+          </label>
+          <input
+            type="text"
+            className="mb-4 w-full rounded-md border border-plain bg-plain/10 p-2 text-sm text-gray-500"
+            placeholder="https://www.plurk.com/p/xxxxxxx"
+            value={urlInput}
+            onChange={(e) => {
+              setUrlInput(e.target.value);
+              if (e.target.value) setSelectedId("");
+            }}
+          />
 
-      <label className="mb-4 flex cursor-pointer items-center gap-2 text-sm text-gray-500">
-        <input
-          type="checkbox"
-          checked={sendAll}
-          onChange={(e) => setSendAll(e.target.checked)}
-        />
-        一次發送所有分段（共 {splitTexts.length} 則）
-      </label>
+          <label className="mb-4 flex cursor-pointer items-center gap-2 text-sm text-gray-500">
+            <input
+              type="checkbox"
+              checked={sendAll}
+              onChange={(e) => setSendAll(e.target.checked)}
+            />
+            一次發送所有分段（共 {splitTexts.length} 則）
+          </label>
 
-      <div className="flex justify-end gap-2">
-        <button
-          className="rounded-md bg-gray-300 px-4 py-1.5 text-sm text-gray-500"
-          onClick={handleClose}
-        >
-          取消
-        </button>
-        <button
-          className="rounded-md bg-main px-4 py-1.5 text-sm text-white disabled:opacity-40"
-          disabled={!targetPlurkId || isSending}
-          onClick={handleConfirm}
-        >
-          確認發送
-        </button>
-      </div>
-
+          <div className="flex justify-end gap-2">
+            <button
+              className="rounded-md bg-gray-300 px-4 py-1.5 text-sm text-gray-500"
+              onClick={handleClose}
+            >
+              取消
+            </button>
+            <button
+              className="rounded-md bg-main px-4 py-1.5 text-sm text-white disabled:opacity-40"
+              disabled={!targetPlurkId || isSending}
+              onClick={handleConfirm}
+            >
+              確認發送
+            </button>
+          </div>
         </>
       )}
     </div>

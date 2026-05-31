@@ -2,13 +2,12 @@ import clsx from "clsx";
 import { useCallback, useEffect, useState } from "react";
 import { splitTextUtils } from "@/app/chunk/utils/splitText";
 import { checkAuthed } from "@/app/chunk/utils/plurkAuth";
+import PostDialog from "@/app/chunk/components/PostDialog/PostDialog";
 import "./SplitResult.scss";
 
 type SplitResultProps = {
   splitTexts: string[];
-  postedIndex: number[];
-  onOpenPostDialog: (index: number) => void;
-  onConfirmOAuth: (index: number) => void;
+  onConfirmOAuth: () => void;
 };
 
 const sendBtnStyle = {
@@ -24,33 +23,29 @@ const copyBtnStyle = {
     "px-2 py-3/10 h-7 bg-gray-200 text-gray-300 cursor-default border-none rounded-md hover:transform-none",
 };
 
-export default function SplitResult({
-  splitTexts,
-  postedIndex,
-  onOpenPostDialog,
-  onConfirmOAuth,
-}: SplitResultProps) {
+export default function SplitResult({ splitTexts, onConfirmOAuth }: SplitResultProps) {
   const { copyParagraph, suggestDeleteCount } = splitTextUtils;
   const [copyIndex, setCopyIndex] = useState<number[]>([]);
   const [consentOpen, setConsentOpen] = useState(false);
-  const [pendingIndex, setPendingIndex] = useState(0);
+  const [postedIndex, setPostedIndex] = useState<number[]>([]);
+  const [openPostDialogIndex, setOpenPostDialogIndex] = useState<number | null>(null);
 
-  const handleSend = useCallback(
-    (index: number) => {
-      if (!checkAuthed()) {
-        setPendingIndex(index);
-        setConsentOpen(true);
-      } else {
-        onOpenPostDialog(index);
-      }
-    },
-    [onOpenPostDialog],
-  );
+  const handleSend = useCallback((index: number) => {
+    if (!checkAuthed()) {
+      setConsentOpen(true);
+    } else {
+      setOpenPostDialogIndex(index);
+    }
+  }, []);
 
   const handleConsentConfirm = useCallback(() => {
     setConsentOpen(false);
-    onConfirmOAuth(pendingIndex);
-  }, [onConfirmOAuth, pendingIndex]);
+    onConfirmOAuth();
+  }, [onConfirmOAuth]);
+
+  const handleSendSuccess = useCallback((indices: number[]) => {
+    setPostedIndex((prev) => [...new Set([...prev, ...indices])]);
+  }, []);
 
   const handleCopy = async (text: string, index: number) => {
     await copyParagraph(text);
@@ -59,6 +54,7 @@ export default function SplitResult({
 
   useEffect(() => {
     setCopyIndex([]);
+    setPostedIndex([]);
   }, [splitTexts]);
 
   return (
@@ -148,6 +144,12 @@ export default function SplitResult({
           </div>
         );
       })}
+      <PostDialog
+        openIndex={openPostDialogIndex}
+        onClose={() => setOpenPostDialogIndex(null)}
+        splitTexts={splitTexts}
+        onSendSuccess={handleSendSuccess}
+      />
     </>
   );
 }
