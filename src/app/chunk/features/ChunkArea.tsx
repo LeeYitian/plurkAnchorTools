@@ -9,7 +9,8 @@ import { CHUNKS_SESSION_KEY } from "@/types/constants";
 
 export default function ChunkArea() {
   const [originalText, setOriginalText] = useState("");
-  const [postDialogOpen, setPostDialogOpen] = useState(false);
+  const [openPostDialogIndex, setOpenPostDialogIndex] = useState<number | null>(null);
+  const [postedIndex, setPostedIndex] = useState<number[]>([]);
 
   // OAuth 跳轉回來後，還原原始文字、更新 textarea 顯示、開啟 PostDialog
   useEffect(() => {
@@ -18,8 +19,9 @@ export default function ChunkArea() {
       window.history.replaceState(null, "", window.location.pathname); //確認來自 OAuth 導轉後移除網址中的 params
       const stored = sessionStorage.getItem(CHUNKS_SESSION_KEY);
       if (stored) {
-        setOriginalText(stored);
-        setPostDialogOpen(true);
+        const { text, index } = JSON.parse(stored) as { text: string; index: number };
+        setOriginalText(text);
+        setOpenPostDialogIndex(index);
         sessionStorage.removeItem(CHUNKS_SESSION_KEY);
       }
     }
@@ -32,11 +34,20 @@ export default function ChunkArea() {
     return splitTextUtils.countAndSplit(originalText);
   }, [originalText]);
 
-  const openPostDialog = () => setPostDialogOpen(true);
+  // splitTexts 變動時重置已發送狀態
+  useEffect(() => {
+    setPostedIndex([]);
+  }, [splitTexts]);
+
+  const openPostDialog = (index: number) => setOpenPostDialogIndex(index);
+
+  const handleSendSuccess = useCallback((indices: number[]) => {
+    setPostedIndex((prev) => [...new Set([...prev, ...indices])]);
+  }, []);
 
   // 授權前把原始文字（非分段結果）存入 sessionStorage，確保跳轉回來可以精確還原
-  const handleConfirmOAuth = useCallback(() => {
-    sessionStorage.setItem(CHUNKS_SESSION_KEY, originalText);
+  const handleConfirmOAuth = useCallback((index: number) => {
+    sessionStorage.setItem(CHUNKS_SESSION_KEY, JSON.stringify({ text: originalText, index }));
     const deviceId = getOrCreateDeviceId();
     window.location.href = `/api/auth/requestToken?deviceid=${deviceId}`;
   }, [originalText]);
@@ -50,13 +61,15 @@ export default function ChunkArea() {
       />
       <SplitResult
         splitTexts={splitTexts}
+        postedIndex={postedIndex}
         onOpenPostDialog={openPostDialog}
         onConfirmOAuth={handleConfirmOAuth}
       />
       <PostDialog
-        open={postDialogOpen}
-        onOpenChange={setPostDialogOpen}
+        openIndex={openPostDialogIndex}
+        onClose={() => setOpenPostDialogIndex(null)}
         splitTexts={splitTexts}
+        onSendSuccess={handleSendSuccess}
       />
     </>
   );

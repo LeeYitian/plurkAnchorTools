@@ -6,12 +6,16 @@ import "./SplitResult.scss";
 
 type SplitResultProps = {
   splitTexts: string[];
-  onOpenPostDialog: () => void;
-  onConfirmOAuth: () => void;
+  postedIndex: number[];
+  onOpenPostDialog: (index: number) => void;
+  onConfirmOAuth: (index: number) => void;
 };
 
-const sendBtnStyle =
-  "px-2 py-3/10 h-7 bg-plain text-main dark:text-black cursor-pointer rounded-md";
+const sendBtnStyle = {
+  default:
+    "px-2 py-3/10 h-7 bg-plain text-main dark:text-black cursor-pointer rounded-md",
+  sent: "px-2 py-3/10 h-7 bg-gray-200 text-gray-300 cursor-default rounded-md hover:transform-none",
+};
 
 const copyBtnStyle = {
   default:
@@ -22,25 +26,31 @@ const copyBtnStyle = {
 
 export default function SplitResult({
   splitTexts,
+  postedIndex,
   onOpenPostDialog,
   onConfirmOAuth,
 }: SplitResultProps) {
   const { copyParagraph, suggestDeleteCount } = splitTextUtils;
   const [copyIndex, setCopyIndex] = useState<number[]>([]);
   const [consentOpen, setConsentOpen] = useState(false);
+  const [pendingIndex, setPendingIndex] = useState(0);
 
-  const handleSend = useCallback(() => {
-    if (!checkAuthed()) {
-      setConsentOpen(true);
-    } else {
-      onOpenPostDialog();
-    }
-  }, [onOpenPostDialog]);
+  const handleSend = useCallback(
+    (index: number) => {
+      if (!checkAuthed()) {
+        setPendingIndex(index);
+        setConsentOpen(true);
+      } else {
+        onOpenPostDialog(index);
+      }
+    },
+    [onOpenPostDialog],
+  );
 
   const handleConsentConfirm = useCallback(() => {
     setConsentOpen(false);
-    onConfirmOAuth();
-  }, [onConfirmOAuth]);
+    onConfirmOAuth(pendingIndex);
+  }, [onConfirmOAuth, pendingIndex]);
 
   const handleCopy = async (text: string, index: number) => {
     await copyParagraph(text);
@@ -65,7 +75,16 @@ export default function SplitResult({
           <br />
           此行為不會讓本網站取得你的帳號密碼，授權僅用於在選定的噗文中留言。
           <br />
-          你可隨時前往噗浪設定取消授權。
+          你可隨時前往
+          <a
+            href="https://www.plurk.com/settings/sessions"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline text-main"
+          >
+            噗浪設定
+          </a>
+          取消授權。
         </p>
         <div className="flex justify-end gap-2">
           <button
@@ -100,13 +119,20 @@ export default function SplitResult({
             {deleteSuggestion && (
               <span className="absolute bottom-5 text-[0.9rem] md:text-[0.8rem] font-light text-gray-400">
                 {deleteSuggestion > 0
-                  ? `刪除 ${deleteSuggestion} 字以調整分段`
-                  : "刪除 1 行以調整分段"}
+                  ? `刪除 ${deleteSuggestion} 字將下個段落移到此處`
+                  : "刪除 1 行將下個段落移到此處"}
               </span>
             )}
             <div className="flex gap-2 self-end mt-3/10">
-              <button className={sendBtnStyle} onClick={handleSend}>
-                發送
+              <button
+                className={
+                  postedIndex.includes(index)
+                    ? sendBtnStyle.sent
+                    : sendBtnStyle.default
+                }
+                onClick={() => handleSend(index)}
+              >
+                {postedIndex.includes(index) ? "已發送" : "發送"}
               </button>
               <button
                 className={

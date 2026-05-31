@@ -6,9 +6,10 @@ import { clearAuthed } from "@/app/chunk/utils/plurkAuth";
 import "./PostDialog.scss";
 
 type PostDialogProps = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  openIndex: number | null;
+  onClose: () => void;
   splitTexts: string[];
+  onSendSuccess: (indices: number[]) => void;
 };
 
 function extractPlurkId(url: string) {
@@ -18,10 +19,12 @@ function extractPlurkId(url: string) {
 }
 
 export default function PostDialog({
-  open,
-  onOpenChange,
+  openIndex,
+  onClose,
   splitTexts,
+  onSendSuccess,
 }: PostDialogProps) {
+  const open = openIndex !== null;
   const [plurks, setPlurks] = useState<TPlurkItem[]>([]);
   const [selectedId, setSelectedId] = useState("");
   const [urlInput, setUrlInput] = useState("");
@@ -55,11 +58,11 @@ export default function PostDialog({
   }, [open]);
 
   const targetPlurkId = selectedId || extractPlurkId(urlInput);
-  const handleClose = () => onOpenChange(false);
+  const handleClose = () => onClose();
 
   const handleConfirm = async () => {
-    if (!targetPlurkId || isSending) return;
-    const toSend = sendAll ? splitTexts : [splitTexts[0]];
+    if (openIndex === null || !targetPlurkId || isSending) return;
+    const toSend = sendAll ? splitTexts : [splitTexts[openIndex]];
     setIsSending(true);
     setError("");
     try {
@@ -74,6 +77,8 @@ export default function PostDialog({
           throw new Error(data.data || "留言發送失敗");
         }
       }
+      const sentIndices = sendAll ? splitTexts.map((_, i) => i) : [openIndex];
+      onSendSuccess(sentIndices);
       handleClose();
     } catch (e) {
       clearAuthed();
@@ -90,6 +95,12 @@ export default function PostDialog({
         open ? "opacity-100" : "opacity-0 pointer-events-none",
       )}
     >
+      {isSending ? (
+        <div className="flex h-full w-full items-center justify-center py-8">
+          <div className="spinner" />
+        </div>
+      ) : (
+        <>
       <p className="mb-4 text-base font-bold text-main">發送留言</p>
       {error && (
         <p className="mb-4 text-xs text-red-500">{`出現錯誤：${error}`}</p>
@@ -148,9 +159,12 @@ export default function PostDialog({
           disabled={!targetPlurkId || isSending}
           onClick={handleConfirm}
         >
-          {isSending ? "發送中..." : "確認發送"}
+          確認發送
         </button>
       </div>
+
+        </>
+      )}
     </div>
   );
 }

@@ -36,8 +36,8 @@ export async function GET(request: NextRequest) {
 
   if (!oauthToken || !oauthTokenSecret) {
     return Response.json(
-      { state: "FAILURE", data: "噗浪回傳資料有誤" },
-      { status: 500 },
+      { state: "FAILURE", data: "噗浪回傳資料有誤，請重新授權" },
+      { status: 500, headers: { "Set-Cookie": "plurk_authed=; Max-Age=0; path=/" } },
     );
   }
 

@@ -24,8 +24,8 @@ export async function GET(request: NextRequest) {
 
   if (!res.ok) {
     return Response.json(
-      { state: "FAILURE", data: "取得噗文清單失敗，請稍後再試" },
-      { status: 500 },
+      { state: "FAILURE", data: "取得噗文清單失敗，請重新授權" },
+      { status: 500, headers: { "Set-Cookie": "plurk_authed=; Max-Age=0; path=/" } },
     );
   }
 
