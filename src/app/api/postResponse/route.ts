@@ -10,13 +10,13 @@ export async function POST(request: NextRequest) {
   )?.value;
 
   if (!accessToken || !accessTokenSecret) {
-    return Response.json({ error: "Not authenticated" }, { status: 401 });
+    return Response.json({ state: "FAILURE", data: "尚未授權" }, { status: 401 });
   }
 
   const { plurk_id, content } = await request.json();
 
   if (!plurk_id || !content) {
-    return Response.json({ error: "Missing parameters" }, { status: 400 });
+    return Response.json({ state: "FAILURE", data: "缺少必要參數" }, { status: 400 });
   }
 
   const res = await oauthSignedFetch(
@@ -26,7 +26,10 @@ export async function POST(request: NextRequest) {
   );
 
   if (!res.ok) {
-    return Response.json({ error: "Failed to post response" }, { status: 500 });
+    return Response.json(
+      { state: "FAILURE", data: "留言發送失敗，請重新授權" },
+      { status: 500, headers: { "Set-Cookie": "plurk_authed=; Max-Age=0; path=/" } },
+    );
   }
 
   return Response.json({ state: "SUCCESS" });

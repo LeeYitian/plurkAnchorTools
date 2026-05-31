@@ -139,6 +139,22 @@
   button:hover {
     transform: scale(1.1);
   }
+
+  input[type="checkbox"] {
+    appearance: none;
+    width: 1.125rem;
+    min-width: 1.125rem;
+    height: 1.125rem;
+    background-color: var(--color-white);
+    border-radius: 0.125rem;
+    border: 2px solid var(--color-main);
+    cursor: pointer;
+
+    &:checked {
+      background-color: var(--color-main);
+      background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M5 13L9 17L19 7' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
+    }
+  }
 }
 
 /* @media (prefers-color-scheme: dark) {

@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
 
   if (!oauthToken || !oauthVerifier || !requestSecret) {
     return Response.json(
-      { error: "Missing OAuth parameters" },
+      { state: "FAILURE", data: "缺少授權參數" },
       { status: 400 },
     );
   }
@@ -30,8 +30,8 @@ export async function GET(request: NextRequest) {
 
   if (!res.ok) {
     return Response.json(
-      { error: "Failed to get access token" },
-      { status: 500 },
+      { state: "FAILURE", data: "取得存取權杖失敗，請重新授權" },
+      { status: 500, headers: { "Set-Cookie": "plurk_authed=; Max-Age=0; path=/" } },
     );
   }
 
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
 
   if (!accessToken || !accessTokenSecret) {
     return Response.json(
-      { error: "Invalid response from Plurk" },
+      { state: "FAILURE", data: "噗浪回傳資料有誤" },
       { status: 500 },
     );
   }
