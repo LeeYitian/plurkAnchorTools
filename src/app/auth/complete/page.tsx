@@ -20,47 +20,42 @@ export default function OAuthCompletePage() {
     if (errorMessage) {
       setError(errorMessage);
     } else {
-      // 桌面瀏覽器通常成功，使用者看不到這頁；
-      // 手機瀏覽器在 cross-origin 跳轉後 close 多半被忽略，使用者需手動按按鈕。
-      window.close();
+      // 通知父視窗授權完成，由父視窗透過 window.open() 的 reference 關閉此 popup，
+      // 不在此呼叫 window.close()，因為 cross-origin 跳轉後自我關閉在手機上會被忽略。
+      window.opener?.postMessage(
+        { type: "OAUTH_COMPLETE" },
+        window.location.origin,
+      );
     }
   }, []);
 
   if (error) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-white">
-        <div className="w-[85vw] max-w-sm rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
-          <p className="mb-3 text-base font-bold text-main">授權失敗</p>
-          <p className="mb-6 text-xs text-red-500">{`出現錯誤：${error}`}</p>
-          <div className="flex justify-end">
-            <button
-              className="rounded-md bg-gray-300 px-4 py-1.5 text-sm text-gray-500"
-              onClick={() => window.close()}
-            >
-              關閉分頁
-            </button>
-          </div>
-        </div>
+      <div className="fixed left-1/2 -translate-x-1/2 w-[90vw] md:w-[60vw] inset-0 flex flex-col items-center justify-center">
+        <p className="mb-3 text-base font-bold text-main">授權失敗</p>
+        <p className="text-sm text-black text-center">
+          請關閉此分頁並回到原本的頁面重新操作。如反覆見到此畫面請
+          <a
+            className="text-main underline"
+            href="https://www.plurk.com/p/3hpbx8t2r0"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            回報問題
+          </a>
+          。
+        </p>
+        <p className="mb-4 text-sm text-red-500">{`出現錯誤：${error}`}</p>
       </div>
     );
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-white">
-      <div className="w-[85vw] max-w-sm rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
-        <p className="mb-3 text-base font-bold text-main">授權完成</p>
-        <p className="mb-6 text-sm leading-relaxed text-gray-600">
-          已成功取得噗浪授權，請關閉此分頁並回到原本的頁面繼續操作。
-        </p>
-        <div className="flex justify-end">
-          <button
-            className="rounded-md bg-cute px-4 py-1.5 text-sm text-white"
-            onClick={() => window.close()}
-          >
-            關閉分頁
-          </button>
-        </div>
-      </div>
+    <div className="fixed left-1/2 -translate-x-1/2 w-[90vw] md:w-[60vw] inset-0 flex flex-col items-center justify-center">
+      <p className="mb-3 text-base font-bold text-main">授權完成</p>
+      <p className="text-sm text-black text-center">
+        已成功取得噗浪授權，請關閉此分頁並回到原本的頁面繼續操作。
+      </p>
     </div>
   );
 }

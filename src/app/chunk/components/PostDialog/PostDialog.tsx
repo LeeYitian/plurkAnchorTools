@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { useEffect, useState } from "react";
 import type { TPlurkItem } from "@/types/plurks";
 import { PLURK_URL_REGEX } from "@/types/constants";
-import { clearAuthed } from "@/app/chunk/utils/plurkAuth";
+
 import "./PostDialog.scss";
 
 type PostDialogProps = {
@@ -33,23 +33,32 @@ export default function PostDialog({
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState("");
 
+  const resetData = () => {
+    setPlurks([]);
+    setSelectedId("");
+    setUrlInput("");
+  };
+
   useEffect(() => {
     if (!open) return;
     setError("");
+    resetData(); // 每次開啟都清空舊資料，避免授權被撤銷後仍能看到上次的 plurks
     const fetchPlurks = async () => {
       setIsFetching(true);
       try {
-        const r = await fetch("/api/getMyPlurks");
-        if (!r.ok) {
-          const data = await r.json();
-          setError(data.data || "取得噗文清單失敗");
+        const res = await fetch("/api/getMyPlurks");
+        if (!res.ok) {
+          const data = await res.json();
+          // server 的 401 response 已帶 Set-Cookie 清除 plurk_authed，不需要 client 再清一次
+          // 502：Plurk 服務故障，授權狀態可能仍有效
+          setError(data.data);
           return;
         }
-        const data = await r.json();
+        const data = await res.json();
         setPlurks(data.data ?? []);
       } catch {
-        clearAuthed();
-        setError("取得噗文清單失敗，請重新授權");
+        // 純粹的網路錯誤，不清除授權狀態
+        setError("網路連線失敗，請稍後再試");
       } finally {
         setIsFetching(false);
       }
@@ -60,7 +69,7 @@ export default function PostDialog({
   const targetPlurkId = selectedId || extractPlurkId(urlInput);
   const handleClose = () => onClose();
 
-  const handleConfirm = async () => {
+  const handlePost = async () => {
     if (openIndex === null || !targetPlurkId || isSending) return;
     const toSend = sendAll ? splitTexts : [splitTexts[openIndex]];
     setIsSending(true);
@@ -74,15 +83,26 @@ export default function PostDialog({
         });
         if (!res.ok) {
           const data = await res.json();
-          throw new Error(data.data || "留言發送失敗");
+          // status 附在 error 上，讓 catch 判斷是否需要清除授權
+          throw Object.assign(new Error(data.data), { status: res.status });
         }
       }
       const sentIndices = sendAll ? splitTexts.map((_, i) => i) : [openIndex];
       onSendSuccess(sentIndices);
       handleClose();
     } catch (e) {
-      clearAuthed();
-      setError(e instanceof Error ? e.message : "留言發送失敗，請重新授權");
+      const status = (e as Error & { status?: number }).status;
+      if (status === 401) {
+        // server 的 401 response 已帶 Set-Cookie 清除 plurk_authed，不需要 client 再清一次
+        resetData();
+      }
+      // status 存在 → server 回傳的錯誤，訊息來自 server（e.message === data.data）
+      // status 不存在 → 純網路錯誤，e.message 是瀏覽器的 "Failed to fetch"，改用 client 訊息
+      setError(
+        status !== undefined
+          ? (e instanceof Error ? e.message : "留言發送失敗")
+          : "網路連線失敗，請稍後再試",
+      );
     } finally {
       setIsSending(false);
     }
@@ -157,7 +177,7 @@ export default function PostDialog({
             <button
               className="rounded-md bg-main px-4 py-1.5 text-sm text-white disabled:opacity-40"
               disabled={!targetPlurkId || isSending}
-              onClick={handleConfirm}
+              onClick={handlePost}
             >
               確認發送
             </button>

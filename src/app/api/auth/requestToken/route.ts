@@ -17,6 +17,11 @@ import { oauthSignedFetch } from "@/app/chunk/utils/oauthSignedFetch";
 import { AUTHORIZE_URL, REQUEST_TOKEN_URL } from "@/app/api/constants";
 
 export async function GET(request: NextRequest) {
+  const errorRedirect = (message: string) =>
+    NextResponse.redirect(
+      new URL(`/auth/complete?error=${encodeURIComponent(message)}`, request.url),
+    );
+
   const callbackUrl = new URL("/api/auth/callback", request.url).toString();
 
   const res = await oauthSignedFetch(REQUEST_TOKEN_URL, {
@@ -24,10 +29,7 @@ export async function GET(request: NextRequest) {
   });
 
   if (!res.ok) {
-    return Response.json(
-      { state: "FAILURE", data: "取得授權碼失敗，請重新授權" },
-      { status: 500, headers: { "Set-Cookie": "plurk_authed=; Max-Age=0; path=/" } },
-    );
+    return errorRedirect("取得授權碼失敗，請重新授權");
   }
 
   const params = new URLSearchParams(await res.text());
@@ -35,10 +37,7 @@ export async function GET(request: NextRequest) {
   const oauthTokenSecret = params.get("oauth_token_secret");
 
   if (!oauthToken || !oauthTokenSecret) {
-    return Response.json(
-      { state: "FAILURE", data: "噗浪回傳資料有誤，請重新授權" },
-      { status: 500, headers: { "Set-Cookie": "plurk_authed=; Max-Age=0; path=/" } },
-    );
+    return errorRedirect("噗浪回傳資料有誤，請重新授權");
   }
 
   const deviceId = request.nextUrl.searchParams.get("deviceid") ?? "";

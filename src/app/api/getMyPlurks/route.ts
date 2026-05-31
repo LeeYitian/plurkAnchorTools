@@ -12,20 +12,38 @@ export async function GET(request: NextRequest) {
   if (!accessToken || !accessTokenSecret) {
     return Response.json(
       { state: "FAILURE", data: "尚未授權" },
-      { status: 401 },
+      {
+        status: 401,
+        headers: { "Set-Cookie": "plurk_authed=; Max-Age=0; path=/" },
+      },
     );
   }
 
   const res = await oauthSignedFetch(
     GET_PLURKS_URL,
-    { filter: "my", limit: "20" },
+    { filter: "my", limit: "15" },
     { key: accessToken, secret: accessTokenSecret },
   );
 
   if (!res.ok) {
+    const data = await res.json();
+    // Plurk 回 401/403 代表 token 已失效，清除 cookie 並通知前端清除授權狀態
+    if (res.status === 401 || res.status === 403) {
+      return Response.json(
+        { state: "FAILURE", data: "授權已失效，請重新授權" },
+        {
+          status: 401,
+          headers: { "Set-Cookie": "plurk_authed=; Max-Age=0; path=/" },
+        },
+      );
+    }
+    // 其他錯誤（如 Plurk 服務故障）不清授權，不讓使用者白白被登出
     return Response.json(
-      { state: "FAILURE", data: "取得噗文清單失敗，請重新授權" },
-      { status: 500, headers: { "Set-Cookie": "plurk_authed=; Max-Age=0; path=/" } },
+      {
+        state: "FAILURE",
+        data: data["error_text"] || "取得噗文清單失敗，請稍後再試",
+      },
+      { status: 502 },
     );
   }
 
