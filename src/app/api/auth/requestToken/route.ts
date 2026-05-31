@@ -44,8 +44,14 @@ export async function GET(request: NextRequest) {
   const deviceId = request.nextUrl.searchParams.get("deviceid") ?? "";
   const authorizeParams = new URLSearchParams({ oauth_token: oauthToken });
   if (deviceId) {
+    const ua = request.headers.get("user-agent") ?? "";
+    const model = /Android/i.test(ua)
+      ? "Android"
+      : /iPhone|iPad/i.test(ua)
+        ? "iOS"
+        : "PC";
     authorizeParams.set("deviceid", deviceId);
-    authorizeParams.set("model", "Plurk Anchor");
+    authorizeParams.set("model", model);
   }
 
   const isLocal = request.url.includes("localhost");

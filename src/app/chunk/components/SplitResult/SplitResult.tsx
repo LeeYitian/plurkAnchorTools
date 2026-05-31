@@ -8,6 +8,8 @@ import "./SplitResult.scss";
 type SplitResultProps = {
   splitTexts: string[];
   onConfirmOAuth: () => void;
+  oauthError: string | null;
+  onClearOAuthError: () => void;
 };
 
 const sendBtnStyle = {
@@ -23,7 +25,7 @@ const copyBtnStyle = {
     "px-2 py-3/10 h-7 bg-gray-200 text-gray-300 cursor-default border-none rounded-md hover:transform-none",
 };
 
-export default function SplitResult({ splitTexts, onConfirmOAuth }: SplitResultProps) {
+export default function SplitResult({ splitTexts, onConfirmOAuth, oauthError, onClearOAuthError }: SplitResultProps) {
   const { copyParagraph, suggestDeleteCount } = splitTextUtils;
   const [copyIndex, setCopyIndex] = useState<number[]>([]);
   const [consentOpen, setConsentOpen] = useState(false);
@@ -94,6 +96,26 @@ export default function SplitResult({ splitTexts, onConfirmOAuth }: SplitResultP
             onClick={handleConsentConfirm}
           >
             確認授權
+          </button>
+        </div>
+      </div>
+
+      <div
+        className={clsx(
+          "consentDialog",
+          oauthError ? "opacity-100" : "opacity-0 pointer-events-none",
+        )}
+      >
+        <p className="mb-3 text-base font-bold text-main">授權失敗</p>
+        {oauthError && (
+          <p className="mb-6 text-xs text-red-500">{`出現錯誤：${oauthError}`}</p>
+        )}
+        <div className="flex justify-end">
+          <button
+            className="rounded-md bg-gray-300 text-gray-500 px-4 py-1.5 text-sm"
+            onClick={onClearOAuthError}
+          >
+            關閉
           </button>
         </div>
       </div>
