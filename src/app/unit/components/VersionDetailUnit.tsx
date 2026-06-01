@@ -88,7 +88,7 @@ export default function VersionDetailUnit() {
           v1.4.3：修正
           <ul>
             <li>滑鼠連點兩下無法正確判斷游標位置的問題（手機版容易發生）</li>
-            <li>手機版點選文章區塊沒有必要dispatch 滾動位置</li>
+            <li>手機版點選文章區塊沒有必要 dispatch 滾動位置</li>
             <li>介面樣式調整</li>
           </ul>
         </li>

@@ -28,6 +28,7 @@ export default function VersionDetailChunk() {
         </li>
         <li>v1.4.1：更新 Next.js 以及新增問題回報連結</li>
         <li>v1.4.2：新增深色模式</li>
+        <li>v1.5.0：新增 Plurk OAuth 授權，可以將分段完的文字發送到噗內</li>
       </ul>
     </details>
   );
