@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { oauthSignedFetch } from "@/app/chunk/utils/oauthSignedFetch";
+import { oauthSignedFetch } from "@/app/chunk/lib/oauth";
 import type { TPlurkItem } from "@/types/plurks";
 import { GET_PLURKS_URL } from "@/app/api/constants";
 import { getSession, deleteSession } from "@/lib/session";

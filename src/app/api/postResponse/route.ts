@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { oauthSignedFetch } from "@/app/chunk/utils/oauthSignedFetch";
+import { oauthSignedFetch } from "@/app/chunk/lib/oauth";
 import { RESPONSE_ADD_URL } from "@/app/api/constants";
 import { getSession, deleteSession } from "@/lib/session";
 
@@ -54,7 +54,11 @@ export async function POST(request: NextRequest) {
       }
       // 其他錯誤（invalid plurk_id 等）帶入 Plurk 的錯誤訊息，授權狀態不變
       return Response.json(
-        { state: "FAILURE", data: data["error_text"] || "留言發送失敗", sentCount },
+        {
+          state: "FAILURE",
+          data: data["error_text"] || "留言發送失敗",
+          sentCount,
+        },
         { status: 400 },
       );
     }

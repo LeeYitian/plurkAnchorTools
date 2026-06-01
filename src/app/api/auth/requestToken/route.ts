@@ -13,13 +13,16 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { oauthSignedFetch } from "@/app/chunk/utils/oauthSignedFetch";
+import { oauthSignedFetch } from "@/app/chunk/lib/oauth";
 import { AUTHORIZE_URL, REQUEST_TOKEN_URL } from "@/app/api/constants";
 
 export async function GET(request: NextRequest) {
   const errorRedirect = (message: string) =>
     NextResponse.redirect(
-      new URL(`/auth/complete?error=${encodeURIComponent(message)}`, request.url),
+      new URL(
+        `/auth/complete?error=${encodeURIComponent(message)}`,
+        request.url,
+      ),
     );
 
   const callbackUrl = new URL("/api/auth/callback", request.url).toString();

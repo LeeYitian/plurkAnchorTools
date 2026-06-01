@@ -9,7 +9,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { oauthSignedFetch } from "@/app/chunk/utils/oauthSignedFetch";
+import { oauthSignedFetch } from "@/app/chunk/lib/oauth";
 import { ACCESS_TOKEN_URL, ONE_MONTH } from "@/app/api/constants";
 import { createSession } from "@/lib/session";
 
