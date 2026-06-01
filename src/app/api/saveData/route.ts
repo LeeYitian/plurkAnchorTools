@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { randomBytes } from "crypto";
-import { redis } from "@/app/lib/redis";
+import { redis } from "@/lib/redis";
 import sanitizeHtml from "sanitize-html";
 
 function generateKey() {
@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Error saving data:", error);
     return Response.json(
-      { state: "FAILURE", data: String(error) },
+      { state: "FAILURE", data: `資料儲存失敗，請稍後再試。${String(error)}` },
       { status: 500 },
     );
   }

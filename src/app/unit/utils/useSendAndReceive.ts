@@ -1,8 +1,9 @@
 import { LoadingContext } from "@/providers/LoadingProvider";
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
-import { use, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { indexedDBService } from "@/app/unit/lib/indexDB";
 import useFetchPlurk from "@/app/unit/utils/useFetchPlurk";
+import { APIFetch } from "@/lib/APIFetch";
 
 type TReplaceExistedData = {
   data: Record<string, string>;
@@ -21,29 +22,18 @@ export default function useSendAndReceive() {
 
   const sendDataToCloud = async () => {
     setLoading(true);
-    try {
-      const allSavedPlurks = await getSavedEditedPlurks(plurk_id);
+    const allSavedPlurks = await getSavedEditedPlurks(plurk_id);
+    const result = await APIFetch<string>("/api/saveData", {
+      method: "POST",
+      body: JSON.stringify({ data: allSavedPlurks, plurk_id, selectedPlurksIds }),
+    });
+    setLoading(false);
 
-      const res = await fetch("/api/saveData", {
-        method: "POST",
-        body: JSON.stringify({
-          data: allSavedPlurks,
-          plurk_id,
-          selectedPlurksIds,
-        }),
-      });
-      const { data } = await res.json();
-
-      if (!res.ok) {
-        setErrorMessage(data);
-      } else {
-        return data;
-      }
-    } catch (error) {
-      setErrorMessage(JSON.stringify(error));
-    } finally {
-      setLoading(false);
+    if (!result.ok) {
+      setErrorMessage(result.data);
+      return;
     }
+    return result.data;
   };
 
   /**
@@ -52,24 +42,25 @@ export default function useSendAndReceive() {
    */
   const receiveDataFromCloud = async (value: string) => {
     setLoading(true);
-    try {
-      const res = await fetch("/api/getData?key=" + value);
-      const { data: resData } = await res.json();
-      const { plurk_id, data: data, selectedPlurksIds } = resData;
+    const result = await APIFetch<{
+      plurk_id: number;
+      data: Record<string, string>;
+      selectedPlurksIds: number[];
+    }>("/api/getData?key=" + value);
+    setLoading(false);
 
-      if (res.ok && plurk_id) {
-        return { plurk_id, data, selectedPlurksIds };
-      } else {
-        setErrorMessage("缺少必要資料欄位，請重新上傳編輯紀錄");
-      }
-      if (!res.ok) {
-        setErrorMessage(resData);
-      }
-    } catch (error) {
-      setErrorMessage(JSON.stringify(error));
-    } finally {
-      setLoading(false);
+    if (!result.ok) {
+      setErrorMessage(result.data);
+      return;
     }
+
+    const { plurk_id, data, selectedPlurksIds } = result.data;
+    if (!plurk_id) {
+      setErrorMessage("缺少必要資料欄位，請重新上傳編輯紀錄");
+      return;
+    }
+
+    return { plurk_id, data, selectedPlurksIds };
   };
 
   const replaceData = async (

@@ -50,8 +50,8 @@ export default function SplitResult({ splitTexts, onConfirmOAuth }: SplitResultP
   }, []);
 
   const handleCopy = async (text: string, index: number) => {
-    await copyParagraph(text);
-    setCopyIndex([...copyIndex, index]);
+    const success = await copyParagraph(text);
+    if (success) setCopyIndex([...copyIndex, index]);
   };
 
   useEffect(() => {

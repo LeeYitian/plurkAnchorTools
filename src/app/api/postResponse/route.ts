@@ -5,7 +5,7 @@ import { getSession, deleteSession } from "@/lib/session";
 
 function clearAuthResponse(message: string, sentCount = 0) {
   const res = NextResponse.json(
-    { state: "FAILURE", data: message, sentCount },
+    { state: "FAILURE", data: { message, sentCount } },
     { status: 401 },
   );
   res.cookies.delete("plurk_session");
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
 
   if (!plurk_id || !Array.isArray(contents) || contents.length === 0) {
     return Response.json(
-      { state: "FAILURE", data: "缺少必要參數" },
+      { state: "FAILURE", data: { message: "缺少必要參數" } },
       { status: 400 },
     );
   }
@@ -56,8 +56,7 @@ export async function POST(request: NextRequest) {
       return Response.json(
         {
           state: "FAILURE",
-          data: data["error_text"] || "留言發送失敗",
-          sentCount,
+          data: { message: data["error_text"] || "留言發送失敗", sentCount },
         },
         { status: 400 },
       );
@@ -65,5 +64,5 @@ export async function POST(request: NextRequest) {
     sentCount++;
   }
 
-  return Response.json({ state: "SUCCESS", sentCount });
+  return Response.json({ state: "SUCCESS", data: { sentCount } });
 }

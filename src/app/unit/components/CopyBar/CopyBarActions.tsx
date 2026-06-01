@@ -78,6 +78,7 @@ export default function CopyBarActions({
       toast.success(`${copyStatusText[COPY_STATUS.copied]} 文字`);
     } catch (error) {
       console.error("Error copying text:", error);
+      toast.error("複製失敗，請確認瀏覽器是否允許存取剪貼簿");
     } finally {
       setTimeout(() => {
         setCopyStatus(COPY_STATUS.idle);
@@ -96,6 +97,7 @@ export default function CopyBarActions({
       toast.success(`${copyStatusText[COPY_STATUS.copied]} HTML`);
     } catch (error) {
       console.error("Error copying HTML:", error);
+      toast.error("複製失敗，請確認瀏覽器是否允許存取剪貼簿");
     } finally {
       setTimeout(() => {
         setCopyStatus(COPY_STATUS.idle);
@@ -117,6 +119,7 @@ export default function CopyBarActions({
       toast.success(`${copyStatusText[COPY_STATUS.copied]} Markdown`);
     } catch (error) {
       console.error("Error copying Markdown:", error);
+      toast.error("複製失敗，請確認瀏覽器是否允許存取剪貼簿");
     } finally {
       setTimeout(() => {
         setCopyStatus(COPY_STATUS.idle);

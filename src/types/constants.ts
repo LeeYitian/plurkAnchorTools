@@ -59,3 +59,12 @@ export const COLOR_MODE = {
 
 export const CHUNKS_SESSION_KEY = "plurk_anchor_chunks";
 export const DEVICE_ID_KEY = "plurk_anchor_device_id";
+
+/** 各 API pathname → 網路錯誤時的友善前綴，實際訊息為 `${prefix}${String(error)}` */
+export const NETWORK_ERROR_PREFIXES: Record<string, string> = {
+  "/api/fetchPlurks": "取得噗文失敗，請稍後再試。",
+  "/api/getData":     "資料載入失敗，請稍後再試。",
+  "/api/saveData":    "資料儲存失敗，請稍後再試。",
+  "/api/getMyPlurks": "網路連線失敗，請稍後再試。",
+  "/api/postResponse":"留言發送失敗，請稍後再試。",
+};

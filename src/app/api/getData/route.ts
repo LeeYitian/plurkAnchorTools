@@ -1,4 +1,4 @@
-import { redis } from "@/app/lib/redis";
+import { redis } from "@/lib/redis";
 import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {

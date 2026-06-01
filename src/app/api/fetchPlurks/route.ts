@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Error fetching Plurks:", error);
     return Response.json(
-      { state: "FAILURE", data: String(error) },
+      { state: "FAILURE", data: `取得噗文失敗，請稍後再試。${String(error)}` },
       { status: 500 },
     );
   }

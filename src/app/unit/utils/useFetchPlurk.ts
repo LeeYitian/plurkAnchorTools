@@ -2,6 +2,8 @@ import { LoadingContext } from "@/providers/LoadingProvider";
 import { PlurksDataContext } from "@/providers/PlurksDataProvider";
 import { PLURK_URL_REGEX } from "@/types/constants";
 import { useContext, useState } from "react";
+import { APIFetch } from "@/lib/APIFetch";
+import type { TPlurkResponse } from "@/types/plurks";
 
 export default function useFetchPlurk() {
   const [, setLoading] = useContext(LoadingContext);
@@ -17,27 +19,28 @@ export default function useFetchPlurk() {
   const fetchPlurk = async (url: string) => {
     if (!url) return;
     const match = url.match(PLURK_URL_REGEX);
-    if (match) {
-      setLoading(true);
-      const plurk_id = match[1];
-      const response = await fetch(`/api/fetchPlurks?id=${plurk_id}`);
-
-      if (!response.ok) {
-        const message = await response.json();
-        setErrorMessage(
-          `*取噗錯誤：${JSON.stringify(message.data)}。請檢查網址`,
-        );
-        dispatch({ type: "SET_PLURKS", payload: [] });
-        setLoading(false);
-        return;
-      }
-
-      const { data } = await response.json();
-      dispatch({ type: "SET_PLURKS", payload: data });
-    } else {
+    if (!match) {
       setErrorMessage("無效的噗文網址");
+      return;
     }
+
+    setLoading(true);
+    const plurk_id = match[1];
+    const result = await APIFetch<TPlurkResponse[]>(`/api/fetchPlurks?id=${plurk_id}`);
     setLoading(false);
+
+    if (!result.ok) {
+      // status 0 是網路錯誤（預設訊息）；其他是 API 錯誤（附上請檢查網址）
+      setErrorMessage(
+        result.status === 0
+          ? `*取噗錯誤：${result.data}`
+          : `*取噗錯誤：${result.data}。請檢查網址`,
+      );
+      dispatch({ type: "SET_PLURKS", payload: [] });
+      return;
+    }
+
+    dispatch({ type: "SET_PLURKS", payload: result.data });
   };
 
   const clearErrorMessage = () => {

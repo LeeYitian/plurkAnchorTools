@@ -67,11 +67,13 @@ const countAndSplit = (texts: string) => {
   return paragraphs;
 };
 
-const copyParagraph = async (paragraph: string) => {
+const copyParagraph = async (paragraph: string): Promise<boolean> => {
   try {
-    return navigator.clipboard.writeText(paragraph);
+    await navigator.clipboard.writeText(paragraph);
+    return true;
   } catch (err) {
     console.log("copy failed", err);
+    return false;
   }
 };
 

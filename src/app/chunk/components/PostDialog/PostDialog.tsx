@@ -2,6 +2,10 @@ import clsx from "clsx";
 import { useEffect, useState } from "react";
 import type { TPlurkItem } from "@/types/plurks";
 import { PLURK_URL_REGEX } from "@/types/constants";
+import { APIFetch } from "@/lib/APIFetch";
+
+type PostSuccess = { sentCount: number };
+type PostError = { message: string; sentCount?: number };
 
 import "./PostDialog.scss";
 
@@ -45,23 +49,15 @@ export default function PostDialog({
     resetData(); // 每次開啟都清空舊資料，避免授權被撤銷後仍能看到上次的 plurks
     const fetchPlurks = async () => {
       setIsFetching(true);
-      try {
-        const res = await fetch("/api/getMyPlurks");
-        if (!res.ok) {
-          const data = await res.json();
-          // server 的 401 response 已帶 Set-Cookie 清除 plurk_authed，不需要 client 再清一次
-          // 502：Plurk 服務故障，授權狀態可能仍有效
-          setError(data.data);
-          return;
-        }
-        const data = await res.json();
-        setPlurks(data.data ?? []);
-      } catch {
-        // 純粹的網路錯誤，不清除授權狀態
-        setError("網路連線失敗，請稍後再試");
-      } finally {
-        setIsFetching(false);
+      // server 的 401 response 已帶 Set-Cookie 清除 plurk_authed，不需要 client 再清一次
+      // 502：Plurk 服務故障，授權狀態可能仍有效
+      const result = await APIFetch<TPlurkItem[]>("/api/getMyPlurks");
+      setIsFetching(false);
+      if (!result.ok) {
+        setError(result.data);
+        return;
       }
+      setPlurks(result.data ?? []);
     };
     fetchPlurks();
   }, [open]);
@@ -74,35 +70,37 @@ export default function PostDialog({
     const toSend = sendAll ? splitTexts : [splitTexts[openIndex]];
     setIsSending(true);
     setError("");
-    try {
-      const res = await fetch("/api/postResponse", {
+
+    const result = await APIFetch<PostSuccess, PostError>(
+      "/api/postResponse",
+      {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ plurk_id: targetPlurkId, contents: toSend }),
-      });
-      const data = await res.json();
+      },
+      // 錯誤型別需為物件（含 message），無法使用 map 的字串預設，改由此處自行組裝
+      (err) => ({ message: `留言發送失敗，請稍後再試。${String(err)}` }),
+    );
 
-      if (data.sentCount > 0) {
-        const sentIndices = sendAll
-          ? Array.from({ length: data.sentCount }, (_, i) => i)
-          : [openIndex];
-        onSendSuccess(sentIndices);
-      }
+    setIsSending(false);
 
-      if (!res.ok) {
-        // server 的 401 response 已帶 Set-Cookie 清除 plurk_authed，不需要 client 再清一次
-        if (res.status === 401) resetData();
-        setError(data.data);
-        return;
-      }
-
-      handleClose();
-    } catch {
-      // 純粹的網路錯誤
-      setError("網路連線失敗，請稍後再試");
-    } finally {
-      setIsSending(false);
+    // sentCount 在 success 和 failure（部分成功）都可能有值，undefined 視為 0
+    const sentCount = result.data.sentCount ?? 0;
+    if (sentCount > 0) {
+      const sentIndices = sendAll
+        ? Array.from({ length: sentCount }, (_, i) => i)
+        : [openIndex];
+      onSendSuccess(sentIndices);
     }
+
+    if (!result.ok) {
+      // server 的 401 response 已帶 Set-Cookie 清除 plurk_authed，不需要 client 再清一次
+      if (result.status === 401) resetData();
+      setError(result.data.message);
+      return;
+    }
+
+    handleClose();
   };
 
   return (
