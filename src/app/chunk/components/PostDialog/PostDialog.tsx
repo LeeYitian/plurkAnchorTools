@@ -75,34 +75,31 @@ export default function PostDialog({
     setIsSending(true);
     setError("");
     try {
-      for (const content of toSend) {
-        const res = await fetch("/api/postResponse", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ plurk_id: targetPlurkId, content }),
-        });
-        if (!res.ok) {
-          const data = await res.json();
-          // status 附在 error 上，讓 catch 判斷是否需要清除授權
-          throw Object.assign(new Error(data.data), { status: res.status });
-        }
+      const res = await fetch("/api/postResponse", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plurk_id: targetPlurkId, contents: toSend }),
+      });
+      const data = await res.json();
+
+      if (data.sentCount > 0) {
+        const sentIndices = sendAll
+          ? Array.from({ length: data.sentCount }, (_, i) => i)
+          : [openIndex];
+        onSendSuccess(sentIndices);
       }
-      const sentIndices = sendAll ? splitTexts.map((_, i) => i) : [openIndex];
-      onSendSuccess(sentIndices);
-      handleClose();
-    } catch (e) {
-      const status = (e as Error & { status?: number }).status;
-      if (status === 401) {
+
+      if (!res.ok) {
         // server 的 401 response 已帶 Set-Cookie 清除 plurk_authed，不需要 client 再清一次
-        resetData();
+        if (res.status === 401) resetData();
+        setError(data.data);
+        return;
       }
-      // status 存在 → server 回傳的錯誤，訊息來自 server（e.message === data.data）
-      // status 不存在 → 純網路錯誤，e.message 是瀏覽器的 "Failed to fetch"，改用 client 訊息
-      setError(
-        status !== undefined
-          ? (e instanceof Error ? e.message : "留言發送失敗")
-          : "網路連線失敗，請稍後再試",
-      );
+
+      handleClose();
+    } catch {
+      // 純粹的網路錯誤
+      setError("網路連線失敗，請稍後再試");
     } finally {
       setIsSending(false);
     }
@@ -164,7 +161,7 @@ export default function PostDialog({
               checked={sendAll}
               onChange={(e) => setSendAll(e.target.checked)}
             />
-            一次發送所有分段（共 {splitTexts.length} 則）
+            一次依序發送所有分段（共 {splitTexts.length} 則）
           </label>
 
           <div className="flex justify-end gap-2">
