@@ -32,6 +32,9 @@ const reducer = (
 ): TInitialState => {
   switch (action.type) {
     case "SET_PLURKS":
+      // isSamePlurk：使用者重新載入同一則噗文時（例如手動重整），
+      // 保留既有的勾選狀態和編輯內容，不要清空。
+      // 若換了不同的噗文，則清空，避免舊資料殘留在新噗文的畫面上。
       const isSamePlurk =
         state.plurks[0]?.plurk_id === action.payload[0]?.plurk_id;
       return {
@@ -43,6 +46,7 @@ const reducer = (
         editedPlurks: isSamePlurk ? state.editedPlurks : {},
       };
     case "SELECT_PLURKS_IDS":
+      // Toggle 邏輯：已選 → 取消，未選 → 加入，用 Set 確保不重複
       const temp = new Set(state.selectedPlurksIds);
 
       for (const id of action.payload) {

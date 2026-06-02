@@ -1,5 +1,6 @@
 import { deleteDB, IDBPDatabase, openDB } from "idb";
 
+// Singleton 設計：整個應用共用同一個連線物件，terminated() 在瀏覽器強制斷線時重設。
 let dbPromise: Promise<IDBPDatabase> | null = null;
 
 type TSavedEditedPlurk = {
@@ -31,6 +32,7 @@ const getDB = () => {
         }
       },
       terminated() {
+        // 瀏覽器強制中斷連線（例如記憶體不足，或是有人人為刪除 IndexedDB），重設讓下次呼叫重新開啟
         console.log("Database terminated!");
         dbPromise = null;
       },

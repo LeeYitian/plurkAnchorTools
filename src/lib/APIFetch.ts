@@ -17,6 +17,10 @@ function networkErrorMessage(url: string, error: unknown): string {
  * - API 回 4xx/5xx：`{ ok: false, data: body.data, status }`
  * - 網路錯誤（請求未送達）：`{ ok: false, data: <友善前綴 + String(error)>, status: 0 }`
  *
+ * 為什麼用 status: 0 代表網路錯誤？
+ * HTTP 狀態碼不包含 0，用 0 作為「請求根本沒送出去」的信號，
+ * 呼叫端可以靠 `status === 0` 判斷是斷網還是後端回錯，給出不同的錯誤提示。
+ *
  * @param onNetworkError data 型別需為物件時（例如 postResponse）才傳，用來覆蓋預設的字串訊息
  */
 export async function APIFetch<T, E = string>(

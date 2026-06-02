@@ -16,6 +16,9 @@ export default function useEditPlurks() {
       target.setAttribute("contentEditable", "true");
       target.focus();
 
+      // 攔截 Enter 鍵的預設行為（insertParagraph）
+      // Plurk 的段落格式是雙 <br>（第一個是換行，第二個 class="double-br" 是段落標記），故仿照之。
+
       const beforeInput = (e: InputEvent) => {
         if (e.inputType === "insertParagraph") {
           e.preventDefault();
@@ -42,11 +45,13 @@ export default function useEditPlurks() {
       target.addEventListener(
         "blur",
         () => {
+          // blur 時才儲存，而不是每次 input 都存：減少 IndexedDB 寫入頻率
           target.removeEventListener("beforeinput", beforeInput);
-
           target.removeAttribute("contentEditable");
           const newContent = target.innerHTML;
           setEditing(false);
+
+          // 內容沒有變化時不寫入，避免污染編輯紀錄
           if (newContent === originalContent) return;
 
           saveEditedPlurk({
@@ -58,6 +63,7 @@ export default function useEditPlurks() {
             payload: { [id]: newContent },
           });
         },
+        // once: true 確保 blur listener 只執行一次，防止重複觸發（例如 focus 在元素間快速切換）
         { once: true },
       );
     },

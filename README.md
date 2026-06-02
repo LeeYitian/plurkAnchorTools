@@ -2,6 +2,13 @@
 
 以 Next.js、React、tailwindcss 製作的文字小工具，適用於社群網站噗浪（Plurk）。
 
+## 目錄
+
+- [功能介紹](#功能介紹)
+- [技術介紹](#技術介紹)
+- [啟動專案](#啟動專案)
+- [使用者回饋紀錄](#使用者回饋紀錄)
+
 ## 功能介紹
 
 ### 分段工具：將長文斷成噗浪留言的長度
@@ -61,6 +68,84 @@
 - 覆蓋資料前進行提示
 - 編輯過內容後有醒目提示
 - 深色模式（prefers-color-scheme 搭配手動切換）
+
+### 功能資料流
+
+#### 分段工具
+
+```
+使用者輸入文字
+  → splitText（切段，360字／11行限制）
+  → 顯示切段結果，可逐段複製
+
+（選用）OAuth 授權發文：
+  /api/auth/requestToken  →  Plurk 授權頁面
+  ↓（使用者同意）
+  /api/auth/callback  →  createSession（寫入 Redis）
+  →  /auth/complete（中繼頁，供 popup 關閉）
+
+發文：
+  前端選定目標噗文  →  /api/postResponse
+  →  oauthSignedFetch（附 OAuth 簽章）  →  Plurk API
+```
+
+#### 組合工具
+
+```
+使用者貼上噗文 URL
+  →  /api/fetchPlurks（Responses/get API + HTML 解析噗首）
+  →  PlurksDataContext（useReducer 管理狀態）
+  →  從 IndexedDB 載入既有勾選與編輯紀錄
+
+勾選留言：
+  更新 selectedPlurksIds（context）  →  寫入 IndexedDB（selected-ids）
+
+編輯留言：
+  雙擊 → contentEditable
+  →  blur 時比對內容是否改變
+  →  有變更：寫入 IndexedDB（edited-plurks）+ 更新 context
+
+跨裝置傳輸（傳送端）：
+  點「傳送」  →  讀取 IndexedDB 所有編輯紀錄
+  →  /api/saveData（sanitize HTML → 寫入 Redis）
+  →  回傳 6 碼 key  →  顯示 QR Code
+
+跨裝置傳輸（接收端）：
+  掃描 QR Code  →  /unit/fromscan?key={6碼}
+  →  /api/getData（從 Redis 取回）
+  →  replaceSinglePlurkData（覆寫 IndexedDB）
+  →  重新 fetch 噗文，恢復編輯狀態
+```
+
+## 啟動專案
+
+### 本地啟動
+
+環境變數：
+
+```
+# Plurk OAuth 應用程式憑證（至 https://www.plurk.com/PlurkApp/create 申請）
+PLURK_CONSUMER_KEY
+PLURK_CONSUMER_SECRET
+
+# Vercel、Upstash Redis 相關變數（於 Vercel 設定中連結 Redis 後取得）
+PLURKAT_KV_REST_API_READ_ONLY_TOKEN
+PLURKAT_KV_REST_API_TOKEN
+PLURKAT_KV_REST_API_URL
+PLURKAT_KV_URL
+PLURKAT_REDIS_URL
+VERCEL_OIDC_TOKEN
+```
+
+接著執行：
+
+```bash
+npm install
+npm run dev
+```
+
+> 若不需要 OAuth 發文功能，可略過 `PLURK_CONSUMER_KEY/SECRET`，分段工具仍可正常切段與複製。  
+> 若不需要跨裝置同步，可略過 Redis 設定，組合工具仍可在本機正常使用 IndexedDB。
 
 ## 使用者回饋紀錄
 
