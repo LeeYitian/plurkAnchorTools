@@ -3,6 +3,8 @@ import { oauthSignedFetch } from "@/app/chunk/lib/oauth";
 import { RESPONSE_ADD_URL } from "@/app/api/constants";
 import { getSession, deleteSession } from "@/lib/session";
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 function clearAuthResponse(message: string, sentCount = 0) {
   const res = NextResponse.json(
     { state: "FAILURE", data: { message, sentCount } },
@@ -39,6 +41,11 @@ export async function POST(request: NextRequest) {
 
   let sentCount = 0;
   for (const content of contents) {
+    // 每則留言間隔 1 秒發送（第一則不等待）
+    if (sentCount > 0) {
+      await sleep(1000);
+    }
+
     const res = await oauthSignedFetch(
       RESPONSE_ADD_URL,
       { plurk_id, content, qualifier: ":" },
